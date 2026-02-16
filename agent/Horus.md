@@ -12,7 +12,7 @@ One conversation. You pay attention. You move at the pace the CEO needs.
 ## SOURCES OF TRUTH
 
 `product.md` = the spec. Authoritative. Detailed. "The CLI has these commands, they do exactly this, edge cases behave like this." If behavior isn't in here, it doesn't exist. Everything — code, arch, plans — is derived from this.
-`arch.md` = lightweight impl notes. "We use Prisma for DB, Express for routing, tokens stored in X." Just enough so a coder knows what tools/libs/patterns are in play without reading the code.
+`arch*.md` = lightweight impl notes. "We use Prisma for DB, Express for routing, tokens stored in X." Just enough so a coder knows what tools/libs/patterns are in play without reading the code.
 
 ---
 
@@ -22,9 +22,9 @@ Every conversation moves through these stages in order.
 Each stage ends with a gate — you present what you found and ask what's next.
 Skip stages the CEO doesn't need. Never skip Scout and Present.
 
-```
+
 SCOUT → PRESENT → INTERVIEW? → DOCS UPDATE? → PLAN?
-```
+
 
 ---
 
@@ -68,7 +68,7 @@ Work through ambiguities with the CEO until YOU have zero open questions. Don't 
 
 Only run if there are real spec or architecture changes to capture.
 
-Update `docs/product.md` first, then `docs/arch.md`. Show each diff - present changes summary, ask for confirmation, then save.
+Update `docs/product.md` first, then `docs/arch*.md`. Show each diff - present changes summary, ask for confirmation, then save.
 
 > *"product.md changes: [diff]. Good?"*
 > *"arch.md changes: [diff]. Good?"*

@@ -122,6 +122,5 @@ Everything else: make a call and keep moving.
 - **Blockers:** Anything unresolvable (ideally: none)
 - **Confessions:** Anything you did differently from the plan or any standard you broke, and why
 
-
 Begin immediately.
 When you completed or stopped - write at the end: <ENDTURN>

@@ -18,6 +18,146 @@ Everything in the codebase is **derived** from these docs. Code is never the sou
 
 ---
 
+## The Workflow: Step-by-Step 🔄
+
+### Step 1: Initialize Documentation (Thoth)
+**When to use:** First run, or when you have no docs yet.
+
+```
+Thoth: "Generate product.md and arch.md from current codebase"
+```
+
+Thoth creates the sacred canon (product.md + arch.md) if they don't exist.
+
+---
+
+### Step 2: Send Ideas to Horus
+**When to use:** You have a change you want to make or a question you want answered.
+
+```
+You: "I want to add X feature" or "How does Y work?"
+```
+
+Horus investigates your request and provides context.
+
+---
+
+### Step 3: Horus Interrogates You (Optional)
+**When to use:** Horus needs clarification to make the spec crystal clear.
+
+Horus will ask questions like:
+> "What exactly should happen when X occurs?"
+> "Should this be available to all users or only admins?"
+> "What are the edge cases?"
+
+**Your response:**
+```
+You: "It should do this and this, and handle this edge case."
+```
+
+---
+
+### Step 4: Horus Updates Docs & Creates Plan
+**When to use:** Requirements are clarified, ready to formalize.
+
+Horus:
+1. Updates `product.md` and `arch.md` as the new canon
+2. Generates a detailed plan for Ptah to execute
+
+This step may be combined with Step 3 if the clarification is simple.
+
+---
+
+### Step 5: Ptah Executes the Plan
+**When to use:** You've approved the plan, ready to execute.
+
+```
+Ptah: "Got it. Executing plan..."
+*(Ptah works on the plan)*
+*(Ptah returns when done)*
+```
+
+**No questions asked. Just execution.**
+
+---
+
+### Step 6: Maat Reviews the Work
+**When to use:** Ptah is done, time to check for quality.
+
+```
+Maat: "Checking implementation..."
+```
+
+Maat reviews against the canon and checks for:
+- Correctness
+- Edge cases
+- Broken assumptions
+- Weird behavior
+
+---
+
+### Step 7: If Maat Finds Issues → Loop Back to Ptah
+**When to use:** Maat identifies problems or incomplete work.
+
+```
+Maat: "I found an issue: X is not implemented correctly. Here's what's wrong."
+
+You: Send corrections to Ptah
+Ptah: "Got it. Fixing X..."
+```
+
+Repeat Step 5-7 until Maat is satisfied.
+
+---
+
+### Step 8: Read Maat's Report
+**When to use:** Maat is done reviewing.
+
+```
+Maat: "✅ All checks passed. Implementation is correct and complete."
+```
+
+Read Maat's report to confirm the plan is really done.
+
+---
+
+### Step 9: Generate New Ideas (Set or Hathor)
+**When to use:** Your todo list is empty and you're bored.
+
+```
+Set: "Scan the codebase and find everything that smells."
+Hathor: "Give me 10 wild ideas for new features to add."
+```
+
+Use Set for code criticism, Hathor for wild ideas.
+
+---
+
+### Step 10: Sync or Refine Documentation (Thoth)
+**When to use:** You've manually changed code and want docs to sync, or you want to refine/split documentation.
+
+```
+Thoth: "Regenerate docs based on current codebase."
+Thoth: "Split product.md into smaller, more readable sections."
+Thoth: "Sync arch.md with the recent code changes."
+```
+
+**Core goal:** Keep documentation clear, up-to-date, and well-structured.
+
+---
+
+## The Complete Loop
+
+```
+Start → Thoth (if needed) → Horus (investigate + clarify) → Ptah (execute) → Maat (check)
+                                                                 ↓
+                                                         Found issues?
+                                                         Yes → Ptah fixes → Maat checks again
+                                                         No → Done!
+```
+
+---
+
 ## Why You'll Love This 💕
 
 ### 🙅 No More Long PRDs & Document Juggling
@@ -118,14 +258,7 @@ Ra, change Horus's prompt to use cat + path to the agent files instead of Prompt
 ```
 
 ### Step 4: Verify Installation
-In OpenCode, try calling your agents:
-```
-Horus: "Hello!"
-Ptah: "Hello!"
-Maat: "Hello!"
-```
-
-If all three respond, you're good to go! 🎉
+In OpenCode, use Tab to switch between them
 
 ---
 
@@ -170,7 +303,7 @@ The entire Pharaoh system is **just fancy prompts**. That's it.
 
 ---
 
-## The Workflow Loop
+## The Workflow Loop (Detailed)
 
 ```
 You → Horus → Ptah → Maat → (loop until done) → ✨
@@ -350,22 +483,6 @@ Here's how the full workflow looks in action:
 
 **🎉 Done!**
 
----
-
-## File Structure
-
-```
-PharaohSystemRepo/
-├── docs/
-│   ├── product.md      # The human-readable spec (canon)
-│   └── arch.md         # The tech reference (canon)
-├── todo.txt            # Messy drafts and ideas (nobody sees this! 🔒)
-└── README.md           # This file
-```
-
-- `docs/product.md` — **Edit this only through Horus.** This is your only point of concern for specs.
-- `docs/arch.md` — **Updated automatically by Horus** based on codebase context.
-- `todo.txt` — Your scratchpad. Keep it hidden and personal.
 
 ---
 
@@ -449,12 +566,11 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
 
 ---
 
-## What's Next? (Future Improvements)
+## Want to make it better? (Future Improvements)
 
-- **Split plans into steps:** Break large plans into smaller, executable chunks.
-- **Checkboxes for iteration:** Allow agents to edit checkboxes and run in a loop.
-- **Subagent for context:** Stage 1 could run a subagent to gather initial context.
-- **Professional polish:** Make this production-ready like OAC + Oh My OpenCode.
+- Change Horus to spawn subagents instead
+- Ask Horus to split big plan into several small plans
+- Somehow manage Ptah and Maat talk to each other without copypaste
 
 ---
 
