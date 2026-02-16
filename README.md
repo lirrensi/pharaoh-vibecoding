@@ -228,11 +228,11 @@ You don't write code. You **set the vision**. Horus handles the details. You're 
 ### Step 1: Get the Repo
 ```bash
 # Clone it
-git clone <your-repo-url>
+git clone https://github.com/lirrensi/pharaoh-vibecoding.git
 cd PharaohSystemRepo
 
 # OR download the zip
-# https://github.com/<your-username>/PharaohSystemRepo
+# https://github.com/lirrensi/PharaohSystemRepo
 ```
 
 ### Step 2: Copy Agents to OpenCode
