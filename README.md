@@ -83,6 +83,93 @@ You don't write code. You **set the vision**. Horus handles the details. You're 
 
 ---
 
+## Installation 🛠️
+
+### Step 1: Get the Repo
+```bash
+# Clone it
+git clone <your-repo-url>
+cd PharaohSystemRepo
+
+# OR download the zip
+# https://github.com/<your-username>/PharaohSystemRepo
+```
+
+### Step 2: Copy Agents to OpenCode
+```bash
+# Copy the agents folder to your OpenCode config
+cp -r agents ~/.config/opencode/agents/
+```
+
+### Step 3: Install PromptPaste (Optional but Recommended)
+This is a mini tool to get small prompt snippets easily.
+
+```bash
+# Install with UV (Python tool manager)
+uv tool install promptpaste
+
+# Use it
+pp add lead
+```
+
+**OR** if you don't like PromptPaste, just tell Ra to modify Horus's prompt:
+```
+Ra, change Horus's prompt to use cat + path to the agent files instead of PromptPaste.
+```
+
+### Step 4: Verify Installation
+In OpenCode, try calling your agents:
+```
+Horus: "Hello!"
+Ptah: "Hello!"
+Maat: "Hello!"
+```
+
+If all three respond, you're good to go! 🎉
+
+---
+
+## The Core Idea: Prompts, Not Tools 💭
+
+**This is the most important principle:**
+
+The entire Pharaoh system is **just fancy prompts**. That's it.
+
+- **Horus** = One sophisticated prompt
+- **Ptah** = One sophisticated prompt
+- **Maat** = One sophisticated prompt
+- **Set, Hathor, Thoth, Ra** = One sophisticated prompt each
+
+**You can copy these prompts and use them in ANY coding agent:**
+- Claude
+- GPT-4
+- OpenAI Agents
+- Cursor
+- Continue
+- Codeium
+- Or any other agent that accepts custom prompts
+
+**How to use the agents anywhere:**
+1. Copy the text of the prompt from the `agents/` folder
+2. Paste it into your AI agent's custom prompt field
+3. Done! You have Horus, Ptah, Maat, etc. in any environment
+
+**Why this matters:**
+- The **principle** is what's valuable: structured workflow, CEO-level delegation, no babysitting
+- The **implementation** (prompts) can be copied anywhere
+- You're not locked into a specific tool
+- You can adapt the workflow to whatever agent you're using
+- It's about **organization**, not software
+
+**The beauty of this approach:**
+- Small models work fine (you're just prompting, not running complex logic)
+- No framework dependencies
+- No installation headaches
+- Just copy → paste → use
+- Works in any environment, any language, any model size
+
+---
+
 ## The Workflow Loop
 
 ```
