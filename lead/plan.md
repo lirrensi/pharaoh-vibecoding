@@ -29,7 +29,7 @@ _[One sentence. What does done look like?]_
 
 ---
 
-## Checklist
+# Checklist
 - [ ] Step 1: [one-line summary]
 - [ ] Step 2: [one-line summary]
 - [ ] Step 3: [one-line summary]

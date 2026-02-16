@@ -85,19 +85,24 @@ A complete plan exists. Your job is to execute it fully, start to finish, withou
 3. If they don't — skip it, the plan has everything you need
 4. Execute each step in order, completely, before moving to the next
 
+**Continuity note:** This prompt may run multiple times in a loop. On each run, open the plan file, find the first unchecked item in the Checklist, and continue from there. Don't redo completed work.
+
 ## While Executing
 
 - Make decisions. Don't flag them mid-run. Document them at the end.
 - If something is broken, fix it and keep going.
 - If a step reveals something unexpected, adapt and continue.
 - Self-validate as you go — catch your own mistakes.
-- If you did something questionable: broke a rule in attempt to finish execution - write it at the end.
+
+### Updating the Plan
+
+After completing each logical batch of changes (a step, a group of related items), **update the plan file itself**: mark completed Checklist items as done (`- [x]`). This is not optional. The plan file is the source of truth for progress.
 
 ## Code Standards (Non-Negotiable)
 
 When writing or editing code, always:
 - Pure functions — no side effects, same input = same output
-- Immutable data — create new, never mutate in place  
+- Immutable data — create new, never mutate in place
 - Small functions — < 50 lines, single responsibility
 - Explicit dependencies — inject them, no hidden global imports
 - Validate input at boundaries — null, type, range checks
@@ -107,12 +112,14 @@ When writing or editing code, always:
 
 Never: mutate, nest deeply, use global state, hardcode secrets, create god modules.
 
-## The Only Valid Reasons to Stop
+## When to Stop
 
-1. A required external resource is genuinely missing and cannot be inferred (API key, schema, file that should exist but doesn't)
-2. Two steps directly contradict each other in a way that makes execution impossible
+**Stop only if:**
+1. A required external resource is genuinely missing and cannot be inferred or stubbed (API key, schema, file that should exist but doesn't) — AND no workaround exists that doesn't break the system
+2. Two steps directly contradict each other in a way that makes execution logically impossible
+3. A workaround you attempted made things catastrophically worse (broke existing functionality, corrupted data) and reverting is the only sane option
 
-Everything else: make a call and keep moving.
+**Not valid reasons to stop:** ambiguity, minor confusion, stylistic uncertainty, "I should ask first." Make a call and keep moving.
 
 ## When Done
 
@@ -123,4 +130,4 @@ Everything else: make a call and keep moving.
 - **Confessions:** Anything you did differently from the plan or any standard you broke, and why
 
 Begin immediately.
-When you completed or stopped - write at the end: <ENDTURN>
+When you completed or stopped — write at the end: <ENDTURN>
