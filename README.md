@@ -303,7 +303,7 @@ The entire Pharaoh system is **just fancy prompts**. That's it.
 - **Horus** = One sophisticated prompt
 - **Ptah** = One sophisticated prompt
 - **Maat** = One sophisticated prompt
-- **Anubis, Hathor, Thoth, Ra** = One sophisticated prompt each
+- **Anubis, Hathor, Thoth, Ra, Osiris, Bastet** = One sophisticated prompt each
 
 **You can copy these prompts and use them in ANY coding agent:**
 - Claude
@@ -439,6 +439,36 @@ These agents are **not part of the main loop** — you call them manually when y
 
 ---
 
+### Osiris: Test Engineer 💀
+**When to use:** You want comprehensive test coverage, or need to break things before they break in production.
+
+**What Osiris does:**
+- Writes unit tests, integration tests, and e2e tests
+- Tests edge cases and boundary conditions
+- Performs security testing and vulnerability scanning
+- Ensures code "resurrects stronger" after being broken in tests
+- Reports test coverage gaps and suggests improvements
+
+**Example use case:**
+> "Osiris, write tests for the new authentication module and check for security vulnerabilities."
+
+---
+
+### Bastet: Repo Keeper 🐱
+**When to use:** You want to clean up the repository, improve its structure, or make it more maintainable.
+
+**What Bastet does:**
+- Cleans up messy code, unused files, and dead imports
+- Organizes project structure and improves file organization
+- Adds or updates .gitignore, README, and other repo metadata
+- Ensures consistent coding standards and formatting
+- Makes the repo "beautiful" and welcoming for contributors
+
+**Example use case:**
+> "Bastet, clean up the project structure and add a proper .gitignore file."
+
+---
+
 ## The Agent Roster 📋
 
 | Agent | Role | Main Loop | When to Call |
@@ -450,6 +480,8 @@ These agents are **not part of the main loop** — you call them manually when y
 | **Anubis** 👿 | Code Critic | ❌ No | Finds smells, anti-patterns, technical debt |
 | **Hathor** 💃 | Product Improver | ❌ No | Brainstorms wild, fancy new features |
 | **Thoth** 📜 | Documentation Manager | ❌ No | Generates initial docs, syncs manual changes |
+| **Osiris** 💀 | Test Engineer | ❌ No | Writes tests, breaks things, ensures resilience |
+| **Bastet** 🐱 | Repo Keeper | ❌ No | Cleans repo, organizes structure, improves hygiene |
 
 **Main Loop Agents (Horus → Ptah → Maat):** This is your core workflow. Everything else is optional or manual.
 
@@ -572,7 +604,19 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
    Hathor: "Give me 10 crazy ideas for new features"
    ```
 
-5. **Environment management:**
+5. **Testing:**
+   ```bash
+   # Call Osiris for test coverage and security testing
+   Osiris: "Write tests for the new module and check for vulnerabilities"
+   ```
+
+6. **Repo hygiene:**
+   ```bash
+   # Call Bastet to clean up and organize the project
+   Bastet: "Clean up the repo and organize the file structure"
+   ```
+
+7. **Environment management:**
    ```bash
    # Call Ra for OpenCode management
    Ra: "Make my plugin more cute"
@@ -592,7 +636,7 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
 
 ✨ **Maat is your safety net:** If something feels wrong, Maat will catch it. Don't skip the review loop.
 
-✨ **Optional agents are your toys:** Use Anubis, Hathor, Thoth, and Ra manually when you need them. They're not part of the main loop.
+✨ **Optional agents are your toys:** Use Anubis, Hathor, Thoth, Ra, Osiris, and Bastet manually when you need them. They're not part of the main loop.
 
 ✨ **Ra is your environment conductor:** Ask Ra to tweak OpenCode itself, change prompts, manage configs, or create plugins. He's the only one who knows how everything is wired together!
 
