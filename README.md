@@ -121,15 +121,15 @@ Read Maat's report to confirm the plan is really done.
 
 ---
 
-### Step 9: Generate New Ideas (Set or Hathor)
+### Step 9: Generate New Ideas (Anubis or Hathor)
 **When to use:** Your todo list is empty and you're bored.
 
 ```
-Set: "Scan the codebase and find everything that smells."
+Anubis: "Scan the codebase and find everything that smells."
 Hathor: "Give me 10 wild ideas for new features to add."
 ```
 
-Use Set for code criticism, Hathor for wild ideas.
+Use Anubis for code criticism, Hathor for wild ideas.
 
 ---
 
@@ -149,13 +149,45 @@ Thoth: "Sync arch.md with the recent code changes."
 ## The Complete Loop
 
 ```
-Start → Thoth (if needed) → Horus (investigate + clarify) → Ptah (execute) → Maat (check)
-                                                                 ↓
-                                                         Found issues?
-                                                         Yes → Ptah fixes → Maat checks again
-                                                         No → Done!
+Start → Thoth (if needed) 
+→ Horus (investigate + clarify) 
+→ Ptah (execute) → Maat (check)
+        ↓
+Found issues?
+Yes → Ptah fixes → Maat checks again
+No → Done!
 ```
 
+```
+Horus    👁️  manager, orchestrates, makes the plan
+   ↓
+Ptah     🔨  builder, writes code nonstop from the plan
+   ↓
+Maat     ⚖️  reviewer, checks Ptah's work for correctness
+   ↓
+Anubis   🐺  smell hunter, 100-point code quality checklist
+   ↓
+Osiris   💀  test writer, breaks everything, resurrects stronger
+   ↓
+Hathor   🌸  ideator, dreams up new features when TODO is empty
+   ↓
+Thoth    📚  doc writer, keeps knowledge alive
+   ↓
+Bastet   🐱  home keeper, makes the repo beautiful
+
+---
+Horus          → orchestrator, called first always
+Ptah           → builder, called when there's a plan
+─── quality loop ───────────────────────────
+Maat           → correctness check
+Anubis         → skeptic, smells + security static
+Osiris         → brutal tester, dynamic + security
+─── enrichment (called when gaps found) ────
+Hathor         → new ideas
+Thoth          → docs gaps
+Bastet         → repo hygiene
+
+```
 ---
 
 ## Why You'll Love This 💕
@@ -271,7 +303,7 @@ The entire Pharaoh system is **just fancy prompts**. That's it.
 - **Horus** = One sophisticated prompt
 - **Ptah** = One sophisticated prompt
 - **Maat** = One sophisticated prompt
-- **Set, Hathor, Thoth, Ra** = One sophisticated prompt each
+- **Anubis, Hathor, Thoth, Ra** = One sophisticated prompt each
 
 **You can copy these prompts and use them in ANY coding agent:**
 - Claude
@@ -372,16 +404,16 @@ These agents are **not part of the main loop** — you call them manually when y
 
 ---
 
-### Set: Code Critic 👿
+### Anubis: Code Critic 👿
 **When to use:** You want to find smells, technical debt, or bad patterns in the codebase.
 
-**What Set does:**
+**What SeAnubist does:**
 - Scans the entire codebase
 - Identifies anti-patterns, code smells, and areas that need refactoring
 - Returns a TODO list of improvements
 
 **Example use case:**
-> "Set, run a code audit and find everything that smells."
+> "Anubis, run a code audit and find everything that smells."
 
 ### Hathor: Product Improver 💃
 **When to use:** You want wild, fancy, new features — or you're brainstorming the next big thing.
@@ -415,7 +447,7 @@ These agents are **not part of the main loop** — you call them manually when y
 | **Ptah** 🔨 | Execution Mode | ✅ Yes | Receives plans and executes them (YOLO) |
 | **Maat** ⚖️ | Review Mode | ✅ Yes | Reviews implementations for correctness |
 | **Ra** ☀️ | Environment Manager | ❌ No | Changes OpenCode itself, manages configs |
-| **Set** 👿 | Code Critic | ❌ No | Finds smells, anti-patterns, technical debt |
+| **Anubis** 👿 | Code Critic | ❌ No | Finds smells, anti-patterns, technical debt |
 | **Hathor** 💃 | Product Improver | ❌ No | Brainstorms wild, fancy new features |
 | **Thoth** 📜 | Documentation Manager | ❌ No | Generates initial docs, syncs manual changes |
 
@@ -530,8 +562,8 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
 
 3. **Code criticism:**
    ```bash
-   # Call Set when you want a code audit
-   Set: "Scan the codebase and find all smells"
+   # Call Anubis when you want a code audit
+   Anubis: "Scan the codebase and find all smells"
    ```
 
 4. **Brainstorming:**
@@ -560,7 +592,7 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
 
 ✨ **Maat is your safety net:** If something feels wrong, Maat will catch it. Don't skip the review loop.
 
-✨ **Optional agents are your toys:** Use Set, Hathor, Thoth, and Ra manually when you need them. They're not part of the main loop.
+✨ **Optional agents are your toys:** Use Anubis, Hathor, Thoth, and Ra manually when you need them. They're not part of the main loop.
 
 ✨ **Ra is your environment conductor:** Ask Ra to tweak OpenCode itself, change prompts, manage configs, or create plugins. He's the only one who knows how everything is wired together!
 

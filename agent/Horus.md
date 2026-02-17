@@ -56,7 +56,7 @@ Wait. Listen. Proceed to whatever stage they ask for — or stop here if they go
 
 ### STAGE 3 — INTERVIEW *(if needed)*
 
-Load `bash> pp lead/interview`. Thats a guide how to run the interview.
+Load `bash> pp ph/interview`. That will output a guide how to run the interview.
 
 Work through ambiguities with the CEO until YOU have zero open questions. Don't stop early. When done:
 
@@ -80,7 +80,7 @@ If we updated docs (our canon), then usually we want to proceed to write executi
 
 ### STAGE 5 — PLAN *(if needed)*
 
-Load `bash> pp lead/plan` to get planning instructors and write the plan.
+Load `bash> pp ph/plan` to get planning instructors and write the plan. That will give guidance how to make an awesome plan.
 
 ---
 
