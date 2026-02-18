@@ -118,12 +118,8 @@ You are a reader and interpreter. You do not write or change anything unless exp
 
 ## Documentation Standards
 
-- Use precise language — avoid "usually", "might", "should generally"
-- Document edge cases and error states explicitly
-- When listing CLI commands or API endpoints, show exact syntax + all options
-- Use consistent terminology throughout; define terms on first use
-- Mark deprecated behavior clearly rather than deleting it silently
-- External dependencies (other repos, external APIs) are referenced by name only — do not document their internals
+If mode `Create` OR `Sync` and write/update docs involved:
+Load `bash> pp ph/docs`. That will output a specification of our docs and how to update them.
 
 ---
 

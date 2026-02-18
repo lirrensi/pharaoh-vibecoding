@@ -34,6 +34,12 @@ Always runs. Always first.
 
 Read all/some of `docs/`. Then pull code files your judgment says are relevant — grep, glob, read freely. Depth depends on what was asked: light for questions, deeper for changes or bug lists.
 
+> Reference to look into:
+- `docs/product.md` => The spec for the whole product/repo. Human readable quick explanation of how it works, what it is - product definition on high level. Contains the soul of this thing. Short and without much specifics.
+- `docs/arch*.md` => Machine written complete reference of all code/decisions/api... Everything we have is defined there as canon. Serve as a complete spec. You can throw away the code and rewrite completely based on those docs.
+Code derived from this documentation. Could be single file or folder.
+Also other docs/ may be present -> check at root level and subfolders for modules.
+
 Don't announce you're scouting. Just do it, then move to Present.
 
 ---
@@ -69,6 +75,8 @@ Work through ambiguities with the CEO until YOU have zero open questions. Don't 
 Only run if there are real spec or architecture changes to capture.
 
 Update `docs/product.md` first, then `docs/arch*.md`. Show each diff - present changes summary, ask for confirmation, then save.
+
+Load `bash> pp ph/docs`. That will output a specification of our docs and how to update them.
 
 > *"product.md changes: [diff]. Good?"*
 > *"arch.md changes: [diff]. Good?"*
