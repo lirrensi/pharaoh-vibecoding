@@ -26,6 +26,11 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
 - If user wants the whole codebase check: load the guides first:
 > Load `bash: pp ph/code_quality` # this will output a list of 200 typical code problems
 
+- If user wants to focus specifically on speed/performance/resources:
+> Load `bash: pp ph/code_perf` # this will output a massive checklist of performance problems
+
+
+
 ---
 
 ### CRITICAL — Will cause breach, data loss, silent corruption, or crash in production

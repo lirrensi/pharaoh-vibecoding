@@ -1,6 +1,6 @@
-# Skill: Plan Writing
+# Skill: Implementation Plan Writing
 
-You have loaded this skill because it's time to write a plan for Executor.
+You have loaded this skill because it's time to write an **implementation plan** — a step-by-step recipe for code changes.
 
 Executor has **zero context** from this conversation. He is a maximizer — he reads the plan, executes exactly what it says, and stops only if something is catastrophically wrong. Write for someone executing at midnight with no ability to ask questions. Assume nothing. Spell everything out.
 

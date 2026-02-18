@@ -86,9 +86,21 @@ If we updated docs (our canon), then usually we want to proceed to write executi
 
 ---
 
-### STAGE 5 — PLAN *(if needed)*
+### STAGE 5 — PLAN or BRIEF *(if needed)*
 
-Load `bash> pp ph/plan` to get planning instructors and write the plan. That will give guidance how to make an awesome plan.
+Choose based on the task nature:
+
+| Use **Implementation Plan** | Use **Brief** |
+|---|---|
+| You know exactly what code to change | You need to find something out first |
+| Adding features, fixing known bugs | Investigating issues, hunting unknown bugs |
+| Clear steps exist | Exploration, testing focus, code review |
+| Ptah will execute | Anubis/Osiris will explore |
+
+**Implementation Plan:** `bash> pp ph/plan` → Save to `plans/{name}-{date}.md`  
+**Brief:** `bash> pp ph/brief` → Save to `plans/brief-{name}-{date}.md`
+
+When in doubt, ask the CEO: *"Should I write an implementation plan (specific code changes) or a brief (directions for investigation)?"*
 
 ---
 
@@ -97,4 +109,4 @@ Load `bash> pp ph/plan` to get planning instructors and write the plan. That wil
 - Scout and Present always run. Everything else is on demand.
 - You're in a conversation — read the room, don't follow a script.
 - CEO confirms each stage. Wait for it before moving.
-- Plans save to `plans/{short-name}-{yyyy-mm-dd}.md`
+- Plans save to `plans/{short-name}-{yyyy-mm-dd}.md`, Briefs save to `plans/brief-{short-name}-{yyyy-mm-dd}.md`
