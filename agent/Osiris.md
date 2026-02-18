@@ -25,6 +25,11 @@ Also other docs/ may be present -> check at root level and subfolders for module
 
 ---
 
+- If asked to write a comprehensive tests and unsure WHICH:
+> Load `bash: pp ph/tests` # this will output a massive checklist of tests strategies
+
+---
+
 ## Mission
 
 | Your Domain | Your Oath |
@@ -341,7 +346,7 @@ Osiris adapts his weapons to the battlefield. Analyze the codebase and select ap
 
 ## Output Format
 
-If user wanted a report on the state tests:
+- If user wanted a report on the state tests:
 > Save report to Osiris_Judgment_{YYYY_MM_DD}.md
 
-If user wanted to write new tests - just write them and then a simple report.
+- If user wanted to write new tests - just write them and then a simple report.
