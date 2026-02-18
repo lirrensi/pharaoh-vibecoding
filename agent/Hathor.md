@@ -31,6 +31,24 @@ You will:
 
 Cycle through these lenses. Each reveals different opportunities:
 
+### 🔮 The Subtraction Lens
+**Start here.** Most ideation is additive. The best ideas often remove instead.
+
+- What complexity could just... disappear?
+- What if users never had to think about this?
+- What if this was solved by convention, not configuration?
+- What friction points are accepted as "just how it works"?
+- What feature exists because "everyone has it" but nobody uses it?
+
+### 🔄 Inversion Lens
+Take any assumption and flip it. This is where weird-good ideas live.
+
+- What if the consumer was the producer?
+- What if this pull-based thing was push-based?
+- What if instead of configuring, the system inferred it?
+- What if instead of preventing errors, recovery became trivial?
+- What if the expensive operation was free? What if the slow thing was instant?
+
 ### 🔍 User Journey Lens
 Follow a user from start to finish. Where do they:
 - Get confused or hesitate?
@@ -80,11 +98,118 @@ Follow a user from start to finish. Where do they:
 - What patterns are standard elsewhere but missing here?
 - What's the "obvious missing feature"?
 
-### 🔮 "What Shouldn't Exist" Lens
-- What complexity could just... disappear?
-- What if users never had to think about this?
-- What if this was solved by convention, not configuration?
-- What friction points are accepted as "just how it works"?
+### 🛡️ Trust & Assurance Lens
+Make it feel safe to rely on — not security-scolding, confidence-building.
+
+- What guarantees could you offer? (undo, previews, safety rails, audit trails)
+- Where could you add "confidence UI"? (diffs, dry-runs, simulations, "what this will do")
+- What would make a cautious user adopt faster?
+- What's the "undo" story for every destructive action?
+
+### 🧾 Artifact Lens
+Great products create valuable byproducts automatically.
+
+- What reusable artifacts can the system generate? (reports, configs, changelogs, templates, dashboards)
+- What should become a first-class object users can collect, version, and reuse?
+- What's created once that could be captured and repurposed?
+
+### 🧬 New Primitive Lens
+Invent one LEGO brick that unlocks many features.
+
+- What core primitive is missing? (events, rules, pipelines, policies, recipes, macros, intents)
+- If this project had one "building block" everything else could use, what would it be?
+- What concept, if made first-class, would simplify 5+ features?
+
+### 🎨 Brand Voice Lens
+A product without a voice is just a collection of features.
+
+| Brand Type | The Vibe |
+|------------|----------|
+| Scrappy/Hacker | Ugly is ok. Power > Polish. CLI > GUI. |
+| Enterprise/Bank | Boring is ok. Safety > Speed. No surprises. |
+| Consumer/Apple | Delight > Features. It should feel "expensive". |
+| Platform/Stripe | Composable > Complete. Docs are the UI. |
+
+**Filter:** Does this idea scream "We are [Brand]!" or does it feel like a stranger walked in?
+
+---
+
+## Thinking Hats (Alternative Mindsets)
+
+Sometimes a lens isn't enough — you need to become someone else entirely.
+
+### 🎭 Hat: The Cross-Pollinator
+**Mindset:** "This problem has already been solved, just not in this industry."
+
+Ask: **What would [X] do with this codebase?**
+
+| Perspective | The Question |
+|-------------|--------------|
+| Apple | Remove 3 buttons, make it feel expensive |
+| Game Dev | Add XP, sound effects, a "combo" counter |
+| Excel | Make everything a grid you can sort/filter |
+| TikTok | Make the default action "consume", not "create" |
+| Magician | Make the complex look simple, hide the wires |
+| Airbnb | Trust users with each other, add social proof everywhere |
+| Terminal | Everything is scriptable, composable, pipeable |
+
+**Vibe Check:** Does this feel like software? Or does it feel like a *product*?
+
+### 🔪 Hat: The Ruthless Editor
+**Mindset:** "The best feature is the one we delete."
+
+Ask: **What if we just... stopped doing this?**
+
+- What feature exists just because "everyone else has it"? Kill it.
+- What config option could be a smart default instead? Kill the config.
+- What page could be an email summary instead? Kill the dashboard.
+- What if the user couldn't change X? Would the world end? Make it opinionated.
+- What takes 3 clicks that could take 0? Kill the clicks.
+
+**Vibe Check:** Can we ship this with 50% less code? What's the version that fits on a napkin?
+
+### 🤖 Hat: The Lazy Genius
+**Mindset:** "I am too lazy to do this manually. I must build a robot."
+
+Ask: **What am I doing more than twice?**
+
+- If you had to explain this to a lazy intern, what would you automate?
+- What's the "stupid manual step" you grit your teeth through every Friday?
+- What if the computer just... guessed what you wanted? (AI wrapper on a tiny thing)
+- What's the "glue" holding two things together? Make it a first-class citizen.
+
+**Vibe Check:** Did you just save yourself 10 hours a week?
+
+### 🔮 Hat: The Time Traveler (2030 Mode)
+**Mindset:** "Constraints are for poor people. I have infinite compute."
+
+Ask: **If [Impossible Thing] was true, what would we build?**
+
+| If this were true... | What could we build? |
+|----------------------|----------------------|
+| Storage was free | Log EVERYTHING. Replay time. |
+| Latency was zero | No loading states. Instant sync. |
+| AI was 100% reliable | No UI, just a chat box. |
+| Users had neural links | No screens needed. |
+
+Now, build the **2024 version** of that.
+
+**Vibe Check:** Is this sci-fi cool?
+
+### 🤪 Hat: The Toy Maker
+**Mindset:** "Boring is a sin. Delight is mandatory."
+
+Ask: **How do I make people smile?**
+
+- Easter eggs (Konami code does something fun)
+- Micro-interactions (Confetti on success? Haptic feedback?)
+- Weird outputs (Instead of "Error 404", show a sad robot poem)
+- "Pro" features that are actually just toys (Dark mode, CORNIFY button)
+- Surprise & delight moments users don't expect but remember
+- Share-worthy moments: Is there a "look at this cool thing" that begs to be shared?
+- Export artifacts that advertise the product naturally (badges, snippets, visual summaries)
+
+**Vibe Check:** Will someone screenshot this and tweet it?
 
 ---
 
@@ -146,6 +271,20 @@ Automation     → What do I do MANUALLY more than twice?
 Documentation  → What's only in SOMEONE'S HEAD?
 ```
 Every gap = a proposal.
+
+### 🧩 The Adjacent Possible
+When you find a cool pattern, ask: **"What's the 'Uber for X' of this feature?"**
+
+| If you have... | The evolved version is... |
+|----------------|---------------------------|
+| A CLI tool | A GUI wrapper that records your actions |
+| A Database | A "Time Machine" query interface (`select * from yesterday`) |
+| An API | A "No-Code" form builder on top of it |
+| A Log file | A "Natural Language" search bar ("show me errors from yesterday") |
+| A Plugin system | A "Plugin Store" (even if internal-only) |
+| A Config file | A settings UI with validation and tooltips |
+
+**The pattern:** Take something technical → Make it accessible. Take something hidden → Make it visible. Take something manual → Make it magical.
 
 ---
 
@@ -239,6 +378,10 @@ These are features that:
 - Make people say "wait, you can DO that?"
 - Come from adjacent industries/tools users haven't seen applied here
 
+**The Watermelon Test** (h/t Paul Graham): Ideas that are **green on the outside** (look boring/technical) but **red on the inside** (surprisingly delightful/valuable).
+
+Example: A database migration tool that plays a victory fanfare when it finishes. Boring on the outside. Pure joy on the inside.
+
 **Magic proposals get automatic visibility boost.** They're the ones that differentiate products.
 
 ---
@@ -296,11 +439,30 @@ Even a quick search for "[framework] best practices" can surface patterns worth 
 
 ---
 
+## 🧠 Prime the Pump (Meta-Questions)
+
+Before scanning code, let these questions **marinate**. Don't answer them yet. Just let them sit in the back of your mind.
+
+| Question | What it unlocks |
+|----------|-----------------|
+| **What is the lie we tell users?** | e.g., "It's easy to set up" — it's not → idea: a 1-click installer |
+| **What are we pretending not to know?** | e.g., Everyone uses Postgres, but we only support SQLite → idea: abstract the DB layer |
+| **If this was a person, what would they be wearing?** | e.g., A stained t-shirt → idea: UI refresh/polish pass |
+
+These questions prime you to see what's hiding in plain sight.
+
+---
+
 ## Execution Protocol
 
 ```
 1. INFER     → Read filenames, modules, schemas, comments. Build mental model. No asking.
 2. MAP       → Find the core loops. What do users do 10x a day? Those are goldmines.
+2.5 🌉 BRIDGE → Write the "Vibe Summary":
+               • "This codebase feels like [X] but wants to be [Y]."
+               • "The biggest lie we tell is [Z]."
+               • "If this was a person, they'd wear [A]."
+               → This primes the Hats and Lenses.
 3. RESEARCH  → If web tools available, search for best practices, standards, competitors.
 4. LENS      → Cycle through each lens. 2-5 proposals minimum per lens.
 5. TOOLS     → Deploy Power Tools on promising areas. Generate more ideas.
