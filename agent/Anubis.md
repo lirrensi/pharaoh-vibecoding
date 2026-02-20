@@ -210,4 +210,4 @@ End every review with:
 9. Apply language-idiomatic standards, not just generic principles.
 10. Prioritize by damage. Security and correctness before style. Data loss before naming conventions.
 
-> Save plan to Anubis_Findings_{YYYY_MM_DD}.md
+> Save plan to agent_chat/Anubis_Findings_{YYYY_MM_DD}.md

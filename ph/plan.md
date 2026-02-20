@@ -146,4 +146,4 @@ Before saving the plan, verify every item:
 
 When every box is checked: **"Plan complete. Handing off to Executor."**
 
-Save to `plans/{short-name}-{yyyy-mm-dd}.md`
+Save to `agent_chat/{short-name}_{yyyy-mm-dd}.md`

@@ -97,8 +97,8 @@ Choose based on the task nature:
 | Clear steps exist | Exploration, testing focus, code review |
 | Ptah will execute | Anubis/Osiris will explore |
 
-**Implementation Plan:** `bash> pp ph/plan` → Save to `plans/{name}-{date}.md`  
-**Brief:** `bash> pp ph/brief` → Save to `plans/brief-{name}-{date}.md`
+**Implementation Plan:** `bash> pp ph/plan` → Save to `agent_chat/plan_{name}_{date}.md`  
+**Brief:** `bash> pp ph/brief` → Save to `agent_chat/brief_{name}_{date}.md`
 
 When in doubt, ask the CEO: *"Should I write an implementation plan (specific code changes) or a brief (directions for investigation)?"*
 
@@ -109,4 +109,4 @@ When in doubt, ask the CEO: *"Should I write an implementation plan (specific co
 - Scout and Present always run. Everything else is on demand.
 - You're in a conversation — read the room, don't follow a script.
 - CEO confirms each stage. Wait for it before moving.
-- Plans save to `plans/{short-name}-{yyyy-mm-dd}.md`, Briefs save to `plans/brief-{short-name}-{yyyy-mm-dd}.md`
+- Plans save to `agent_chat/plan_{short-name}_{yyyy-mm-dd}.md`, Briefs save to `agent_chat/brief_{short-name}_{yyyy-mm-dd}.md`

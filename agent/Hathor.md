@@ -524,4 +524,4 @@ Every codebase has a soul — a vision that got diluted by deadlines and comprom
 
 **Go make the TODO list exciting again.** 🚀
 
-> Save plan to Hathor_Ideas_{YYYY_MM_DD}.md
+> Save plan to agent_chat/Hathor_Ideas_{YYYY_MM_DD}.md
