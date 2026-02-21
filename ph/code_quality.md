@@ -1,5 +1,8 @@
-# Code Quality & Security Checklist (253 Items)
-> Clean code prevents security bugs. Security hardening protects clean code.
+# Code Quality Checklist (205 Items)
+> Logical errors, structural issues, maintainability traps, and sneaky bugs.
+> 
+> **Note:** Security-specific items in `code_security.md`
+> **Note:** Performance-specific items in `code_perf.md`
 > 
 > **Priority Legend:** 🔴 CRITICAL | 🟡 HIGH | 🟢 MEDIUM
 
@@ -186,84 +189,6 @@ return error()
 - [ ] **76.** 🟡 Don't catch exceptions you can't handle — logging and re-raising is just noise
 - [ ] **77.** 🟢 Avoid double negatives — `if (!notValid)` makes everyone's brain hurt
 - [ ] **78.** 🟢 Negative named booleans — `isNotEnabled`, `disableSsl`; double negatives destroy brain cells. Name positively: `isEnabled`, `useSsl`
-
----
-
-## 🛡️ Authentication (79–83)
-
-- [ ] **79.** 🔴 Never roll your own auth — use OAuth2, OIDC, or battle-tested libraries
-- [ ] **80.** 🔴 Tokens in `httpOnly; Secure; SameSite` cookies — never localStorage (XSS risk)
-- [ ] **81.** 🔴 Bcrypt/Argon2 for passwords — never MD5/SHA1/SHA256 (too fast = crackable)
-- [ ] **82.** 🔴 Destroy session on logout — invalidate ALL sessions on password reset
-- [ ] **83.** 🔴 Rate-limit auth endpoints — exponential backoff + lockout after N failures
-
----
-
-## 🔐 Authorization (84–87)
-
-- [ ] **84.** 🔴 Verify resource ownership every request — `/me/orders` not `/user/123/orders`
-- [ ] **85.** 🔴 Server-side RBAC checks — frontend hiding buttons ≠ security
-- [ ] **86.** 🟡 UUIDs over sequential IDs — prevents enumeration attacks
-- [ ] **87.** 🟡 Row-level security at DB layer — defense in depth, not just app layer
-
----
-
-## 🧹 Input Validation (88–92)
-
-- [ ] **88.** 🔴 Schema-validate ALL input — whitelist approach, reject unknown fields
-- [ ] **89.** 🔴 Parameterized queries only — zero concatenated SQL, ever
-- [ ] **90.** 🔴 Sanitize HTML output — never trust user content as markup
-- [ ] **91.** 🔴 File uploads: validate size + MIME + extension + strip EXIF + validate content
-- [ ] **92.** 🔴 URL allowlists for SSRF prevention — never fetch user-provided URLs blindly
-
----
-
-## 🔒 Secrets & Crypto (93–96)
-
-- [ ] **93.** 🔴 Zero hardcoded secrets — env vars only, verify at startup
-- [ ] **94.** 🔴 `.env` in `.gitignore` + audit git history for leaks
-- [ ] **95.** 🔴 CSPRNG for tokens/IDs — never `Math.random()` or `random.random()`
-- [ ] **96.** 🔴 Modern algorithms only — AES-256-GCM, ChaCha20, Ed25519; never DES/RC4/ECB
-
----
-
-## 🌐 Headers & Transport (97–99)
-
-- [ ] **97.** 🔴 Security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options
-- [ ] **98.** 🔴 HTTPS everywhere — redirect HTTP, no mixed content
-- [ ] **99.** 🔴 CORS explicit allowlist — never `Access-Control-Allow-Origin: *` on auth endpoints
-
----
-
-## 📊 Observability (100–104)
-
-- [ ] **100.** 🔴 Never log sensitive data — passwords, tokens, cards, PII stay out
-- [ ] **101.** 🟡 Structured logging (JSON) — machine-parseable, not grep-dependent
-- [ ] **102.** 🟡 Request correlation IDs — trace requests across services
-- [ ] **103.** 🔴 Alerts on anomalies — spike in errors, unusual access patterns
-- [ ] **104.** 🔴 Audit log for sensitive ops — who did what to which resource, when, immutable
-
----
-
-## 📦 Supply Chain (105–108)
-
-- [ ] **105.** 🔴 Pin + lock dependencies — reproducible builds, no `^` version ranges
-- [ ] **106.** 🔴 Vulnerability scanning in CI — block deploys on critical CVEs
-- [ ] **107.** 🟡 No self-approvals — at least one real review before merge
-- [ ] **108.** 🔴 Rollback plan before deploy — know how to undo before you ship
-
----
-
-## 🖥️ Frontend Security (109–110)
-
-- [ ] **109.** 🟡 Subresource Integrity (SRI) on CDN assets — don't trust CDNs blindly
-```
-<script src="https://cdn.example.com/lib.js"
-        integrity="sha384-abc123..."
-        crossorigin="anonymous"></script>
-```
-
-- [ ] **110.** 🔴 No sensitive data in browser history/URL state — tokens, passwords, PII in URL = leaked in logs, history, referrers
 
 ---
 
@@ -526,16 +451,6 @@ if (active) {
 
 ---
 
-## 🔐 Additional Security Smells (204–208)
-
-- [ ] **204.** 🔴 Timing attacks — `if (inputToken === storedToken)` leaks length. Use constant-time compare libs
-- [ ] **205.** 🟡 Avoid convenience imports that pull the world — importing a huge module for one helper is a smell
-- [ ] **206.** 🟡 No cyclic re-exports/barrel abuse — barrel files that create sneaky cycles are maintainability debt
-- [ ] **207.** 🔴 Constant-time comparison for secrets — use `crypto.timingSafeEqual()` or equivalent, never `===`
-- [ ] **208.** 🟡 Error context must be structured — include key fields (ids, operation, state) not prose-only strings
-
----
-
 ## 📝 Encoding & Serialization (209–212)
 
 - [ ] **209.** 🔴 Implicit encoding assumptions — always specify UTF-8 explicitly for file/network I/O
@@ -688,10 +603,7 @@ const i = await getItems(o);
 
 ## 🔴 Critical Items Summary (Must-Fix Before Ship)
 
-These cause production bugs, security vulnerabilities, or data corruption:
-
-**Core Security (All 🔴):**
-- #79-96 — Authentication, authorization, input validation, secrets, crypto
+These cause production bugs or data corruption:
 
 **Data Integrity:**
 - #5, #18, #21, #23 — Side effects, immutability, global state, transactions
@@ -723,6 +635,10 @@ These cause production bugs, security vulnerabilities, or data corruption:
 **Memory:**
 - #222 — Closure capturing too much
 - #226-228 — Silent type coercion, lossy conversions
+
+**API & Security (see code_security.md for full security checklist):**
+- #43 — Sensitive data in GET params/URLs
+- #45 — Rate limiting (also see code_security.md #5)
 
 ---
 
