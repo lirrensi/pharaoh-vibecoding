@@ -135,6 +135,13 @@ OpenCode Agent Knowledge:
   * Place common skills globally for project-wide access
   * Use permissions to control sensitive skill access
   * Include usage context in SKILL.md for better agent matching
+- Installing Skills (when user asks):
+  * CLI tool: https://www.npmjs.com/package/skills
+  * Install: `npx skills add owner/repo -g -a opencode`
+  * List available: `npx skills add owner/repo --list`
+  * Install specific: `npx skills add owner/repo -s skill-name`
+  * OpenCode paths: project `.agents/skills/`, global `~/.config/opencode/skills/`
+  * Fallback (if CLI fails): clone repo to temp folder, copy skill folder to `~/.config/opencode/skills/` or `~/.agents/skills/`
 - Best Practices for Custom Tools:
   * Use tool() helper for type safety and validation
   * Define clear Zod schemas with descriptions for args
