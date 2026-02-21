@@ -1,10 +1,10 @@
-# Code Quality Checklist (205 Items)
+# Code Quality Checklist (249 Items)
 > Logical errors, structural issues, maintainability traps, and sneaky bugs.
-> 
+>
 > **Note:** Security-specific items in `code_security.md`
 > **Note:** Performance-specific items in `code_perf.md`
-> 
-> **Priority Legend:** 🔴 CRITICAL | 🟡 HIGH | 🟢 MEDIUM
+>
+> **Priority Legend:** 🔴 CRITICAL | 🟡 HIGH | 🟢 MEDIUM | 🔪 SIMPLIFY
 
 ---
 
@@ -224,7 +224,7 @@ function process() {
 
 ## 🧠 Complexity Smells (123–133)
 
-- [ ] **123.** 🟡 Nested ternaries — one ternary is fine; nested ternaries are a war crime
+- [ ] **123.** 🟡 Nested ternaries — one ternary is fine; nested ternaries are a war crime. Prefer switch statements or if/else chains for multiple conditions.
 ```
 # BAD
 const label = a ? (b ? "X" : "Y") : (c ? "Z" : "W");
@@ -249,7 +249,7 @@ return handlers[type]();
 ```
 
 - [ ] **125.** 🟡 Deeply nested callbacks — flatten with async/await or extract named functions
-- [ ] **126.** 🟡 Overly clever one-liners — if it needs a comment to explain, it's not clever, it's hostile
+- [ ] **126.** 🟡 Overly clever one-liners — if it needs a comment to explain, it's not clever, it's hostile. Prioritize readability over brevity. `arr.filter(x => x.active).map(x => x.id)[0]` is fine. `arr.reduce((a, b) => a || b.id, null)` is showing off.
 - [ ] **127.** 🔴 Multiple return types from one function — returns `string | null | number | false` is a type nightmare
 ```
 # BAD: returns User | null | false | undefined depending on mood
@@ -433,10 +433,10 @@ if (active) {
 ```
 
 - [ ] **193.** 🟢 Scope minimization — declare variables as close to their usage as possible, not at the top
-- [ ] **194.** 🟡 YAGNI violations — delete "just in case" code. If it's not called, it's a bug waiting to happen
+- [ ] **194.** 🔪 YAGNI violations — delete "just in case" code. If it's not called now, it's a bug waiting to happen. **The Rule:** "If I delete this, will anything break?" Yes → keep it. No → DELETE IMMEDIATELY. "Maybe in the future?" → DELETE. Git remembers.
 - [ ] **195.** 🟡 Re-assigning function arguments — treat inputs as `const`. Create a new variable if you need to change it
 - [ ] **196.** 🟢 Boolean blindness — `setFlag(true)` is meaningless. `enableFeature()` or `disableValidation()` is self-documenting
-- [ ] **197.** 🟡 Comments are deodorant — if the code stinks, rewrite it. Don't explain the smell away
+- [ ] **197.** 🟡 Comments are deodorant — if the code stinks, rewrite it. Don't explain the smell away. **If you write a comment, you failed to make the code clear.** Rename the variable. Extract the function. Kill the comment.
 
 ---
 
@@ -601,6 +601,178 @@ const i = await getItems(o);
 
 ---
 
+## 🔪 Over-Engineering & Bloat (254–268)
+
+*Focus: Ruthless deletion. If it's not pulling its weight, kill it.*
+
+- [ ] **254.** 🔪 **Unnecessary abstraction layers** — Controller → Service → Manager → Repository → DAO where each just delegates to the next. If a layer adds no decisions, collapse it.
+```
+# BAD: 5 files to save a user
+UserController → UserService → UserManager → UserRepository → UserDAO
+
+# GOOD: 2-3 files
+UserController → UserService → UserRepository
+```
+
+- [ ] **255.** 🔪 **Premature abstraction (Rule of Three)** — Interfaces/base classes created with only ONE implementation. Wait until you have 2+ real cases that need them. Abstractions must earn their complexity.
+- [ ] **256.** 🔪 **Forced DRY — coupling unrelated code** — Two functions that share 80% code but serve different domains. Merging them creates a fragile frankenstein that breaks when either domain changes independently. Duplication is cheaper than wrong abstraction.
+```
+# BAD: Forced together because they "look the same"
+function processEntity(entity, type) {
+    if (type === "user") { /* 20 user-specific lines */ }
+    if (type === "order") { /* 20 order-specific lines */ }
+    // 10 shared lines
+}
+
+# GOOD: Duplication is cheaper than coupling
+function processUser(user) { ... }
+function processOrder(order) { ... }
+```
+
+- [ ] **257.** 🔪 **Over-fragmented code (Ravioli)** — 50-line feature spread across 12 files with 3-line functions. Locality of behavior matters. If understanding a flow requires opening 8 tabs, you over-split.
+- [ ] **258.** 🟢 **Nano-functions that obscure flow** — Extracting every 2 lines into a named function when inline is clearer. The reader now has to jump around to follow logic.
+```
+# BAD: Extraction that hurts readability
+function processOrder(order) {
+    validateExists(order);
+    checkStatus(order);
+    applyDiscount(order);
+    updateTotal(order);
+    saveOrder(order);
+}
+// ...where each function is 1-2 lines and only called here
+
+# GOOD: Inline when it's clearer
+function processOrder(order) {
+    if (!order) throw new NotFoundError();
+    if (order.status !== 'pending') throw new InvalidStateError();
+    order.total = order.subtotal * (1 - order.discountRate);
+    await db.orders.save(order);
+}
+```
+
+- [ ] **259.** 🟢 **Comment-delimited sections in functions** — Block comments like `// --- Validate ---` separating "phases" are extract-method signals. The comment should become the function name.
+```
+# BAD
+function processOrder(order) {
+    // --- Validate order ---
+    if (!order.items.length) throw ...
+    // --- Calculate totals ---
+    let subtotal = 0;
+    // --- Apply discounts ---
+    if (order.coupon) { ... }
+    // --- Save to database ---
+    await db.save(order);
+}
+
+# GOOD: The comments became function names
+function processOrder(order) {
+    validateOrder(order);
+    const total = calculateTotal(order.items, order.coupon);
+    await saveOrder({ ...order, total });
+}
+```
+
+- [ ] **260.** 🔪 **Over-configurable code** — 12 options/params where only 2 are ever used. Every option doubles the testing surface. Hard-code until you genuinely need flexibility.
+```
+# BAD: 12 options, 3 ever used
+createServer({
+    port: 3000,
+    host: 'localhost',
+    protocol: 'http',
+    encoding: 'utf-8',
+    maxHeaderSize: 8192,
+    keepAliveTimeout: 5000,
+    // ... 6 more that are always defaults
+})
+
+# GOOD: Sensible defaults, expose only what varies
+createServer({ port: 3000 })
+```
+
+- [ ] **261.** 🟢 **Unnecessary async wrappers** — Synchronous logic wrapped in `async`/`Promise` for no reason. Adds stack trace noise and cognitive overhead.
+```
+# BAD
+async function getFullName(user) {
+    return `${user.first} ${user.last}`;  // nothing async here
+}
+
+# GOOD
+function getFullName(user) {
+    return `${user.first} ${user.last}`;
+}
+```
+
+- [ ] **262.** 🔪 **Polymorphism for ≤2 cases** — Interface + 2 implementations + factory + registry... for "free" vs "premium." An if/else is 3 lines. Patterns are solutions to recurring problems. No problem = no pattern needed.
+- [ ] **263.** 🟢 **Storing easily derived values** — Caching computed state (`itemCount`, `totalPrice`, `isEmpty`) that then requires manual synchronization instead of computing on access via getters.
+```
+# BAD
+class Cart {
+    items = [];
+    itemCount = 0;      // redundant — items.length
+    totalPrice = 0;     // redundant — sum of items
+    isEmpty = true;     // redundant — items.length === 0
+}
+
+# GOOD
+class Cart {
+    items = [];
+    get itemCount() { return this.items.length; }
+    get totalPrice() { return this.items.reduce((s, i) => s + i.price, 0); }
+    get isEmpty() { return this.items.length === 0; }
+}
+```
+
+- [ ] **264.** 🔪 **Helper/Utility class sprawl** — `StringUtils`, `DateHelper`, `MathEx` with static methods. If it's a pure function, put it in the module that uses it. Don't create grab-bag classes.
+- [ ] **265.** 🔪 **Unnecessary design patterns** — Observer with 1 subscriber, Strategy with 1 strategy, Factory that returns the same class. The pattern IS the complexity if you don't have the problem.
+- [ ] **266.** 🔪 **Config hell** — `if (config.features.isNewThingEnabled)` scattered through business logic. Pass a context object or use strategy pattern. Don't hunt for flags in the logic.
+- [ ] **267.** 🔪 **Ceremony layers** — Request → Controller → Service → Manager → Provider → Helper where each just passes data along. Each layer should justify itself with a decision or transformation.
+- [ ] **268.** 🔪 **Over-generalized solutions** — A function handling 15 cases via config/switches when you only ever use 2. The config complexity exceeds the problem complexity.
+
+---
+
+## 🔧 Refactoring & Simplification Safety (269–278)
+
+*Focus: How to safely simplify without breaking behavior.*
+
+- [ ] **269.** 🔴 **Separate refactor commits from behavior changes** — If a PR both "cleans up" AND "changes logic", reviewing is guesswork. One or the other.
+- [ ] **270.** 🔴 **Characterization tests before refactor** — Lock current behavior (especially legacy/buggy behavior) before cleanup. No tests = no refactor safety net. If you don't have a test, you aren't refactoring; you're just changing code and hoping.
+- [ ] **271.** 🟡 **Refactor in reversible steps** — Small mechanical transformations. Keep diffs reviewable. Big-bang rewrites are risky.
+- [ ] **272.** 🟡 **Don't refactor without observability** — If it runs in prod, ensure logs/metrics/traces exist to validate no regressions.
+- [ ] **273.** 🔪 **Delete code aggressively (with proof)** — Prefer removing unused paths over "simplifying" them. "If I delete this, will anything break?" No = DELETE. Yes = keep but simplify.
+- [ ] **274.** 🟢 **Inline needless indirection** — If a function is a 1-line pass-through with no semantic value, remove it. Call the target directly.
+- [ ] **275.** 🟡 **Reduce public API surface** — Make modules/classes expose the minimum. Fewer exports/public methods = easier refactors later.
+- [ ] **276.** 🟡 **One obvious way** — Within a codebase, pick ONE pattern for the same thing (errors, results, async style, DI). Consistency simplifies more than cleverness.
+- [ ] **277.** 🟢 **Normalize data to kill branching** — Convert inputs to canonical shape early so downstream code is simpler. Shape divergence = branching explosion.
+- [ ] **278.** 🟡 **Keep refactors tool-friendly** — Use formatter + linter + "rename symbol" refactors; avoid manual risky edits that tools can't verify.
+
+---
+
+## 🧠 Cognitive Load & Hidden Coupling (279–286)
+
+*Focus: "Don't make me think." Hidden dependencies and cognitive overhead.*
+
+- [ ] **279.** 🟡 **Hidden coupling — temporal APIs** — `init()` must be called before `run()`. The API should enforce this (constructor, state machine) or do it internally. Don't make callers guess.
+- [ ] **280.** 🟡 **Destructuring abuse** — Deeply nested object destructuring in function signatures saves lines but destroys readability and makes null-reference bugs harder to spot.
+```
+# BAD
+function printCity({ user: { profile: { address: { city } } } }) { ... }
+
+# GOOD
+function printCity(data) {
+    const city = data?.user?.profile?.address?.city;
+}
+```
+
+- [ ] **281.** 🟡 **Deeply nested object access (Law of Demeter)** — `user.profile.address.city` violates encapsulation. Ask for what you need, don't navigate the object graph. Pass `city` directly. (See also #190)
+- [ ] **282.** 🟢 **Over-defensive checks** — Re-validating what the type system or upstream validation already guarantees. Redundant guards add noise and suggest code is less safe than it is. (See also #198)
+- [ ] **283.** 🟡 **Unnecessary generic type parameters** — `class Repository<T extends BaseEntity<T>>` when you only ever use `Repository<User>`. Add generics at the second use case, not the first.
+- [ ] **284.** 🟢 **Type gymnastics** — If the type definition is harder to read than the code it types, simplify. Types should clarify, not obscure.
+- [ ] **285.** 🔪 **"WTF/min" density** — Clever one-liners, heavy chaining, missing intermediate variables. `arr.reduce((a, b) => a || b.id, null)` is showing off, not engineering. (See also #126, #230)
+- [ ] **286.** 🟢 **Preserve helpful intermediate variables** — Don't inline everything. A well-named `const` for a complex boolean is self-documenting code. (Pairs with #230)
+
+---
+
 ## 🔴 Critical Items Summary (Must-Fix Before Ship)
 
 These cause production bugs or data corruption:
@@ -640,6 +812,10 @@ These cause production bugs or data corruption:
 - #43 — Sensitive data in GET params/URLs
 - #45 — Rate limiting (also see code_security.md #5)
 
+**Refactor Safety (CRITICAL):**
+- #269 — Separate refactor commits from behavior changes
+- #270 — Characterization tests before refactor (no tests = no refactor)
+
 ---
 
 ## 🟡 High Priority Items (Fix Soon)
@@ -653,6 +829,9 @@ Maintainability debt that slows development:
 - Encoding & serialization (#209-212)
 - Collection traps (#213-217)
 - Equality gotchas (#218-221)
+- Refactor safety (#271-272, #275-276, #278)
+- Cognitive load (#279-281, #283)
+- Hidden coupling (#279)
 
 ---
 
@@ -665,3 +844,40 @@ Code pleasantness improvements that rarely cause bugs:
 - Lazy classes (#146)
 - Scope minimization (#193)
 - Yoda conditions (#233)
+- Nano-functions (#258)
+- Intermediate variables (#286)
+- Type gymnastics (#284)
+- Over-defensive checks (#282)
+
+---
+
+## 🔪 SIMPLIFY Priority (De-Bloat & Ruthless Deletion)
+
+*Focus: Over-engineering, unnecessary complexity, and "just in case" code. Use for self-review after writing sessions.*
+
+**Abstraction Bloat:**
+- #254 — Unnecessary abstraction layers
+- #255 — Premature abstraction (Rule of Three)
+- #262 — Polymorphism for ≤2 cases
+- #265 — Unnecessary design patterns
+- #267 — Ceremony layers
+
+**Wrong DRY / False Duplication:**
+- #256 — Forced DRY — coupling unrelated code
+- #268 — Over-generalized solutions
+
+**Over-Fragmentation:**
+- #257 — Over-fragmented code (Ravioli)
+- #258 — Nano-functions that obscure flow
+
+**Config & Utility Bloat:**
+- #260 — Over-configurable code
+- #264 — Helper/Utility class sprawl
+- #266 — Config hell
+
+**YAGNI & Dead Weight:**
+- #194 — YAGNI violations (delete aggressively)
+- #273 — Delete code aggressively (with proof)
+
+**Cognitive Overhead:**
+- #285 — "WTF/min" density (clever code syndrome)
