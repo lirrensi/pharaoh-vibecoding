@@ -46,6 +46,7 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
 - Injection vulnerabilities: SQL concatenation, unsanitized user input, SSRF
 - Hardcoded secrets in source code or git history
 - Authorization bypasses: missing ownership checks, sequential IDs, UI-only enforcement
+- Semantic/context injection: untrusted `AGENTS.md`/PRs/issues/commit text/package docs influencing privileged agent behavior
 
 **Correctness (see `code_quality.md`):**
 - Race conditions without locking
@@ -67,6 +68,7 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
 - OAuth2 misconfigurations
 - Missing security headers (CSP, HSTS, X-Frame-Options)
 - Input validation gaps
+- Supply-chain prompt exposure: package lifecycle scripts, README/install instructions, fetched docs, or changelogs treated as trusted instructions
 
 **Stability (see `code_quality.md`):**
 - Network/DB calls without timeouts

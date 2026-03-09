@@ -222,20 +222,29 @@
 
 ---
 
+## 🧠 Context & Semantic Supply Chain
+
+- [ ] **124.** 🔴 IF agent or LLM consumes repository-controlled instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, prompts, memory files) → THEN treat them as executable supply-chain inputs: code review them, pin ownership, and require explicit approval before privileged runs
+- [ ] **125.** 🔴 IF agent/CI context includes commits, PR descriptions, issues, code comments, docs, or copied terminal output from untrusted contributors → THEN sanitize/label as untrusted data before prompting tools/models — never let natural-language artifacts become privileged instructions
+- [ ] **126.** 🔴 IF installing/updating packages or running generators with agent assistance → THEN disable or strictly allowlist lifecycle scripts/hooks (`preinstall`, `postinstall`, `prepare`), verify provenance/signatures, and inspect package metadata/README tasking before execution
+- [ ] **127.** 🟡 IF agent fetches external web pages, package docs, changelogs, or release notes into context → THEN isolate retrieved text from system intent and require human confirmation before any network, shell, or file-mutating action derived from that content
+
+---
+
 ## 🔮 Post-Quantum & Future-Proofing
 
-- [ ] **124.** 🟡 IF long-term secrets (≥10 years) → THEN migrate to hybrid post-quantum KEM (Kyber + X25519) — prepares for quantum computing threats
-- [ ] **125.** 🟡 IF using TLS → THEN monitor for TLS 1.2 deprecation + enable TLS 1.3 only + post-quantum in flight (Cloudflare does this already)
-- [ ] **126.** 🟡 IF multi-region → THEN ensure data residency compliance (GDPR, data localization laws) — legal exposure
+- [ ] **128.** 🟡 IF long-term secrets (≥10 years) → THEN migrate to hybrid post-quantum KEM (Kyber + X25519) — prepares for quantum computing threats
+- [ ] **129.** 🟡 IF using TLS → THEN monitor for TLS 1.2 deprecation + enable TLS 1.3 only + post-quantum in flight (Cloudflare does this already)
+- [ ] **130.** 🟡 IF multi-region → THEN ensure data residency compliance (GDPR, data localization laws) — legal exposure
 
 ---
 
 ## 🛡️ Operational Security
 
-- [ ] **127.** 🟡 IF team uses 2FA → THEN require hardware keys (FIDO2/WebAuthn) for high-privilege accounts — SMS/Authenticator apps vulnerable to SIM-swapping
-- [ ] **128.** 🟡 IF has incident response plan → THEN test it regularly via tabletop exercises — untested plans fail when needed most
-- [ ] **129.** 🟡 IF using open source → THEN audit for abandoned/unmaintained dependencies — "零日" (zero-day) in unpatched libs
-- [ ] **130.** 🟡 IF CI runs tests → THEN ensure test suites can't be bypassed via CI config tampering — attackers could disable security tests
+- [ ] **131.** 🟡 IF team uses 2FA → THEN require hardware keys (FIDO2/WebAuthn) for high-privilege accounts — SMS/Authenticator apps vulnerable to SIM-swapping
+- [ ] **132.** 🟡 IF has incident response plan → THEN test it regularly via tabletop exercises — untested plans fail when needed most
+- [ ] **133.** 🟡 IF using open source → THEN audit for abandoned/unmaintained dependencies — "零日" (zero-day) in unpatched libs
+- [ ] **134.** 🟡 IF CI runs tests → THEN ensure test suites can't be bypassed via CI config tampering — attackers could disable security tests
 
 ---
 
@@ -259,7 +268,7 @@
 | Zero-Trust | #94, #95, #97 |
 | Business Logic | #101, #102, #104, #106, #108 |
 | Data Protection | #110–112, #116 |
-| AI/LLM | #117–119, #121, #123 |
+| AI/LLM | #117–119, #121, #123–126 |
 
 ---
 
@@ -281,9 +290,9 @@
 | Zero-Trust | #96, #98–100 |
 | Business Logic | #103, #105, #107, #109 |
 | Data Protection | #113–115 |
-| AI/LLM | #120, #122 |
-| Post-Quantum | #124–126 |
-| Operational | #127–130 |
+| AI/LLM | #120, #122, #127 |
+| Post-Quantum | #128–130 |
+| Operational | #131–134 |
 
 ---
 
@@ -308,7 +317,8 @@
 | Business Logic & Abuse Prevention | #101–109 |
 | Data Protection & Privacy | #110–116 |
 | AI/LLM Security | #117–123 |
-| Post-Quantum & Future-Proofing | #124–126 |
-| Operational Security | #127–130 |
+| Context & Semantic Supply Chain | #124–127 |
+| Post-Quantum & Future-Proofing | #128–130 |
+| Operational Security | #131–134 |
 
-**Total: 130 Items**
+**Total: 134 Items**

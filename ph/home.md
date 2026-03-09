@@ -1,4 +1,4 @@
-# Repository Health Checklist (Eleven Lenses)
+# Repository Health Checklist (Twelve Lenses)
 > Load only when needed for repo health audits, bootstrapping new projects, or when unsure what to improve.
 >
 > Priority Legend: 🔴 CRITICAL | 🟡 IMPORTANT | 🟢 NICE
@@ -339,10 +339,23 @@ Those serve as examples — adapt to language specifics.
 
 ---
 
-## 🤖 AGENT_OPS — Agent-Friendly Repository Hygiene
-*"Can a coding agent understand and navigate this repo efficiently?"*
+## 🧠 Lens 12: Agent Ops & Context Hygiene
+*"Can a coding agent operate here safely and understand the repo efficiently?"*
 
 **This is not DevEx for humans. This is AgentEx — making repos work for AI coding agents.**
+
+### Context & Trust Hygiene 🔴
+
+| Check | Question |
+|-------|----------|
+| **Instruction files as code** | Are `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, prompt templates, memory files, `skills/`, MCP configs/servers, and agent bootstrap docs treated like operational code rather than passive docs? |
+| **Imperative tasking** | Do repo-controlled files contain instructions that can steer agents into privileged actions, network callbacks, background jobs, secret access, self-modification, or bypassing trust boundaries? |
+| **Contributor-controlled text** | Could `.github/` issue templates, PR templates, contribution docs, comments, setup guides, changelogs, or copied terminal snippets be pasted into agent context as if they were trusted instructions? |
+| **Bootstrap command safety** | Before recommending `npm install`, generators, MCP setup, or bootstrap scripts, do lifecycle hooks (`preinstall`, `install`, `postinstall`, `prepare`) and setup paths get reviewed first? |
+| **Trust-boundary bypass guidance** | Does the repo tell users or agents to disable approvals, sandboxing, permissions, or confirmation prompts for convenience? |
+| **Safe-run defaults** | Does the repo encourage least privilege, review-first workflows, isolated generated output, and human confirmation for networked or file-mutating actions derived from untrusted text? |
+
+**Hunt:** Agent instruction files that smuggle tasking. Skill/MCP configs with elevated influence. Setup docs that normalize disabling safety rails. Package hooks that execute surprise behavior.
 
 ### Agent Instruction Files
 
