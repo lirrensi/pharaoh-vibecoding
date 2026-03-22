@@ -1,14 +1,23 @@
 # Pharaoh Coding System for OpenCode
 
-**Vibe coding on steroids** — one single interface for everything, CEO-level workflow, no command-line chaos. 🪙✨
+**Vibe coding on steroids** — one system, two Horus modes, sharper specialists, and even less babysitting. 🪙✨
+
+## What's New
+
+- **Horus now delegates directly** to `Ptah`, `Maat`, `Anubis`, `Osiris`, `Bastet`, and `Thoth` when the job calls for it.
+- **HorusSync exists as the classic manual mode** for people who want to manage the handoffs themselves.
+- **Anubis and Osiris are more separated now**: Anubis loads only the review checklists it needs, and Osiris loads only the testing modules it needs.
+- **The system is more modular overall**: less prompt bloat, more targeted specialist passes, cleaner orchestration.
 
 ---
 
 ## The Core Philosophy
 
-You have one **sole entry point** for your entire project: **Horus**.
+You have one main entry point for your entire project: **Horus**.
 
-Everything you want to do, know, or change happens through Horus. No more writing long PRDs, no more context switching between terminals and docs. Just talk → Horus listens → Horus executes → Done. 💅
+Everything you want to do, know, or change can happen through Horus. No more writing long PRDs, no more context switching between terminals and docs. Just talk → Horus listens → Horus delegates → Horus reports back → Done. 💅
+
+If you prefer the older hands-on style, use **HorusSync** instead. HorusSync keeps the same thinking pipeline, but **does not manage sub-agents for you**. You stay responsible for dispatching the workers yourself.
 
 The entire system revolves around a sacred canon:
 - `docs/product.md` — the **product canon** (purpose, vibe, what it is, why it exists, how it broadly works)
@@ -36,14 +45,16 @@ Thoth creates the sacred canon in order: `product.md`, then `spec.md`, then arch
 
 ---
 
-### Step 2: Send Ideas to Horus
+### Step 2: Pick Your Horus Mode
 **When to use:** You have a change you want to make or a question you want answered.
 
 ```
-You: "I want to add X feature" or "How does Y work?"
+You: "Horus, I want to add X feature"
+You: "HorusSync, help me plan X and I'll manage the rest"
 ```
 
-Horus investigates your request and provides context.
+- **Horus** investigates, decides who to call, and manages the worker loop.
+- **HorusSync** investigates and plans, but leaves execution and follow-up handoffs to you.
 
 ---
 
@@ -73,7 +84,7 @@ This step may be combined with Step 3 if the clarification is simple.
 
 ---
 
-### Step 5: Ptah Executes the Plan
+### Step 5: Execution Happens
 **When to use:** You've approved the plan, ready to execute.
 
 ```
@@ -82,12 +93,12 @@ Ptah: "Got it. Executing plan..."
 *(Ptah returns when done)*
 ```
 
-**No questions asked. Just execution.**
+With **Horus**, this handoff is automatic. With **HorusSync**, you do the handoff yourself.
 
 ---
 
-### Step 6: Maat Reviews the Work
-**When to use:** Ptah is done, time to check for quality.
+### Step 6: Verification Runs
+**When to use:** Execution is done, time to check the result.
 
 ```
 Maat: "Checking implementation..."
@@ -99,30 +110,34 @@ Maat reviews against the canon and checks for:
 - Broken assumptions
 - Weird behavior
 
+If needed, Horus can also dispatch:
+- **Anubis** for code smells, architecture criticism, security review, or performance skepticism
+- **Osiris** for test creation, test strategy, coverage gaps, and failure-mode verification
+
 ---
 
-### Step 7: If Maat Finds Issues → Loop Back to Ptah
-**When to use:** Maat identifies problems or incomplete work.
+### Step 7: If Verification Finds Issues -> Loop Back
+**When to use:** Maat, Anubis, or Osiris identifies problems or incomplete work.
 
 ```
 Maat: "I found an issue: X is not implemented correctly. Here's what's wrong."
 
-You: Send corrections to Ptah
+Horus: Sends corrections to Ptah
 Ptah: "Got it. Fixing X..."
 ```
 
-Repeat Step 5-7 until Maat is satisfied.
+Repeat Step 5-7 until the active verification pass is satisfied.
 
 ---
 
-### Step 8: Read Maat's Report
-**When to use:** Maat is done reviewing.
+### Step 8: Read Horus's Synthesis
+**When to use:** The loop is done and you want the clean answer.
 
 ```
-Maat: "✅ All checks passed. Implementation is correct and complete."
+Horus: "✅ Ptah finished the work, Maat verified it, and here are the final notes."
 ```
 
-Read Maat's report to confirm the plan is really done.
+Read Horus's synthesis to confirm the job is really done.
 
 ---
 
@@ -157,8 +172,9 @@ Thoth: "Sync arch docs with the recent implementation changes."
 ## The Complete Loop
 
 ```
-Start → Thoth (if needed) 
-→ Horus (investigate + clarify) 
+Start → Thoth (if needed)
+→ Horus or HorusSync (investigate + clarify)
+→ Plan / Brief
 → Ptah (execute) → Maat (check)
         ↓
 Found issues?
@@ -167,29 +183,31 @@ No → Done!
 ```
 
 ```
-Horus    👁️  manager, orchestrates, makes the plan
+Horus      👁️  orchestrator, keeps context, calls specialists directly
+HorusSync  🧭  classic planner, keeps context, but you manage the workers
    ↓
-Ptah     🔨  builder, writes code nonstop from the plan
+Ptah       🔨  builder, writes code nonstop from the plan
    ↓
-Maat     ⚖️  reviewer, checks Ptah's work for correctness
+Maat       ⚖️  verifier, checks implementation against canon
    ↓
-Anubis   🐺  smell hunter, 100-point code quality checklist
+Anubis     🐺  critic, loads only the review modules the repo actually needs
    ↓
-Osiris   💀  test writer, breaks everything, resurrects stronger
+Osiris     💀  test judge, loads only the testing modules the repo actually needs
    ↓
-Hathor   🌸  ideator, dreams up new features when TODO is empty
+Hathor     🌸  ideator, dreams up new features when TODO is empty
    ↓
-Thoth    📚  doc writer, keeps knowledge alive
+Thoth      📚  doc writer, keeps knowledge alive
    ↓
-Bastet   🐱  home keeper, makes the repo beautiful
+Bastet     🐱  home keeper, makes the repo beautiful
 
 ---
-Horus          → orchestrator, called first always
+Horus          → orchestrator, called first when you want delegation
+HorusSync      → planner mode, called first when you want manual control
 Ptah           → builder, called when there's a plan
 ─── quality loop ───────────────────────────
 Maat           → correctness check
-Anubis         → skeptic, smells + security static
-Osiris         → brutal tester, dynamic + security
+Anubis         → skeptic, smells + architecture + security/perf review
+Osiris         → brutal tester, test design + test execution + failure modes
 ─── enrichment (called when gaps found) ────
 Hathor         → new ideas
 Thoth          → docs gaps
@@ -213,9 +231,10 @@ Bastet         → repo hygiene
 - **No babysitting agents** — they work while you focus on other things
 
 ### 👑 CEO-Level Workflow
-This is how a real CEO works:
+This is how a real CEO workflow works:
 - **You** = The CEO with the vision
-- **Horus** = Your Chief Technical Officer (CTO) who translates vision into specs
+- **Horus** = Your Chief Technical Officer (CTO) who translates vision into specs and manages the specialists
+- **HorusSync** = The old-school CTO who plans brilliantly but expects you to run the team yourself
 - **Ptah** = The implementation team (you delegate to them)
 - **Maat** = Quality assurance (they check everything before you sign off)
 
@@ -257,7 +276,7 @@ You don't write code. You **set the vision**. Horus handles the details. You're 
 ### Why Pharaoh Wins 🏆
 
 1. **No Step-by-Step Confirmation** — You don't confirm each step. Horus thinks, Ptah executes, you return later to check.
-2. **Simple & Clear** — No over-engineering, no unclear workflows. Just three agents: Horus (plan), Ptah (execute), Maat (check).
+2. **Simple & Clear** — No over-engineering, no unclear workflows. Pick delegated `Horus` or manual `HorusSync`, then let `Ptah` execute and `Maat` verify.
 3. **Flexible & Model-Agnostic** — Works with small models, no hardcoded model requirements.
 4. **CEO-Level Workflow** — You delegate, you don't babysit. This is how real CEOs work.
 
@@ -277,8 +296,8 @@ cd PharaohSystemRepo
 
 ### Step 2: Copy Agents to OpenCode
 ```bash
-# Copy the agents folder to your OpenCode config
-cp -r agents ~/.config/opencode/agents/
+# Copy the agent folder to your OpenCode config
+cp -r agent ~/.config/opencode/agent/
 ```
 
 ### Step 3: Install PromptPaste (Optional but Recommended)
@@ -309,6 +328,7 @@ In OpenCode, use Tab to switch between them
 The entire Pharaoh system is **just fancy prompts**. That's it.
 
 - **Horus** = One sophisticated prompt
+- **HorusSync** = One sophisticated prompt
 - **Ptah** = One sophisticated prompt
 - **Maat** = One sophisticated prompt
 - **Anubis, Hathor, Thoth, Ra, Osiris, Bastet** = One sophisticated prompt each
@@ -323,9 +343,9 @@ The entire Pharaoh system is **just fancy prompts**. That's it.
 - Or any other agent that accepts custom prompts
 
 **How to use the agents anywhere:**
-1. Copy the text of the prompt from the `agents/` folder
+1. Copy the text of the prompt from the `agent/` folder
 2. Paste it into your AI agent's custom prompt field
-3. Done! You have Horus, Ptah, Maat, etc. in any environment
+3. Done! You have Horus, HorusSync, Ptah, Maat, etc. in any environment
 
 **Why this matters:**
 - The **principle** is what's valuable: structured workflow, CEO-level delegation, no babysitting
@@ -350,7 +370,7 @@ You → Horus → Ptah → Maat → (loop until done) → ✨
 ```
 
 ### 1. Horus: Your Architect & Manager 🦅
-**Horus is your ONLY interaction point.** Literally. Everything flows through him/her.
+**Horus is your default interaction point.** Everything can flow through him.
 
 **What Horus does:**
 - Listens to your ideas, questions, or requests
@@ -358,6 +378,12 @@ You → Horus → Ptah → Maat → (loop until done) → ✨
 - Investigates the current codebase and docs
 - Updates `product.md`, `spec.md`, and architecture docs as the **absolute canon**
 - Generates a detailed, idiot-proof plan for Ptah to execute
+- Calls the right specialists directly and keeps the whole loop in one conversation
+
+### 1b. HorusSync: The Manual-Conductor Variant 🧭
+**HorusSync thinks like Horus, but does not delegate for you.**
+
+Use HorusSync if you want the same scouting, clarification, and planning discipline, but prefer to manually call `Ptah`, `Maat`, `Anubis`, `Osiris`, or `Thoth` yourself.
 
 **Example interview questions Horus might ask:**
 > "You want dark mode? Is this for admin users only? Should it persist across sessions? What about existing themes?"
@@ -391,9 +417,9 @@ On a good day, this completes in 1 iteration. On a bad day, 2-3. 🙏
 
 ---
 
-## The Optional Agents (Manual Invocations)
+## The Specialist Agents
 
-These agents are **not part of the main loop** — you call them manually when you need them:
+These agents are outside the default `Horus -> Ptah -> Maat` spine, but they can be called **either manually or through Horus** when the job needs them:
 
 ### Ra: Environment Manager ☀️
 **When to use:** You want to change OpenCode itself, manage configs, or modify prompt behaviors.
@@ -413,12 +439,13 @@ These agents are **not part of the main loop** — you call them manually when y
 ---
 
 ### Anubis: Code Critic 👿
-**When to use:** You want to find smells, technical debt, or bad patterns in the codebase.
+**When to use:** You want to find smells, technical debt, architectural problems, security risks, or performance concerns.
 
-**What SeAnubist does:**
-- Scans the entire codebase
-- Identifies anti-patterns, code smells, and areas that need refactoring
-- Returns a TODO list of improvements
+**What Anubis does:**
+- Builds a threat/risk snapshot first
+- Loads only the review checklists that match the repo shape
+- Identifies anti-patterns, code smells, architectural issues, security risks, and performance concerns
+- Returns a prioritized findings list instead of vague advice
 
 **Example use case:**
 > "Anubis, run a code audit and find everything that smells."
@@ -448,14 +475,14 @@ These agents are **not part of the main loop** — you call them manually when y
 ---
 
 ### Osiris: Test Engineer 💀
-**When to use:** You want comprehensive test coverage, or need to break things before they break in production.
+**When to use:** You want comprehensive testing, stronger failure-mode coverage, or proof that the code survives reality.
 
 **What Osiris does:**
-- Writes unit tests, integration tests, and e2e tests
+- Profiles the repo first instead of loading one giant universal checklist
+- Loads only the test modules needed for this repo and request
+- Writes unit, integration, system-flow, or resilience tests as needed
 - Tests edge cases and boundary conditions
-- Performs security testing and vulnerability scanning
-- Ensures code "resurrects stronger" after being broken in tests
-- Reports test coverage gaps and suggests improvements
+- Reports coverage gaps, weak assumptions, and decorative tests
 
 **Example use case:**
 > "Osiris, write tests for the new authentication module and check for security vulnerabilities."
@@ -481,17 +508,18 @@ These agents are **not part of the main loop** — you call them manually when y
 
 | Agent | Role | Main Loop | When to Call |
 |-------|------|-----------|--------------|
-| **Horus** 🦅 | Architect & Manager | ✅ Yes | Your ONLY interaction point for all changes |
+| **Horus** 🦅 | Architect & Manager | ✅ Yes | Default entry point when you want orchestration |
+| **HorusSync** 🧭 | Manual Planner | ✅ Yes | Entry point when you want planning without delegation |
 | **Ptah** 🔨 | Execution Mode | ✅ Yes | Receives plans and executes them (YOLO) |
 | **Maat** ⚖️ | Review Mode | ✅ Yes | Reviews implementations for correctness |
 | **Ra** ☀️ | Environment Manager | ❌ No | Changes OpenCode itself, manages configs |
-| **Anubis** 👿 | Code Critic | ❌ No | Finds smells, anti-patterns, technical debt |
+| **Anubis** 👿 | Code Critic | ❌ No | Runs focused review passes for smells, security, architecture, and performance |
 | **Hathor** 💃 | Product Improver | ❌ No | Brainstorms wild, fancy new features |
 | **Thoth** 📜 | Documentation Manager | ❌ No | Generates initial docs, syncs manual changes |
-| **Osiris** 💀 | Test Engineer | ❌ No | Writes tests, breaks things, ensures resilience |
+| **Osiris** 💀 | Test Engineer | ❌ No | Runs focused test passes, writes tests, and exposes failure modes |
 | **Bastet** 🐱 | Repo Keeper | ❌ No | Cleans repo, organizes structure, improves hygiene |
 
-**Main Loop Agents (Horus → Ptah → Maat):** This is your core workflow. Everything else is optional or manual.
+**Main Loop Agents:** `Horus -> Ptah -> Maat` is the delegated loop. `HorusSync -> you manually dispatch workers` is the classic loop.
 
 ---
 
@@ -576,12 +604,12 @@ The docs (`product.md` + `spec.md` + architecture docs) are the source of truth.
 
 ### The Workflow in Detail
 1. **You** describe what you want (high-level, vague, whatever).
-2. **Horus** investigates, interviews you, clarifies requirements.
-3. **Horus** updates `product.md`, `spec.md`, and architecture docs as the new canon.
-4. **Horus** generates a detailed plan for Ptah.
-5. **Ptah** executes the plan (YOLO mode, no questions).
-6. **Maat** reviews the implementation against the canon.
-7. If Maat finds issues → loop back to step 2.
+2. **Horus** or **HorusSync** investigates, interviews you, and clarifies requirements.
+3. They update `product.md`, `spec.md`, and architecture docs as the new canon when needed.
+4. They generate a detailed plan or brief.
+5. **Horus** can dispatch the right specialists directly, while **HorusSync** leaves dispatching to you.
+6. **Ptah** executes the plan and **Maat** verifies the implementation against the canon.
+7. If Maat, Anubis, or Osiris finds issues -> loop back to the planner.
 8. If Maat approves → you're done! 🎉
 
 ### Why This Matters
@@ -602,19 +630,20 @@ The docs (`product.md` + `spec.md` + architecture docs) are the source of truth.
    ```
 
 2. **Making changes:**
-   ```bash
-   # Talk to Horus about what you want
-   You: "I want to add X feature"
-   Horus: (investigates, interviews, updates canon, generates plan)
-   Ptah: (executes plan)
-   Maat: (reviews)
-   ```
+    ```bash
+    # Delegated mode
+    You: "Horus, I want to add X feature"
+    Horus: (investigates, interviews, updates canon, generates plan, dispatches workers)
+
+    # Manual mode
+    You: "HorusSync, plan X and I'll manage the handoffs"
+    ```
 
 3. **Code criticism:**
    ```bash
-   # Call Anubis when you want a code audit
-   Anubis: "Scan the codebase and find all smells"
-   ```
+    # Call Anubis when you want a targeted review
+    Anubis: "Scan the codebase and find smells, security risks, and architectural problems"
+    ```
 
 4. **Brainstorming:**
    ```bash
@@ -624,9 +653,9 @@ The docs (`product.md` + `spec.md` + architecture docs) are the source of truth.
 
 5. **Testing:**
    ```bash
-   # Call Osiris for test coverage and security testing
-   Osiris: "Write tests for the new module and check for vulnerabilities"
-   ```
+    # Call Osiris for test coverage and failure-mode verification
+    Osiris: "Write tests for the new module and stress the risky paths"
+    ```
 
 6. **Repo hygiene:**
    ```bash
@@ -654,18 +683,20 @@ The docs (`product.md` + `spec.md` + architecture docs) are the source of truth.
 
 ✨ **Maat is your safety net:** If something feels wrong, Maat will catch it. Don't skip the review loop.
 
-✨ **Optional agents are your toys:** Use Anubis, Hathor, Thoth, Ra, Osiris, and Bastet manually when you need them. They're not part of the main loop.
+✨ **Choose the right Horus:** Use `Horus` when you want delegation. Use `HorusSync` when you want to manage the workers yourself.
+
+✨ **Anubis and Osiris are sharper now:** Anubis reviews with only the relevant quality/security/perf lenses. Osiris tests with only the relevant test modules.
 
 ✨ **Ra is your environment conductor:** Ask Ra to tweak OpenCode itself, change prompts, manage configs, or create plugins. He's the only one who knows how everything is wired together!
 
 ---
 
-## Want to make it better? (Future Improvements)
+## Recent Upgrades
 
-- Change Horus to spawn subagents instead
-- Ask Horus to split big plan into several small plans
-- Somehow manage Ptah and Maat talk to each other without copypaste
+- Horus can now run the worker loop directly instead of making you coordinate every handoff.
+- HorusSync preserves the original manual style for people who want tighter hands-on control.
+- Anubis and Osiris now use more focused checklist loading, so reviews and test passes stay relevant instead of bloated.
 
 ---
 
-**Remember:** Horus is your interface. Ptah is your engine. Maat is your safety net. Together, they're the ultimate CEO workflow for vibe coding. 🪙✨
+**Remember:** Horus is your delegated interface. HorusSync is your manual strategist. Ptah is your engine. Maat is your safety net. Together, they're the upgraded CEO workflow for vibe coding. 🪙✨

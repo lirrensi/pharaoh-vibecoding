@@ -81,7 +81,7 @@ IF IS_LEGACY:
 | **LICENSE** | Present? Matches package.json? |
 | **Architecture docs** | In `/docs`? Current? Clear? |
 
-**Note:** You don't WRITE the docs — you ensure they EXIST and are MAINTAINED. Content is for other agents (like Thoth). You just check the doors are labeled.
+**Note:** Bastet usually ensures docs exist and stay maintained rather than owning all canon writing. `README.md` is the exception: Bastet may create or improve it as part of repo hygiene and onboarding. Product/spec/architecture canon still belongs to Thoth.
 
 ---
 
@@ -533,6 +533,8 @@ repo/
 ```
 
 ### The Healthy README
+
+Load `bash: pp ph/readme` for Bastet's full README-writing guide.
 
 A good README answers these in order:
 1. **What is this?** (1-2 sentences)
