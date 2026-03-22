@@ -11,8 +11,13 @@ You have one **sole entry point** for your entire project: **Horus**.
 Everything you want to do, know, or change happens through Horus. No more writing long PRDs, no more context switching between terminals and docs. Just talk → Horus listens → Horus executes → Done. 💅
 
 The entire system revolves around a sacred canon:
-- `docs/product.md` — the **spec** (human-readable, high-level, authoritative)
-- `docs/arch.md` — the **tech reference** (machine-readable, implementation details)
+- `docs/product.md` — the **product canon** (purpose, vibe, what it is, why it exists, how it broadly works)
+- `docs/spec.md` — the **behavior canon** (RFC-like, precise, language-agnostic)
+- `docs/arch.md` / `docs/arch_*.md` — the **architecture canon** (how this repository currently implements the product)
+
+These layers refine downward:
+
+`product.md` -> `spec.md` -> `arch*.md` -> code
 
 Everything in the codebase is **derived** from these docs. Code is never the source of truth — the docs are.
 
@@ -24,10 +29,10 @@ Everything in the codebase is **derived** from these docs. Code is never the sou
 **When to use:** First run, or when you have no docs yet.
 
 ```
-Thoth: "Generate product.md and arch.md from current codebase"
+Thoth: "Generate product.md, spec.md, and arch docs from current codebase"
 ```
 
-Thoth creates the sacred canon (product.md + arch.md) if they don't exist.
+Thoth creates the sacred canon in order: `product.md`, then `spec.md`, then architecture docs.
 
 ---
 
@@ -61,7 +66,7 @@ You: "It should do this and this, and handle this edge case."
 **When to use:** Requirements are clarified, ready to formalize.
 
 Horus:
-1. Updates `product.md` and `arch.md` as the new canon
+1. Updates `product.md`, `spec.md`, and architecture docs as the new canon
 2. Generates a detailed plan for Ptah to execute
 
 This step may be combined with Step 3 if the clarification is simple.
@@ -133,16 +138,19 @@ Use Anubis for code criticism, Hathor for wild ideas.
 
 ---
 
-### Step 10: Sync or Refine Documentation (Thoth)
-**When to use:** You've manually changed code and want docs to sync, or you want to refine/split documentation.
+### Step 10: Read, Update, or Sync Documentation (Thoth)
+**When to use:** You want to understand the canon, apply explicit doc changes, sync docs to code, or bootstrap docs for a repo using this system.
 
 ```
+Thoth: "Read the docs and explain how this product works."
+Thoth: "Update product.md and spec.md to reflect these requirements."
 Thoth: "Regenerate docs based on current codebase."
 Thoth: "Split product.md into smaller, more readable sections."
-Thoth: "Sync arch.md with the recent code changes."
+Thoth: "Sync spec.md with the recent behavior changes."
+Thoth: "Sync arch docs with the recent implementation changes."
 ```
 
-**Core goal:** Keep documentation clear, up-to-date, and well-structured.
+**Core goal:** Keep documentation understandable, authoritative, up-to-date, and well-structured.
 
 ---
 
@@ -348,7 +356,7 @@ You → Horus → Ptah → Maat → (loop until done) → ✨
 - Listens to your ideas, questions, or requests
 - Interviews you to clarify requirements (asks the "why" and "how")
 - Investigates the current codebase and docs
-- Updates `product.md` and `arch.md` as the **absolute canon**
+- Updates `product.md`, `spec.md`, and architecture docs as the **absolute canon**
 - Generates a detailed, idiot-proof plan for Ptah to execute
 
 **Example interview questions Horus might ask:**
@@ -370,7 +378,7 @@ Once Horus gives you a plan, Ptah becomes a **paperclip maximizer**.
 After Ptah finishes, Maat enters the loop to **check** everything.
 
 **Maat's role:**
-- Reviews the plan against the canon (`product.md` + `arch.md`)
+- Reviews the plan against the canon (`product.md` + `spec.md` + architecture docs)
 - Checks that everything was implemented correctly
 - Looks for edge cases, broken assumptions, or weird behavior
 - Reports back to you (or Horus) with findings
@@ -430,7 +438,7 @@ These agents are **not part of the main loop** — you call them manually when y
 **When to use:** First run, or when you've manually changed code and want the docs to sync back.
 
 **What Thoth does:**
-- Creates `product.md` and `arch.md` from scratch (on first run)
+- Creates `product.md`, `spec.md`, and architecture docs from scratch (on first run)
 - Syncs docs with code changes you make manually
 - Ensures the canon is up-to-date
 
@@ -509,13 +517,18 @@ Here's how the full workflow looks in action:
 **Horus:**
 > "Perfect! Now I'm updating the canon..."
 
-**(Horus updates `product.md` and `arch.md`)**
-> "✅ Updated `product.md` with dark mode specs:
+**(Horus updates `product.md`, `spec.md`, and architecture docs)**
+> "✅ Updated `product.md` with the new product-level summary:
+> - Admin users can switch between light and dark themes
+> - Theme choice persists across sessions
+> - Theme controls live in admin settings
+>
+> ✅ Updated `spec.md` with behavioral requirements:
 > - Feature: Admin-only dark mode
 > - Storage: localStorage
 > - API endpoint: `GET /api/theme` returns `{ theme: 'dark' | 'light' }`
 > - Frontend: Toggle button in admin settings, theme class applied to body
-
+>
 > ✅ Updated `arch.md` with implementation notes:
 > - Use CSS variables for theming
 > - Add `localStorage.getItem('theme')` on init
@@ -554,12 +567,17 @@ Here's how the full workflow looks in action:
 
 ### The Golden Rule
 **Code ≠ Source of Truth**
-The docs (`product.md` + `arch.md`) are the source of truth. Everything else is derived from them. If it's not in the docs, it doesn't exist.
+The docs (`product.md` + `spec.md` + architecture docs) are the source of truth. Everything else is derived from them. If it's not in the docs, it doesn't exist.
+
+- `product.md` surviving means the product can be rediscovered.
+- `spec.md` surviving means the behavior can be rebuilt in any language.
+- architecture docs surviving means the current implementation can be rebuilt much more faithfully.
+- code is the cheapest layer to lose.
 
 ### The Workflow in Detail
 1. **You** describe what you want (high-level, vague, whatever).
 2. **Horus** investigates, interviews you, clarifies requirements.
-3. **Horus** updates `product.md` and `arch.md` as the new canon.
+3. **Horus** updates `product.md`, `spec.md`, and architecture docs as the new canon.
 4. **Horus** generates a detailed plan for Ptah.
 5. **Ptah** executes the plan (YOLO mode, no questions).
 6. **Maat** reviews the implementation against the canon.
@@ -568,8 +586,8 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
 
 ### Why This Matters
 - **No context switching:** Everything happens in OpenCode, no terminals.
-- **One source of truth:** `product.md` and `arch.md` are always in sync.
-- **Human-centric specs:** `product.md` is written for humans, not machines.
+- **One source of truth:** product, spec, and architecture stay aligned.
+- **Human-centric overview:** `product.md` is for humans; `spec.md` and architecture docs carry the deeper canon.
 - **Execution-focused:** Horus plans, Ptah executes, Maat checks.
 - **CEO workflow:** You set the vision, Horus handles the details. (It's vibe coding, not wipe coding!)
 
@@ -580,7 +598,7 @@ The docs (`product.md` + `arch.md`) are the source of truth. Everything else is 
 1. **First run:**
    ```bash
    # Call Thoth to generate initial docs
-   Thoth: "Generate product.md and arch.md from current codebase"
+   Thoth: "Generate product.md, spec.md, and arch docs from current codebase"
    ```
 
 2. **Making changes:**
