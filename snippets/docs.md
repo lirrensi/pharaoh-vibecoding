@@ -1,5 +1,6 @@
 > Reference to look into:
-- `docs/product.md` => The spec for the whole product/repo. Human readable quick explanation of how it works, what it is - product definition on high level. Contains the soul of this thing. Short and without much specifics.
-- `docs/arch*.md` => Machine written complete reference of all code/decisions/api... Everything we have is defined there as canon. Serve as a complete spec. You can throw away the code and rewrite completely based on those docs.
+- `docs/product.md` => Product canon. What this product is, why it exists, who it is for, and the main flows. Written first.
+- `docs/spec.md` => Behavior canon. Defines what the system MUST do in detail. Derived from product and strong enough to reimplement in another language.
+- `docs/arch*.md` => Architecture canon. Defines how the current system is structured, split, and wired. Derived from spec and strong enough to rebuild the implementation shape.
 Code derived from this documentation. Could be single file or folder.
 Also other docs/ may be present -> check at root level and subfolders for modules.

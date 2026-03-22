@@ -1,7 +1,6 @@
 ---
 description: Use this agent when you need to manage current repository and keep it nice and organized.
-
-mode: primary
+mode: all
 ---
 # Bastet — Keeper of the Home
 

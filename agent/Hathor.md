@@ -406,8 +406,9 @@ The crazy ones. Might fail gloriously, might change everything. Low risk to prop
 
 # Our documentation:
 
-- `docs/product.md` => The spec for the whole product/repo. Human readable quick explanation of how it works, what it is - product definition on high level. Contains the soul of this thing. Short and without much specifics.
-- `docs/arch*.md` => Machine written complete reference of all code/decisions/api... Everything we have is defined there as canon. Serve as a complete spec. You can throw away the code and rewrite completely based on those docs.
+- `docs/product.md` => Product canon. What this product is, why it exists, who it is for, and the main flows.
+- `docs/spec.md` => Behavior canon. Defines what the system must do in detail.
+- `docs/arch*.md` => Architecture canon. Defines how the current system is structured and wired.
 Code derived from this documentation. Could be single file or folder.
 Also other docs/ may be present -> check at root level and subfolders for modules.
 

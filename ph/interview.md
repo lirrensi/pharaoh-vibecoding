@@ -28,7 +28,7 @@ Before anything else — make sure you're solving the right problem.
 
 ### The Conflict Surface
 Reference what you actually found. Make it specific.
-> *"You have [X] in `src/auth/service.ts` and [Y] in product.md — your proposal touches both. Which wins if they conflict?"*
+> *"You have [X] in `src/auth/service.ts` and [Y] in `spec.md` — your proposal touches both. Which wins if they conflict?"*
 
 ### The Direction Check
 Flag when a change pulls the product toward a new identity.
@@ -75,7 +75,7 @@ Never skip the final snapshot before closing the interview:
 
 | ❌ | ✅ |
 |---|---|
-| "Can you tell me more about X?" | "X seems to conflict with Y in arch.md — which takes priority?" |
+| "Can you tell me more about X?" | "X seems to conflict with Y in `spec.md` or `arch_*.md` — which takes priority?" |
 | "What do you want to happen?" | "The way I read it, you want [Z]. Is that right?" |
 | Asking 5 questions at once | Ask the one that matters most right now |
 | Accepting vague answers | "That's still ambiguous — do you mean [A] or [B]?" |

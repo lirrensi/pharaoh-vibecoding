@@ -114,10 +114,18 @@ OpenCode Agent Knowledge:
      - Formatters: Configure code formatting via `/docs/formatters`
      - Commands: Create custom commands via `/docs/commands`
      - Config: Tweak overall settings via `/docs/config`
-   * Windows Shell:
-     - OpenCode inherits `$SHELL` env var; to change shell, update system user env:
-       `[Environment]::SetEnvironmentVariable("SHELL", "pwsh.exe", "User")`
-     - This makes it permanent across all terminals & CLI apps (OpenCode, git bash, etc.)
+    * Windows Shell:
+      - OpenCode on Windows uses cmd.exe internally by default
+      - The `$SHELL` env var does NOT control OpenCode's internal shell on Windows
+      - To use PowerShell 7, set COMSPEC in a function BEFORE launching OpenCode:
+        ```
+        function oc {
+            $env:COMSPEC = "C:\Program Files\PowerShell\7\pwsh.exe"
+            . $PROFILE
+            opencode
+        }
+        ```
+      - Profile functions won't be available inside OpenCode's internal shell (PowerShell runs in non-interactive mode per command, profile doesn't load)
 - Plugin Hook Types:
   * Command Events: command.executed
   * File Events: file.edited, file.watcher.updated

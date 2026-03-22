@@ -1,16 +1,30 @@
 # Documentation Specification
 
-This spec defines the canonical documentation structure for projects. Anyone can read this to understand **where docs live, what they contain, and how to write them**.
+This document defines the canonical documentation model for projects in this system: where docs live, what each file means, and how to write them.
 
 ---
 
 ## Core Philosophy
 
-**Documentation is the canon. Code is derivative.**
+**Documentation is the canon. Code is disposable derivative.**
 
-- If a behavior is not documented, it does not officially exist.
+The documentation stack refines downward: `product.md` -> `spec.md` -> `arch*.md` -> code
+
+- `product.md` is written first. It defines the product's purpose, value, actors, main flows, and non-goals.
+- `spec.md` is written from `product.md`. It defines exact, language-agnostic behavior without committing to one implementation.
+- `arch.md` / `arch_*.md` is written from `spec.md`. It defines how this repository's current implementation realizes that behavior.
+- Code may be discarded and regenerated from the docs. The docs are the valuable artifact.
+
+### Layer Ownership
+- `product.md` owns product identity, purpose, user value, major flows, and non-goals.
+- `spec.md` owns exact behavior, contracts, edge cases, state rules, and conformance.
+- `arch.md` / `arch_*.md` owns implementation structure, components, dependencies, boundaries, and runtime shape.
+
+### Conflict Handling
 - If code and docs disagree, docs win — or docs are updated intentionally.
-- Documentation can be used to completely rebuild the codebase.
+- If `arch*.md` and `spec.md` disagree on behavior, `spec.md` wins.
+- If `spec.md` and `product.md` disagree on product identity, purpose, or non-goals, `product.md` wins.
+- Lower layers must preserve the truth of the layer above while adding precision.
 
 ---
 
@@ -18,14 +32,16 @@ This spec defines the canonical documentation structure for projects. Anyone can
 
 ### Primary Canon
 
-```
+```text
 docs/
-├── product.md          ← Human soul. Short, high-level, the "what is this thing"
-├── arch.md             ← Single file if simple
+├── product.md          ← Human-facing product truth; a second README with canon status
+├── spec.md             ← Rebuildable, language-agnostic behavior spec
+├── arch.md             ← Single-file current-implementation architecture canon if simple
 │   OR
-├── arch_index.md       ← Index if multiple arch files
-├── arch_core.md        ← Core/foundation component
-├── arch_*.md           ← Additional components (arch_api, arch_cli, etc.)
+├── arch_index.md       ← Map of architecture documents
+├── arch_core.md        ← Shared foundation
+├── arch_*.md           ← Additional architecture components
+├── glossary.md         ← Shared terminology when needed
 │
 └── adr/                ← Architecture Decision Records
     ├── 0001-*.md
@@ -33,206 +49,292 @@ docs/
     └── ...
 ```
 
-### Glossary
+### Secondary Canon
 
+```text
+README.md               ← Project entry point
+CONTRIBUTING.md         ← Contribution process
+CHANGELOG.md            ← Version history
+docs/
+├── guides/             ← Tutorials and how-tos
+├── api/                ← Reference docs if kept separate
+├── schemas/            ← OpenAPI, AsyncAPI, JSON Schema, etc.
+└── troubleshooting.md  ← Common issues
 ```
-docs/glossary.md        ← Single source of truth for all terminology
-```
 
-**Purpose**: Define terms once, link everywhere. Prevents inconsistent re-definitions across multiple arch files.
+Formal schemas, migrations, and interface contracts supplement the canon. They do not replace it.
 
-**When Required**: Any project with >1 arch file OR specialized domain terminology.
+---
 
-**Format** — use headings for stable anchors (tables don't link reliably):
+## Split Rules
+
+### When to Split Architecture Docs
+
+A single `arch.md` should split into `arch_*.md` files when:
+
+1. **Replaceability test**: a component could be rewritten independently without forcing changes to unrelated components.
+2. **Size threshold**: `arch.md` exceeds 500 lines — consider splitting. Exceeds 800 lines — split it.
+3. **Operational clarity**: different subsystems have separate boundaries, runtime concerns, or ownership surfaces that are easier to maintain independently.
+
+### When to Create `arch_index.md`
+
+- Required when there are multiple `arch_*.md` files.
+- It is a map only: component name, one-line description, link.
+- It must not become a second implementation document.
+
+### Naming Rules
+
+- Use `arch_{name}.md` for split architecture files.
+- Use `arch_core.md` for shared foundations.
+- Use `arch_index.md` only when a split exists.
+- Never use freeform names like `architecture-final.md` or `backend-arch-notes.md`.
+
+### When to Create `glossary.md`
+
+Create `docs/glossary.md` when any of the following is true:
+
+- there is more than one architecture document,
+- the spec uses specialized domain terms,
+- multiple agents or contributors could interpret important terms differently.
+
+Use headings for stable anchors:
 
 ```markdown
 # Glossary
 
 ## Agent
 
-An autonomous process that handles tasks. See [arch_agent.md](arch_agent.md).
+Autonomous process that executes a bounded task.
 
 ## Session
 
 A single execution context from start to finish.
 ```
 
-**Usage**: Link to glossary instead of re-defining: "Uses the [Agent](glossary.md#agent) pattern."
+If a term is used inconsistently:
 
-**Conflict Rule**: If a term is used in a way that contradicts its glossary definition:
-- The glossary definition wins.
-- Flag the inconsistent usage as a discrepancy.
-- Do NOT silently redefine in the glossary to match misuse.
-
-### Secondary Canon
-
-Other docs maintained alongside primary spec:
-
-```
-README.md               ← Project entry point
-CONTRIBUTING.md         ← How to contribute
-CHANGELOG.md            ← Version history
-docs/
-├── guides/             ← Tutorials and how-tos
-├── api/                ← API references (if separate from arch)
-├── schemas/            ← Formal interface contracts (OpenAPI, AsyncAPI, JSON Schema)
-└── troubleshooting.md  ← Common issues
-```
-
-**Interface Contracts** (if applicable):
-- `schemas/openapi.yaml` — REST API spec
-- `schemas/asyncapi.yaml` — Event/message spec
-- `schemas/*.json` — JSON Schema for messages/config
-- `migrations/*.sql` — Database migrations
-
-These formal artifacts supplement arch docs but don't replace them.
-
----
-
-## Split Rules
-
-### When to Split arch.md
-
-A single `arch.md` splits into `arch_*.md` files when:
-
-1. **Replaceability test**: A component could be rewritten in a different language/library without touching other components.
-2. **Size threshold**: `arch.md` exceeds 500 lines — consider splitting. Exceeds 800 lines — split it.
-
-### When to Create arch_index.md
-
-- **Required** when there are >1 `arch_*.md` files.
-- Single `arch.md` has an inline overview at the top instead.
-
-### When to Create a Folder
-
-If a component has >2 related files, create a folder:
-
-```
-docs/
-├── arch_index.md
-├── arch_core.md
-└── arch_mcp/
-    ├── index.md        ← Component index
-    ├── protocol.md     ← Specific aspect
-    └── handlers.md     ← Specific aspect
-```
+- the glossary wins,
+- the inconsistency is a discrepancy,
+- the glossary must not be silently rewritten to match misuse.
 
 ---
 
 ## Document Specifications
 
-### product.md — The Human Soul
+### `product.md` — The Human Overview
 
-**Purpose**: High-level explanation of what the product is, how it works, and who it's for. Contains the soul of the project. Readable in one sitting.
+**Purpose**: Explain what the product is, who it is for, why it exists, and how it broadly works. It should feel like a second README, but it is still canonical.
 
-**Audience**: Humans — developers, users, stakeholders
+**Audience**: Humans first — founders, developers, users, reviewers, new contributors
 
-**Tone**: Warm, approachable, conversational but professional
+**Tone**: Warm, concise, approachable
 
-**Length**: Keep under 1000 lines
+**Length**: Aim for one sitting. Prefer under 250 lines. If it grows past 400 lines, it is probably carrying spec material that belongs elsewhere.
 
-**Required Sections**:
+**Stack role**: First canonical layer. Write it before `spec.md`. If only `product.md` survives, a strong reader should still be able to reconstruct the intended product and derive a likely `spec.md`, but some thinking is still required.
 
-| Section | What it Contains |
-|---------|------------------|
-| Overview | One-paragraph elevator pitch. What is this thing and why does it exist? |
-| Features | Bullet list of core capabilities. What can users do? |
-| Architecture Summary | High-level design. Main components and how they connect. Diagram encouraged. |
-| User Flows/Stories | How different users interact with the system. Key journeys. |
+**What belongs here**:
 
-**Optional Sections**:
-- Quick Start / Getting Started
-- Philosophy / Design Principles
-- Non-Goals / Out of Scope ← **Recommended** — what this is deliberately NOT. Prevents scope creep and stops agents from hallucinating features that were consciously rejected.
-- Unresolved Questions ← **Recommended** — known unknowns. Stops agents from hallucinating solutions for unsolved problems.
-- Roadmap / Future Direction
+- the elevator pitch,
+- the core value proposition,
+- the major user journeys,
+- the major system shape,
+- the important non-goals.
+
+**What does NOT belong here**:
+
+- exhaustive edge-case behavior,
+- protocol minutiae,
+- line-by-line API contracts,
+- implementation internals.
+- source-level implementation detail.
+
+**Required sections**:
+
+| Section | What it contains |
+|---|---|
+| Overview | What this product is and why it exists |
+| Core Capabilities | The few things the product fundamentally does |
+| Main User Flows | Key journeys or stories |
+| System Shape | High-level component view, no deep internals |
+| Non-Goals | Deliberately out of scope behavior |
+
+**Optional sections**:
+
+- Quick Start
+- Design Principles
+- Target Users
+- Roadmap
+- Open Questions
 
 ---
 
-### arch*.md — The Machine Canon
+### `spec.md` — The Behavioral Canon
 
-**Purpose**: Complete technical specification. Machine-readable, exhaustive. You could throw away the code and rebuild it entirely from these docs.
+**Purpose**: Define the product behavior in enough detail that the code could be discarded and the system reimplemented in another language or stack with the same externally observable behavior.
 
-**Audience**: Agents/machines primarily, but also developers needing deep reference
+**Audience**: Implementers, reviewers, testers, agents
 
-**Tone**: Clinical, direct, no fluff. Facts and structure over narrative.
+**Tone**: Precise, direct, testable, language-agnostic
 
-**Required Core Sections**:
+**Stack role**: Second canonical layer. Write it from `product.md`, preserving product truth while removing ambiguity. If `spec.md` survives, the product can be rebuilt behaviorally in any language without needing the original code.
 
-| Section | What it Contains |
-|---------|------------------|
-| Overview | 10,000ft view. What this component/system does and its boundaries. |
-| Scope Boundary | What this component owns vs. does NOT own. Prevents functionality creep. |
-| Dependencies | External packages, internal modules, services consumed. Versions if relevant. |
-| Data Models | Schemas, types, structures, database tables, state shapes. |
-| Component Relationships | How this connects to other parts. Data flow, communication patterns. |
-| Contracts / Invariants | Behaviors that MUST hold. Breaking these is a bug, not a refactor. |
-| Design Decisions | Important choices and why they were made. Reference ADRs for major ones. Include confidence levels. |
+**Philosophy**: `spec.md` is RFC-like, not RFC cosplay. Borrow the rigor of RFCs and standards documents without cargo-culting internet publication boilerplate that does not help this repo.
 
-**Scope Boundary Format**:
+### Style Sources for `spec.md`
+
+- **RFC 7322** — structure, consistency, editorial discipline
+- **RFC 2119** — normative keywords (`MUST`, `SHOULD`, `MAY`)
+- **MessagePack spec** — precise tables, diagrams, and conversion rules
+- **W3C QA Specification Guidelines** — conformance thinking and testability
+
+Do **not** automatically add sections like `Status of This Memo`, `IANA Considerations`, or `Author's Address` unless the project explicitly wants them.
+
+### Required sections for `spec.md`
+
+| Section | What it contains |
+|---|---|
+| Abstract | Short summary of what the product/system specified here does |
+| Introduction | Context, goals, and why this spec exists |
+| Scope | What is in scope and out of scope |
+| Terminology | Terms that matter for correct interpretation; link glossary when present |
+| Normative Language | RFC 2119 interpretation of `MUST`, `SHOULD`, `MAY` |
+| System Model | Main actors, interfaces, states, and top-level concepts |
+| Conformance | What a conforming implementation must do |
+| Behavioral Specification | Feature-by-feature or interface-by-interface behavior |
+| Data and State Model | Important entities, states, schemas, transitions |
+| Error Handling and Edge Cases | Failure modes, invalid input behavior, limits |
+| Security Considerations | Security assumptions, constraints, risks |
+| References | Normative and informative references when applicable |
+
+### Recommended sections for `spec.md`
+
+- Compatibility / Migration
+- Extensibility Rules
+- Deprecations
+- Examples
+- Diagrams / State Machines
+- Open Questions
+
+### Rules for writing `spec.md`
+
+- Focus on **what the system must do**, not how a specific codebase currently does it.
+- Use **normative language** only when requirement strength matters.
+- Keep normative and informative text clearly separable.
+- Prefer tables, truth tables, sequence diagrams, state diagrams, and structured examples over vague prose.
+- Define limits, ordering rules, retries, idempotency, error codes, fallback behavior, and conflict resolution explicitly.
+- Write so an independent team could implement from scratch without seeing the source.
+
+### Normative Language
+
+Use RFC 2119 meanings:
+
+- **MUST / MUST NOT** — absolute requirement
+- **SHOULD / SHOULD NOT** — recommended default; exceptions require justification
+- **MAY** — optional behavior
+
+Use these terms sparingly. They should govern interoperability, correctness, or safety — not stylistic preference.
+
+### Conformance Guidance
+
+Every `spec.md` should answer what counts as a conforming implementation, which behaviors are mandatory vs optional, which interfaces or actors must conform, and what variability is allowed without breaking conformance. If the product has profiles, modes, roles, extension points, deprecated behavior, or optional modules, the spec must say exactly how those affect conformance.
+
+- When references exist, split them into **Normative References** and **Informative References**, keep citation labels consistent, cite stable sources when possible, and do not rely on a URL alone when a proper named standard exists.
+- `Security Considerations` is required even when brief. If there are no special concerns, say so explicitly.
+
+---
+
+### `arch.md` / `arch_*.md` — The Architecture Canon
+
+**Purpose**: Describe the current implementation architecture in enough detail that the present system could be rebuilt without the source code. Focus on structure, boundaries, flows, runtime behavior, and operational shape.
+
+**Audience**: Implementers, maintainers, reviewers, agents
+
+**Tone**: Structural, factual, implementation-aware
+
+**Stack role**: Third canonical layer. Write it from `spec.md`, preserving specified behavior while describing the current implementation shape of this repository. If the architecture docs survive, the current implementation can be rebuilt far more faithfully than from `spec.md` alone.
+
+**Key distinction from `spec.md`**:
+
+- `spec.md` defines **behavioral truth**.
+- `arch*.md` defines **implementation shape**.
+
+The architecture layer may mention concrete frameworks, services, deployment topology, storage systems, and code organization when those details matter architecturally. It should still avoid trivia and line-by-line code narration.
+
+### Required sections for architecture docs
+
+| Section | What it contains |
+|---|---|
+| Overview | What this component or system is and why it exists |
+| Scope Boundary | What it owns, what it does not own, and the interfaces at the boundary |
+| Components | Internal parts and their responsibilities |
+| Data Models / Storage | Important persisted or in-memory structures |
+| Relationships and Flow | How data and control move through the system |
+| Dependencies | External services, packages, runtimes, internal modules |
+| Contracts / Invariants | Properties the implementation must preserve |
+| Configuration / Operations | Runtime config, deployment, observability, failure domains |
+| Design Decisions | Important implementation choices and why they exist |
+
+### Recommended sections for architecture docs
+
+- API Surface
+- Security Model
+- Performance Characteristics
+- Testing Strategy
+- Migration Notes
+- Implementation Pointers
+
+### Scope Boundary format
 
 ```markdown
 ### Scope Boundary
 
-**This component owns**: request routing, middleware chain, response serialization
-**This component does NOT own**: business logic, data persistence, auth decisions
-**Boundary interfaces**: receives validated config from arch_core, calls services in arch_services
+**Owns**: request routing, middleware chain, response serialization
+**Does not own**: business rules, persistence policy, authorization decisions
+**Boundary interfaces**: receives validated config from `arch_core.md`, calls services in `arch_api.md`
 ```
 
-**Contracts / Invariants Format**:
+### Contracts / Invariants format
 
 ```markdown
 ### Contracts / Invariants
 
 | Invariant | Description |
-|-----------|-------------|
-| Idempotent retries | Any task MUST be retriable without side effects |
-| Auth required | No endpoint MUST return data without valid token |
-| Ordering | Events MUST be processed in receipt order |
+|---|---|
+| Idempotent retries | Retried tasks MUST not create duplicate side effects |
+| Ordered processing | Events MUST be handled in receipt order within a partition |
+| Auth boundary | Private data MUST NOT cross an unauthenticated boundary |
 ```
 
-These give agents hard boundaries — they know what they can never deviate from versus what's flexible.
+### Design Decisions guidance
 
-**Design Decisions Format** — include confidence levels so readers know which decisions are settled vs. open for revisiting:
+Architecture docs should capture decisions that materially shape the system. Reference ADRs when they exist.
 
-| Decision | Why | Confidence |
-|----------|-----|------------|
-| Use JWT for auth | Stateless, works across services | High |
-| Redis for caching | Familiar, fast enough for now | Medium — revisit at scale |
-| Single DB instance | Simple to start | Low — will need sharding |
+Recommended confidence labels:
 
-- **High**: Settled. Won't change without major new requirements.
-- **Medium**: Works for now but may need revision at scale/growth.
-- **Low**: Quick choice, expects change. Flag for human review before rebuilding.
+| Confidence | Meaning |
+|---|---|
+| High | Settled unless requirements materially change |
+| Medium | Stable for now but likely to evolve |
+| Low | Temporary or exploratory; verify before rebuilding |
 
-**Flexible/Optional Sections** (add as needed):
+### Implementation Pointers
 
-| Section | When to Add |
-|---------|-------------|
-| Implementation Pointers | Paths/files to check in codebase. Not canon — just helps sync. Format below. |
-| API Surface | If component exposes functions/endpoints. Full signatures. |
-| Configuration | If component has config options. All options documented. |
-| Error Handling | If component has specific error states/behaviors. |
-| Security | If component handles auth, encryption, permissions. |
-| Performance | If component has performance constraints/optimizations. |
-| Testing | If component has specific testing strategies/fixtures. |
-| Examples | If usage isn't obvious from API surface alone. |
-
-**Implementation Pointers Format** — helps agents find code during sync without treating code as canon:
+This section is optional and non-canonical. It helps sync docs with code without making code the source of truth.
 
 ```markdown
 ### Implementation Pointers
 
-- **Repos/paths**: `src/core/*`, `src/config/*`
-- **Entry points**: `src/core/init.ts`
-- **Generated artifacts**: `dist/*` (do not edit)
+- Repos/paths: `src/core/*`, `src/config/*`
+- Entry points: `src/core/init.ts`
+- Generated artifacts: `dist/*` (do not edit)
 ```
 
 ---
 
-### arch_index.md — The Map
+### `arch_index.md` — The Map
 
-**Purpose**: Quick navigation to all arch files. One-line descriptions.
+**Purpose**: Navigate architecture files quickly.
 
 **Format**:
 
@@ -242,19 +344,19 @@ These give agents hard boundaries — they know what they can never deviate from
 ## Components
 
 | File | Description |
-|------|-------------|
-| [arch_core.md](arch_core.md) | Shared foundation — logging, config, utils |
-| [arch_api.md](arch_api.md) | REST API layer — routes, handlers, middleware |
-| [arch_mcp.md](arch_mcp.md) | MCP protocol implementation |
+|---|---|
+| [arch_core.md](arch_core.md) | Shared foundation: config, logging, runtime wiring |
+| [arch_agent.md](arch_agent.md) | Agent execution model and boundaries |
+| [arch_cli.md](arch_cli.md) | CLI command parsing and orchestration |
 ```
 
 ---
 
-### ADRs (Architecture Decision Records)
+### ADRs
 
 **Location**: `docs/adr/`
 
-**Naming**: `NNNN-short-description.md` (e.g., `0001-use-postgres-not-mongo.md`)
+**Naming**: `NNNN-short-description.md`
 
 **Template**:
 
@@ -267,22 +369,18 @@ These give agents hard boundaries — they know what they can never deviate from
 
 ## Context
 
-What is the issue we're facing? What options were considered?
+What issue are we solving? What options were considered?
 
 ## Decision
 
-What did we decide? Be specific.
+What did we choose?
 
 ## Consequences
 
-What changes? Benefits? Trade-offs?
+What becomes easier, harder, or riskier?
 ```
 
-**When to Write an ADR**:
-- Choosing between significant alternatives
-- Making a non-obvious technical decision
-- Establishing a pattern others should follow
-- Reversing a previous decision
+Write an ADR when choosing between meaningful alternatives, establishing a pattern others should follow, or reversing a previous decision.
 
 ---
 
@@ -290,86 +388,50 @@ What changes? Benefits? Trade-offs?
 
 ### Language
 
-- Use precise, unambiguous terms
-- Define terms in `glossary.md`, link to it instead of re-defining
-- Consistent terminology throughout — same word means same thing
-- Avoid "usually", "might", "should generally" — be definitive
-
-**Normative Language (RFC 2119)**:
-
-- **MUST** / **MUST NOT** — absolute requirement, binding
-- **SHOULD** / **SHOULD NOT** — recommended, valid exceptions exist
-- **MAY** — optional
-
-Statements using these keywords are normative (binding). Everything else is informative (context, explanation).
-
-Example:
-- "The API MUST return 401 on missing token." (normative — breaking this is a bug)
-- "We typically deploy weekly." (informative — just context)
+- Use precise, stable terminology.
+- Define shared terms once in `glossary.md` when needed.
+- Avoid hedging words like `usually`, `kind of`, `probably`, `roughly`, unless uncertainty is the point.
+- If something is undecided, label it explicitly as undecided.
 
 ### Code Examples
 
-- Must be copy-pasteable and functional
-- Include language tag in code block
-- Show expected output when relevant
-- **Placeholder policy**: All placeholders MUST use `<placeholder_name>` format and include a warning:
+- They must be copy-pasteable when presented as runnable examples.
+- Include language tags.
+- Use `<placeholder_name>` for placeholders and mark them clearly.
 
 ```python
-client.login(username="<your_username>", token="<api_token_from_dashboard>")
-# ⚠️ Replace placeholder values. Copy-pasting as-is will fail.
+client.login(username="<your_username>", token="<api_token>")
+# Replace placeholder values before running.
 ```
-
-Agents scan for unannotated placeholders and flag them as discrepancies.
 
 ### Diagrams
 
-- Any format: Mermaid, PlantUML, ASCII art
-- Prefer Mermaid for GitHub-native rendering
-- Diagrams must be version-controllable (no binary images)
+- Prefer text-first, versionable diagrams: Mermaid, PlantUML, ASCII.
+- Use diagrams when structure or flow is easier to see than explain.
 
-### Links
+### Links and Boundaries
 
-- Cross-link related sections
-- Link to ADRs for design decisions
-- External dependencies: reference by name only, don't document their internals
-
-### Cross-Repository Boundaries
-
-When documenting external services or multi-repo components:
-
-| DO | DON'T |
-|----|-------|
-| Document interface, contract, expected behavior | Document internal implementation |
-| Link to other repo's `product.md` or `arch.md` if public | Document private APIs or internals |
-| Note latency, SLA, version expectations | Assume external repo's doc structure |
-
-**Example**:
-
-```markdown
-Integrates with [Auth Service](https://github.com/org/auth-repo/blob/main/docs/product.md) 
-via OAuth2. Expected latency <200ms. Contract defined in `schemas/auth.yaml`.
-```
-
-**Flag if**: External service lacks docs → "⚠️ Undocumented dependency — risk of drift"
+- Cross-link related sections.
+- Link to ADRs for important design decisions.
+- For external systems, document the contract and expectations, not their internals.
+- If another repo has canonical docs, link to that repo's `product.md`, `spec.md`, or architecture docs instead of rewriting them locally.
 
 ### Deprecation
 
-- Never silently delete documented behavior
-- Mark deprecated sections clearly:
+- Never silently delete documented behavior.
+- Mark deprecated behavior clearly and state the replacement and timeline when known.
 
 ```markdown
-> ⚠️ **Deprecated since vX.Y** — Use [new-thing] instead. Will be removed in vX.Z.
+> Deprecated since vX.Y. Use [new-thing] instead. Planned removal: vX.Z.
 ```
 
 ### Intentionally Undocumented
 
-When something is deliberately not documented (internal implementation details, unstable APIs, etc.):
+When a detail is deliberately left unstable or internal:
 
 ```markdown
-> 🔇 **Intentionally undocumented** — implementation detail, subject to change without notice.
+> Intentionally undocumented — internal detail, subject to change without notice.
 ```
-
-This prevents sync processes from flagging it as a discrepancy forever.
 
 ---
 
@@ -377,58 +439,61 @@ This prevents sync processes from flagging it as a discrepancy forever.
 
 ### Creating New Docs
 
-1. Propose file structure before writing
-2. Human approves structure
-3. Draft content
-4. Human reviews and approves
-5. Docs become the build contract
+1. Propose the file structure before writing.
+2. Get approval on the structure.
+3. Draft `product.md` first.
+4. Draft `spec.md` from `product.md`.
+5. Draft `arch.md` / `arch_*.md` from `spec.md`.
+6. Review the stack for consistency.
+7. Finalize. The docs become the build contract.
 
 ### Syncing Docs with Code
 
-Triggered when:
-- Human requests sync after a session
-- Human requests regeneration after massive changes
+1. Read existing docs first.
+2. Read relevant code.
+3. Find every discrepancy.
+4. Decide whether the doc should change or the code should change.
+5. Update the affected layer and note what changed.
 
-Process:
-1. Read existing docs
-2. Read relevant code
-3. Identify discrepancies
-4. For each: is code correct (update docs) or docs correct (flag for code fix)?
-5. Update affected sections, noting what changed and why
+### Recommended Reading Order
 
-### Inquiring About Docs
+1. `product.md` — orientation
+2. `glossary.md` — vocabulary
+3. `spec.md` — behavior contract
+4. `arch_index.md` — architecture map when present
+5. relevant `arch_*.md` files — implementation detail
+6. ADRs — decision history
+7. code — only when docs are silent, stale, or ambiguous
 
-**Agent Reading Order** — when approaching a project cold:
+When reporting, say:
 
-1. `product.md` — understand what this is
-2. `docs/glossary.md` — learn the vocabulary
-3. `arch_index.md` — understand the component map
-4. Relevant `arch_*.md` — deep dive on area of interest
-5. Relevant `adr/` entries — understand why decisions were made
-6. Code — only if docs are silent or ambiguous
-
-**Reporting**: Always report what docs say, what code does, and whether they agree.
+- what `product.md` says,
+- what `spec.md` says,
+- what architecture docs say,
+- what code does,
+- whether they agree.
 
 ---
 
 ## Quick Reference
 
-| Doc Type | Audience | Length | Tone |
-|----------|----------|--------|------|
-| product.md | Humans | <1000 lines | Warm, approachable |
-| arch*.md | Machines | No limit | Clinical, direct |
-| arch_index.md | Both | Minimal | Factual |
-| glossary.md | Both | As needed | Definitive |
-| ADRs | Humans | Short | Structured |
+| Doc Type | Audience | Primary Question | Tone |
+|---|---|---|---|
+| `product.md` | Humans | What is this and why does it matter? | Warm, concise |
+| `spec.md` | Implementers, testers, agents | What must the system do? | Precise, normative |
+| `arch.md` / `arch_*.md` | Implementers, maintainers, agents | How is the current system structured? | Structural, factual |
+| `arch_index.md` | Both | Where do I read next? | Minimal, factual |
+| `glossary.md` | Both | What do these terms mean? | Definitive |
+| `adr/*` | Humans | Why was this decision made? | Structured |
 
 ---
 
 ## Documentation Agent Boundaries
 
-When using agents to manage docs, they should NOT:
+Documentation agents should NOT:
 
-- Write or modify source code
-- Make architectural or technical decisions (documents them only)
-- Assume undocumented behavior is intentional
-- Leave discrepancies unresolved without flagging
-- Document internals of external systems/repositories
+- write or modify source code,
+- make product or architecture decisions on their own,
+- assume undocumented behavior is intentional,
+- leave discrepancies unresolved without flagging them,
+- document internals of external systems they do not own.

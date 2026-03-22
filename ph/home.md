@@ -373,7 +373,7 @@ Those serve as examples — adapt to language specifics.
 | Check | Question |
 |-------|----------|
 | **Entry points obvious** | Can an agent find `main()`, `app.py`, `index.ts` in < 30 seconds? |
-| **Module map** | Is there a `docs/arch*.md` or similar that maps the codebase? |
+| **Module map** | Is there a `docs/spec.md` and `docs/arch*.md` or similar that map behavior and architecture? |
 | **Naming clarity** | Are folder/file names self-explanatory? `utils/` is a red flag. |
 | **Config discoverability** | Can an agent find all config files without spelunking 5 directories deep? |
 
@@ -408,7 +408,9 @@ repo/
 ├── AGENTS.md              # Single source of truth for agent context
 ├── .cursor/rules/         # (if using Cursor) — minimal, focused rules
 ├── docs/
-│   ├── arch.md            # Machine-readable architecture map
+│   ├── product.md         # Quick human overview
+│   ├── spec.md            # Canonical behavior spec
+│   ├── arch.md            # Architecture canon (split if needed)
 │   └── agent-guide.md     # How to work with this repo programmatically
 ├── Makefile               # One-command everything: dev, test, lint, build
 └── configs/               # Typed, schema-validated configs (not mystery YAML)
@@ -493,7 +495,7 @@ repo/
 | **Automation scripts** | Makefile, justfile, taskfile.yml with `dev`, `test`, `lint`, `build` |
 | **Governance files** | CODEOWNERS, `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE` |
 | **Health scripts** | Setup scripts, seed data scripts, local dev docker-compose |
-| **Agent context** | `AGENTS.md`, `docs/arch.md`, schema-validated configs, parseable linter/test output |
+| **Agent context** | `AGENTS.md`, `docs/spec.md`, `docs/arch*.md`, schema-validated configs, parseable linter/test output |
 
 ---
 
@@ -511,8 +513,10 @@ repo/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── CODEOWNERS           # (if team > 1)
 ├── .husky/                  # or .git/hooks/ — pre-commit, commit-msg
-├── docs/                    # Architecture, decisions, API docs
-│   └── arch*.md             # Machine-written canonical reference
+├── docs/                    # Product, spec, architecture, decisions, API docs
+│   ├── product.md           # Human-facing overview
+│   ├── spec.md              # Behavioral canon
+│   └── arch*.md             # Architecture canon
 ├── src/                     # or lib/, app/ — follows language convention
 ├── tests/                   # or __tests__/, test/, spec/
 ├── .editorconfig            # Editor-agnostic formatting
