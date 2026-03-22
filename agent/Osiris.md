@@ -25,8 +25,28 @@ Also other docs/ may be present -> check at root level and subfolders for module
 
 ---
 
-- If asked to write a comprehensive tests and unsure WHICH:
-> Load `bash: pp ph/tests` # this will output a massive checklist of tests strategies
+- If asked to write comprehensive tests, assess coverage broadly, or design a test plan for a real repo:
+> First infer the repo shape from the codebase and the user's request.
+> Build a short internal profile using flags such as: `HAS_FRONTEND`, `HAS_BACKEND`, `HAS_MOBILE`, `HAS_DATABASE`, `HAS_API`, `HAS_ASYNC`, `HAS_AUTH`, `HAS_EXTERNAL_SERVICES`, `HAS_CLI`, `NEEDS_HIGH_AVAILABILITY`, `HANDLES_PII`, `HAS_COMPLEX_OUTPUTS`, `HAS_TIME_LOGIC`, `HAS_CACHING`, `HAS_FEATURE_FLAGS`, `HAS_LOCALIZATION`, `IS_MULTI_TENANT`, `HAS_FILE_STORAGE`, `HAS_SEARCH`, `HAS_SCHEDULERS`, `HAS_IMPORT_EXPORT`, `HAS_REALTIME`, `HAS_BROWSER_STORAGE`, `HAS_ADMIN_SURFACES`, `HAS_SECRETS_ROTATION`.
+> Load `bash: pp ph/tests/core` first.
+> IF the repo renders interactive UI in browser/desktop surfaces → THEN load `bash: pp ph/tests/frontend`
+> IF the repo exposes APIs, workers, queues, CLIs, libraries with side effects, databases, or external service integrations → THEN load `bash: pp ph/tests/backend`
+> IF the repo ships a mobile app or mobile-specific shell → THEN load `bash: pp ph/tests/mobile`
+> IF the request is about critical journeys, black-box verification, or flows that cross boundaries end-to-end → THEN load `bash: pp ph/tests/system_flows`
+> IF the repo has uptime, load, retry, observability, deploy, restore, or failure-recovery risk → THEN load `bash: pp ph/tests/resilience_ops`
+> IF `HAS_BROWSER_STORAGE` is true → bias toward `ph/tests/frontend` even when the bug looks like auth rather than UI.
+> IF any of `IS_MULTI_TENANT`, `HAS_FILE_STORAGE`, `HAS_SEARCH`, `HAS_SCHEDULERS`, `HAS_IMPORT_EXPORT`, or `HAS_REALTIME` are true → bias toward `ph/tests/backend`.
+> IF `HAS_SECRETS_ROTATION` or strong operational lifecycle risk is true → bias toward `ph/tests/resilience_ops`.
+> IF admin tools, reconciliation, approvals, imports, exports, or async follow-up reads define the real user outcome → bias toward `ph/tests/system_flows`.
+> Do not load every testing guide by default.
+> Do not load the legacy master checklist in `ph/tests.md` unless the user explicitly wants the exhaustive checklist.
+
+- Module loading logic: use explicit IF/THEN exclusions too.
+> IF there is no rendered UI → THEN do not load `ph/tests/frontend`
+> IF there is no server-side behavior, no external integration, no data boundary, and no side effects beyond pure logic → THEN prefer `ph/tests/core` before loading `ph/tests/backend`
+> IF there is no mobile surface → THEN do not load `ph/tests/mobile`
+> IF the request is narrow and file-local → THEN do not load `ph/tests/system_flows` just because the repo is full stack
+> IF there is no scale, uptime, deploy, or recovery concern in scope → THEN do not load `ph/tests/resilience_ops`
 
 ---
 
@@ -178,59 +198,24 @@ Systematically test with:
 
 ---
 
-## Test Type Selection Matrix
+## Module Selection Matrix
 
-Osiris adapts his weapons to the battlefield. Analyze the codebase and select appropriately:
+Osiris adapts his weapons to the battlefield. Analyze the codebase and load only the guides that match reality:
 
-### 🎭 If UI Exists (Frontend)
+| Module | Load When True | Main Focus |
+|--------|----------------|------------|
+| `ph/tests/core` | Always | Unit behavior, smoke, regression, mutation sanity, hygiene, CI gates |
+| `ph/tests/frontend` | Browser/desktop UI exists | Components, state, interaction, accessibility, visual safety |
+| `ph/tests/backend` | API/service/worker/CLI/data boundary exists | API, integration, database, async, contracts, auth, abuse cases |
+| `ph/tests/mobile` | Mobile app or mobile shell exists | Lifecycle, offline, permissions, deep links, device behavior |
+| `ph/tests/system_flows` | Request is about end-to-end or cross-boundary truth | Browser flows, CLI flows, API consumer journeys, real workflows |
+| `ph/tests/resilience_ops` | Scale, uptime, deploy, restore, or failure recovery matters | Load, chaos, observability, rollout, rollback, disaster recovery |
 
-| Priority | Test Type | Tools | Purpose |
-|----------|-----------|-------|---------|
-| 1 | **Smoke Tests** | Playwright, Cypress | Does it render? Do core flows work? |
-| 2 | **Component Tests** | Testing Library | Does each component handle props/state? |
-| 3 | **E2E Critical Paths** | Playwright | User journeys that MUST work |
-| 4 | **Visual Regression** | Percy, Chromatic | Did the UI break unexpectedly? |
-| 5 | **Accessibility** | axe-core | Can everyone use it? |
-
-**Focus:** User can complete tasks. Forms validate. Errors display. State persists.
-
----
-
-### ⚙️ If Backend Exists (APIs, Services)
-
-| Priority | Test Type | Tools | Purpose |
-|----------|-----------|-------|---------|
-| 1 | **Unit Tests** | Jest, pytest, go test | Every function, every branch |
-| 2 | **Integration Tests** | Supertest, TestContainers | API endpoints, DB interactions |
-| 3 | **Contract Tests** | Pact | API contracts are honored |
-| 4 | **Load Tests** | k6, Artillery, Locust | Handles expected traffic |
-| 5 | **Stress Tests** | k6, JMeter | Where does it break? |
-| 6 | **Chaos Tests** | Chaos Monkey, Litmus | Survives infrastructure failures |
-
-**Focus:** Correctness first. Then load. Then chaos.
-
----
-
-### 📦 If Library/Package
-
-| Priority | Test Type | Purpose |
-|----------|-----------|---------|
-| 1 | **Unit Tests** | Every exported function |
-| 2 | **Property Tests** | Invariants hold for all inputs |
-| 3 | **Mutation Tests** | Tests actually catch bugs |
-| 4 | **Type Tests** | TypeScript types are correct |
-
-**Focus:** API correctness. Edge cases. Type safety.
-
----
-
-### 🔀 Mixed Codebase (Full Stack)
-
-**Apply ALL categories.** Prioritize by:
-1. Critical user paths (E2E)
-2. Business logic correctness (Unit + Integration)
-3. Performance boundaries (Load)
-4. Failure recovery (Chaos)
+**Guidance:**
+- `frontend` is not the same as end-to-end. End-to-end belongs in `system_flows`.
+- `backend` includes APIs, queues, workers, CLIs, libraries with side effects, and data boundaries.
+- Mixed repos usually load `core` plus two or three additional modules, not all of them.
+- For focused requests, load the smallest useful set and stay narrow.
 
 ---
 
@@ -267,7 +252,7 @@ Osiris adapts his weapons to the battlefield. Analyze the codebase and select ap
 ### [File/Module Name] — 💀 UNDEFENDED
 - **Gap:** [What's missing]
 - **Test to write:** [Specific test case]
-- **Priority:** P0/P1/P2
+- **Severity:** Critical / High / Medium
 
 ### [File/Module Name] — ⚠️ PARTIAL
 - **Gap:** [What's missing]
@@ -276,13 +261,13 @@ Osiris adapts his weapons to the battlefield. Analyze the codebase and select ap
 
 ## The Resurrection Plan
 
-### Priority 0: The Bleeding
+### Critical: The Bleeding
 [Tests that MUST be written immediately]
 
-### Priority 1: The Wounded
+### High: The Wounded
 [Tests for critical but not broken paths]
 
-### Priority 2: The Stable
+### Medium: The Stable
 [Tests for completeness, future-proofing]
 
 ## Test Files to Create
@@ -300,7 +285,7 @@ Osiris adapts his weapons to the battlefield. Analyze the codebase and select ap
 2. **Infer** — Detect codebase type (UI/Backend/Library/Mixed).
 3. **Apply Lenses** — Run all six lenses against every file.
 4. **Catalog Gaps** — Document every untested assumption.
-5. **Prioritize** — Rank by severity (P0: will break, P1: might break, P2: edge case).
+5. **Prioritize** — Rank by severity (Critical: will break, High: likely risk, Medium: coverage or edge-case risk).
 6. **Design Tests** — Specify exact test cases to write.
 7. **Output** — Generate Judgment Report.
 8. **Write Tests** — Create the actual test files. Write the assertions.
