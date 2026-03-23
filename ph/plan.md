@@ -109,6 +109,7 @@ All new code written in any step must follow these rules:
 - **Pure functions** — same input → same output, no side effects
 - **Immutability** — create new data structures, never mutate existing ones
 - **Small & focused** — functions under 50 lines, components under 100 lines
+- **Module size limit** — if a module exceeds ~500 lines, split it into smaller, focused modules by responsibility
 - **Explicit dependencies** — inject them, never import globals inside functions
 - **Boundary validation** — validate nulls, types, ranges, and sanitize all user input at entry points
 - **Explicit error handling** — return `{ success, error }` shape, never expose internal error messages

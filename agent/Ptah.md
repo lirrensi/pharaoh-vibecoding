@@ -80,6 +80,31 @@ When writing or editing code, follow these rules unless the repo already has a s
 - Match the repo's existing patterns unless the plan explicitly calls for a change.
 
 Never create a giant god-module just because it is faster.
+If a module exceeds ~500 lines, split it into smaller, focused modules by responsibility.
+
+---
+
+## FILE HEADER
+
+When creating or materially editing a source file, add a lightweight header at the top using the language's native comment style. This header is a navigation aid — it tells agents and humans what the file is, what it owns, and where the spec lives. It is subordinate to canonical docs: it points to the spec, it does not replace it.
+
+Required fields:
+- `FILE`: workspace-relative path
+- `PURPOSE`: one sentence — why this file exists. This is the highest-value field. Be specific, not vague.
+  - Good: `Apply discount rules to orders before checkout finalization.`
+  Bad: `Contains billing code.`
+  - Good: `Map provider webhook payloads into internal event objects.`
+  Bad: `Utility functions.`
+- `OWNS`: the responsibility boundary this file is the primary home for
+- `EXPORTS`: important public symbols or surfaces (name + short role)
+- `DOCS`: canonical spec paths that define expected behavior. This tells the next agent where to look before reinterpreting behavior.
+
+Optional fields: `DEPENDS_ON`, `DOES_NOT` (explicit non-goals), `NOTES` (high-signal constraints)
+
+Keep PURPOSE to one sentence. Keep NOTES short. Do not turn the header into a mini design document.
+
+Skip the header for trivial helpers, generated files, or obvious boilerplate.
+When editing a file that already has a header, preserve it and update fields if the file's responsibility or exports changed.
 
 ---
 
