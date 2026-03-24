@@ -24,7 +24,8 @@
 | `HAS_INFRA` | `*.tf`, `k8s/`, `helm/`, `Pulumi.yaml`, `cdk/` | Apply Infra adapter, secrets lens STRICTER, state file hygiene |
 | `HAS_RELEASES` | Tags/releases exist, publish config (npm/pypi/crates/docker) | Add release engineering checks, rollback story |
 | `HAS_MOBILE` | `ios/`, `android/`, `Fastfile`, `*.xcodeproj` | Apply Mobile adapter, signing config safety critical |
-| `HAS_ML` | `notebooks/`, `*.ipynb`, `models/`, DVC, `requirements-gpu.txt` | Check LFS/large file strategy, notebook hygiene |
+| `HAS_ML` | `notebooks/`, `*.ipynb`, `models/`, DVC, `requirements-gpu.txt`, LLM SDKs, vector DBs, prompt folders, eval harnesses | Escalate ML security review, check notebook/artifact hygiene, inspect prompt/RAG/tool trust boundaries |
+| `IS_ML_HEAVY` | Core product behavior depends on LLM/ML/agent loops, retrieval, tools, or non-deterministic pipelines | Treat as deeper static review: inspect code + existing tests thoroughly, but explicitly note that runtime safety still needs separate interactive/e2e evaluation |
 | `IS_REGULATED` | Handles PII/PHI/PCI, or in regulated industry | Stricter security/privacy checks, audit logging |
 | `IS_GREENFIELD` | Fresh repo, <10 commits, no CI yet | Prioritize setup over cleanup, bootstrap everything |
 | `IS_LEGACY` | Old repo, tech debt, inconsistent patterns | Prioritize low-risk cleanup, document before changing |
@@ -59,6 +60,12 @@ IF HAS_RELEASES:
   → Verify changelog tied to releases
 IF HAS_MOBILE:
   → Lens 5 (Secrets): Check signing configs (.p12, .keystore) not committed
+IF HAS_ML:
+  → Lens 5 (Secrets): Check prompt/RAG/tool boundaries, output redaction, and model-adjacent secrets handling
+  → Lens 4 (Dependency Hygiene): Audit AI/ML dependency sprawl and stale packages more aggressively
+IF IS_ML_HEAVY:
+  → Apply a deeper code review of non-deterministic flows, mutation paths, and safety controls
+  → State coverage limit explicitly: code + existing tests only, not full runtime proof
 IF IS_REGULATED:
   → Lens 5 (Secrets): Audit logging, PII handling documented
 IF IS_GREENFIELD:

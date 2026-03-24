@@ -20,6 +20,13 @@
 - [ ] 🔴 Avoid sleeps/timeouts in tests — use fakes, clocks, signals; sleeps create slow + flaky suites
 - [ ] 🔴 Each test owns its data — no shared mutable fixtures that leak state across tests
 
+### ML / Agentic Verification Limits
+
+- [ ] 🔴 IF behavior depends on prompts, retrieval, tools, or model policies → THEN have deterministic tests around prompt builders, policy gates, sanitizers, allowlists, redaction, and fallback logic — don't leave safety in untested glue code
+- [ ] 🟡 IF the repo is ML-heavy → THEN state testability limits clearly: existing tests can verify guardrail code and contracts, but they do not prove live model behavior across all prompts or sessions
+- [ ] 🟡 IF the team relies on manual prompting or ad hoc notebook checks for safety claims → THEN treat that as weak evidence unless key protections are covered by repeatable automated tests
+- [ ] 🟡 IF prompt-injection, RAG leakage, or tool-misuse defenses exist → THEN verify regression tests cover known bad inputs and expected blocked/redacted outcomes
+
 ---
 
 ## 📜 Comment & Documentation Smells
