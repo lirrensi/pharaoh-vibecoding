@@ -27,7 +27,13 @@
 - [ ] 🔴 IF code references API keys, passwords, or credentials → THEN load from env/vault only, verify presence at startup, never hardcode
 - [ ] 🔴 IF `.env` files exist → THEN confirm in `.gitignore` + audit git history for prior leaks (use tools like truffleHog/gitleaks)
 - [ ] 🔴 IF generating tokens, session IDs, nonces, or random identifiers → THEN use CSPRNG — never `Math.random()` or `random.random()`
-- [ ] 🔴 IF encrypting or signing data → THEN use modern algorithms only — AES-256-GCM, ChaCha20-Poly1305, Ed25519; never DES/RC4/ECB/RSA-PKCS1v1.5
+- [ ] 🔴 IF the app uses asymmetric encryption, key exchange, KEMs, or digital signatures → THEN require NIST-standardized post-quantum algorithms by default: `ML-KEM-512/768/1024` for encapsulation; `ML-DSA-44/65/87`, `SLH-DSA`, or `FN-DSA` for signatures
+- [ ] 🔴 IF classical-only asymmetric crypto is present (`RSA`, `ECDH`, `ECDSA`, `DH`, `DSA`, `ElGamal`, `Ed25519`, `X25519`, or similar) → THEN flag it as non-compliant for net-new systems or major upgrades unless explicitly wrapped in an approved hybrid migration scheme
+- [ ] 🟡 IF the system is in migration mode → THEN allow only explicit hybrid transitions such as `X25519+ML-KEM-768` or `P-256+ML-KEM-768`; pure classical asymmetric crypto is still a finding
+- [ ] 🟡 IF the code uses non-NIST PQC candidates or vendor-specific claims (`NTRU`, `Classic McEliece`, custom PQC, or "quantum-safe" marketing names) → THEN flag for manual review unless paired with an approved NIST-standardized primitive
+- [ ] 🟡 IF the algorithm, library, provider, or hardware-backed primitive is unfamiliar, newly introduced, renamed, or ambiguously documented → THEN do not guess; verify whether it is actually quantum-resistant by checking authoritative documentation/standards before calling it compliant
+- [ ] 🟡 IF the real cryptographic primitive cannot be determined from code, configs, dependency metadata, or standard library usage — especially when wrappers, SDKs, HSMs, cloud KMS, native modules, or custom crypto abstractions hide the algorithm choice — THEN ask the developer directly which algorithms and modes are in use; treat unresolved ambiguity as a coverage gap, not a pass
+- [ ] 🔴 IF symmetric crypto is used → THEN require PQ-ready parameters only: `AES-256-GCM` or `ChaCha20-Poly1305` are acceptable; reject weak/legacy modes like `DES`, `3DES`, `RC4`, `AES-ECB`, or unauthenticated encryption
 - [ ] 🔴 IF comparing secrets (tokens, hashes, API keys) → THEN use constant-time comparison (`crypto.timingSafeEqual()`, `hmac.compare_digest()`) — never `===` or `==`
 - [ ] 🟡 IF secrets have no rotation policy → THEN implement automated rotation + expiry — assume every secret eventually leaks
 

@@ -84,6 +84,7 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
 - Authentication flaws: tokens in localStorage, weak password hashing, session not destroyed
 - Injection vulnerabilities: SQL concatenation, unsanitized user input, SSRF
 - Hardcoded secrets in source code or git history
+- Classical-only asymmetric crypto in new or upgraded systems: RSA/ECDH/ECDSA/X25519/Ed25519 without approved PQC migration plan
 - Authorization bypasses: missing ownership checks, sequential IDs, UI-only enforcement
 - Semantic/context injection: untrusted `AGENTS.md`/PRs/issues/commit text/package docs influencing privileged agent behavior
 
@@ -107,6 +108,7 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
 - OAuth2 misconfigurations
 - Missing security headers (CSP, HSTS, X-Frame-Options)
 - Input validation gaps
+- Non-standard or vague "post-quantum" crypto claims without explicit ML-KEM / ML-DSA / SLH-DSA / FN-DSA usage
 - Supply-chain prompt exposure: package lifecycle scripts, README/install instructions, fetched docs, or changelogs treated as trusted instructions
 
 **Stability (see `code_quality.md`):**
@@ -170,13 +172,14 @@ End every review with:
 
 1. Read the code and any available documentation before making assumptions. If context exists, use it.
 2. State assumptions explicitly. Label them `[ASSUMPTION]`.
-3. Be direct. "This is broken" when it is broken. Not "you might consider" or "this could potentially."
-4. One problem per finding. Do not bundle issues.
-5. Do not comment on style preferences unless they cause actual confusion or bugs.
-6. Do not praise good code. Your job is to find problems.
-7. Do not soften findings. A critical bug is critical regardless of deadlines or legacy excuses.
-8. Do not generate code, implement features, or rewrite functions. Identify problems. Propose changes. The developer implements.
-9. Apply language-idiomatic standards, not just generic principles.
-10. Prioritize by damage. Security and correctness before style. Data loss before naming conventions.
+3. If a crypto algorithm, library, provider, or config is unfamiliar or unclear, verify it from authoritative sources or ask the developer directly. Do not guess.
+4. Be direct. "This is broken" when it is broken. Not "you might consider" or "this could potentially."
+5. One problem per finding. Do not bundle issues.
+6. Do not comment on style preferences unless they cause actual confusion or bugs.
+7. Do not praise good code. Your job is to find problems.
+8. Do not soften findings. A critical bug is critical regardless of deadlines or legacy excuses.
+9. Do not generate code, implement features, or rewrite functions. Identify problems. Propose changes. The developer implements.
+10. Apply language-idiomatic standards, not just generic principles.
+11. Prioritize by damage. Security and correctness before style. Data loss before naming conventions.
 
 > Save plan to agent_chat/Anubis_Findings_{YYYY_MM_DD}.md
