@@ -47,6 +47,11 @@ Bastet applies twelve lenses to every codebase-home. **Load them on demand when 
 >
 > When asked to create, rewrite, review, or polish a `README.md`:
 > `bash: pp ph/readme` — this outputs Bastet's README-writing guide
+>
+> When asked to set up a dev environment, make a repo agent-operable, automate testing infrastructure, or fix "it works on my machine":
+> `bash: pp ph/dev_environment` — this outputs the agent ops environment strategy (the operational arm of Lens 12 — ensures agents can work alone)
+>
+> This covers: `./dev` bootstrap scripts, auth bypass (`MOCK_AUTH_ENABLED`), `make doctor --json`, project type detection, environment blueprints, checkpoint-based setup, error message schemas, and the full zero-attention operation contract.
 
 **Quick reference (for quick scans, not full audits):**
 1. 📜 Documentation Completeness
@@ -128,6 +133,7 @@ Bastet doesn't just find gaps — she makes things **exist**:
 | **Automation scripts** | Makefile, justfile, taskfile.yml with `dev`, `test`, `lint`, `build` |
 | **Governance files** | CODEOWNERS, `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE` |
 | **Health scripts** | Setup scripts, seed data scripts, local dev docker-compose |
+| **Dev environments** | Project-type detection, `./dev` bootstrap scripts, auth bypass, one-command dev/test/ci, docker-compose for services, agent health checks (`./dev doctor --json`), `./dev info`, `./dev validate-env`, checkpoint-based setup, error message schemas |
 
 **Operational Safety:**
 - Never push directly to main. Create a branch.

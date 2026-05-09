@@ -203,6 +203,7 @@ IF IS_LEGACY:
 
 ## 🏥 Lens 8: Health Checks & Runability 🔴 CRITICAL
 *"Can a brand new dev clone and run this in under 10 minutes?"*
+*"Can a coding agent clone, setup, and run tests with zero manual steps?"*
 
 **Severity: 🔴 CRITICAL — If no one can run the project, it doesn't exist.**
 
@@ -217,8 +218,15 @@ IF IS_LEGACY:
 | **Failure clarity** | When setup fails, does error tell you WHAT TO DO? Or dump a stack trace? |
 | **Prerequisites** | External deps (Postgres, Redis, specific OS) listed upfront, not discovered mid-install? |
 | **Idempotency** | Running setup twice works, or fails on second run? |
+| **Agent-readiness** | Can an agent `./dev setup && ./dev test` without interactive prompts? |
+| **Doctor script** | Is there a `./dev doctor` that returns structured JSON health data with exit codes? |
+| **Auth bypass** | Is there a `MOCK_AUTH_ENABLED` flag that lets agents bypass GUI login? |
+| **Token generation** | Can an agent get an auth token via `./dev generate-token` without a browser? |
+| **Bootstrap entry point** | Is there a `./dev` script at the root that works without `make` installed? |
 
-**Hunt:** "Works on my machine." Missing dependencies. "Just run these 47 commands." Unlisted prerequisites. Cryptic error messages.
+**Hunt:** "Works on my machine." Missing dependencies. "Just run these 47 commands." Unlisted prerequisites. Cryptic error messages. No `./dev doctor`. No auth bypass for headless agents.
+
+> **When dev environment setup is needed:** Load `bash: pp ph/dev_environment` for the full blueprint strategy by project type.
 
 ---
 
@@ -405,8 +413,18 @@ Those serve as examples — adapt to language specifics.
 | **Test output structured** | Are test results in JUnit/TAP format? Or just wall of text? |
 | **One-command operations** | `make lint`, `make test`, `make dev` — agents struggle with multi-step manual processes |
 | **Error messages actionable** | "Error: port in use" vs "Error: port 3000 in use. Kill process with: `lsof -ti:3000 | xargs kill`" |
+| **`make doctor` exists** | Is there a single command that returns structured health data (JSON)? Agents need to self-diagnose. |
+| **`./dev` entry point exists** | Is there a root-level bootstrap script that works without `make` installed? |
+| **`make setup` idempotent** | Can an agent run setup twice safely? No "already exists" errors? |
+| **Environment self-service** | Can an agent spin up all dependencies, run tests, and tear down without human intervention? |
+| **Auth bypass available** | Is there a `MOCK_AUTH_ENABLED` flag that lets agents bypass GUI login? |
+| **Token generation** | Can an agent get an auth token via CLI without a browser? |
+| **Parseable error format** | Do errors include category, cause, fix command, and docs reference? |
+| **Time budgets defined** | Do commands have maximum time limits so agents can detect hung processes? |
 
-**Hunt:** Linters that only output pretty colors. Tests that print "something failed" without details. Commands that require interactive input.
+**Hunt:** Linters that only output pretty colors. Tests that print "something failed" without details. Commands that require interactive input. No `./dev doctor`. Setup that breaks on second run. GUI-only authentication with no CLI bypass.
+
+> **When agent operability needs to go deeper — project-type detection, environment blueprints, self-healing protocols:** Load `bash: pp ph/dev_environment` for the full agent ops environment strategy.
 
 ### The Healthy Agent-Ready Repo
 
