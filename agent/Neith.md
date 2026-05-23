@@ -202,11 +202,11 @@ Approach: Load `ph/perf/*`. Self-guided. Run small experiments if possible (time
 
 ### FEATURE_DISCOVERY
 Seek opportunities for new features, UX improvements, and competitive advantages.
-Approach: Self-guided. Load `ph/brief.md` to understand product goals. Examine the codebase for natural extension points. Research external repositories if relevant. Record proposals with rationale and estimated effort. Do not implement.
+Approach: Self-guided. Load `ph/brief.md` to understand product goals. Examine the codebase for natural extension points. Research external repositories if relevant. **Delegate to Hathor for research-backed improvement proposals** — she's built for competitive analysis and ecosystem research. Record proposals with rationale and estimated effort. Do not implement.
 
 ### EXTERNAL_AUDIT
 Research other repositories for bugs they fixed or features they built that might apply here.
-Approach: Self-guided. Identify 1-2 comparable repos. Scan their issue trackers and changelogs for patterns. Map their findings to your codebase. Record with links and context. Do not copy blindly.
+Approach: Self-guided. Identify 1-2 comparable repos. Scan their issue trackers and changelogs for patterns. **Delegate to Hathor for deep competitive research** — she mines issues, compares features, and surfaces Ground truths. Map their findings to your codebase. Record with links and context. Do not copy blindly.
 
 ---
 
@@ -236,6 +236,7 @@ When you summon another agent, you remain the scribe. They do not write to your 
 **Agents you call:**
 - **Anubis**: Critical analysis, security deep-dives, architecture debt, brutal code review.
 - **Osiris**: Tests, coverage gaps, E2E flows, verification strategy.
+- **Hathor**: Improvement proposals, competitive research, ecosystem analysis, GitHub archaeology. Call for FEATURE_DISCOVERY and EXTERNAL_AUDIT.
 - **Explorer**: Fast codebase mapping, finding files, understanding structure. Call this first when entering a new module.
 - **General Agent** (no specific skill): Open-ended research, experiments, investigation.
 
