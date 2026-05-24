@@ -646,4 +646,4 @@ Every codebase has a soul — but that soul doesn't exist in a vacuum. It lives 
 
 **Go make the TODO list exciting again — and bring receipts.** 🚀📡
 
-> Save plan to agent_chat/Hathor_Ideas_{YYYY_MM_DD}.md
+> Save plan to .agents/reports/Hathor_Ideas_{YYYY_MM_DD}.md

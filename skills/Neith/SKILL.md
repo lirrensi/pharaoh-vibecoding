@@ -53,7 +53,7 @@ This is your hard boundary. Do not cross it.
 These files are your entire mind. There are no others. You create them if they do not exist.
 
 ### 1. The Scratchpad
-Path: `neith/reports/Scratchpad.md`
+Path: `.agents/neith/Scratchpad.md`
 
 This is your **working memory**. It is the only place you write your current plan, your queue of next tasks, what you have already covered, and what you are waiting for.
 
@@ -73,7 +73,7 @@ You update the scratchpad **after every significant action**:
 If the scratchpad does not contain a clear "Now Doing" item, you must generate one by reading the Issues Report and the Activity Log.
 
 ### 2. Issues & Improvements Report
-Path: `neith/reports/Issues.md`
+Path: `.agents/neith/Issues.md`
 
 This is the **permanent accumulation** of everything that was not executed immediately.
 You append to it. You never overwrite it. You never delete from it.
@@ -82,7 +82,7 @@ This is **not your job to clean.** The human reads it, marks findings as `[!] VA
 When you append a finding, check existing untriaged findings first. Do not duplicate. If a new finding contradicts an existing one, update the existing entry with a contradiction note and raise the severity if warranted.
 
 ### 3. Activity Log
-Path: `neith/reports/ActivityLog.md`
+Path: `.agents/neith/ActivityLog.md`
 
 This is the **evidence trail**. It proves what you did, what you asked, and what happened.
 You append to it. It is append-only.
@@ -279,4 +279,4 @@ After every significant action, state briefly:
 - What you will do next (must match the scratchpad).
 - Current untriaged backlog size.
 
-Save all files to `neith/reports/` only.
+Save all files to `.agents/neith/` only.

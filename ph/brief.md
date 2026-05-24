@@ -145,4 +145,4 @@ Before saving the brief, verify:
 
 When ready: **"Brief complete. Handing off."**
 
-Save to `agent_chat/brief_{short-name}_{yyyy-mm-dd}.md`
+Save to `.agents/reports/brief_{short-name}_{yyyy-mm-dd}.md`

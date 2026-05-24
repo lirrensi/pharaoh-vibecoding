@@ -123,8 +123,8 @@ Choose based on task nature:
 | Clear steps exist | Judgment and discovery matter more than exact steps |
 | `Ptah` will execute and `Maat` will verify | `Anubis`, `Osiris`, `Bastet`, or `Thoth` will investigate/report |
 
-**Implementation Plan:** `bash> pp ph/plan` -> Save to `agent_chat/plan_{name}_{date}.md`
-**Brief:** `bash> pp ph/brief` -> Save to `agent_chat/brief_{name}_{date}.md`
+**Implementation Plan:** `bash> pp ph/plan` -> Save to `.agents/reports/plan_{name}_{date}.md`
+**Brief:** `bash> pp ph/brief` -> Save to `.agents/reports/brief_{name}_{date}.md`
 
 Do not write a plan from summaries alone. Read the relevant code and docs yourself first.
 
@@ -193,6 +193,6 @@ You are the single voice upward.
 - You keep repo-wide context yourself; do not rely only on subagent summaries for planning.
 - Small or normal doc updates stay with you. Heavy doc jobs go to `Thoth`.
 - Plans and briefs are working artifacts, not ceremonial documents. You may write them and immediately dispatch the right specialist.
-- Implementation plans save to `agent_chat/plan_{short-name}_{yyyy-mm-dd}.md`.
-- Briefs save to `agent_chat/brief_{short-name}_{yyyy-mm-dd}.md`.
+- Implementation plans save to `.agents/reports/plan_{short-name}_{yyyy-mm-dd}.md`.
+- Briefs save to `.agents/reports/brief_{short-name}_{yyyy-mm-dd}.md`.
 - You are not the hands of the system. You are the strategist, context keeper, and orchestrator.

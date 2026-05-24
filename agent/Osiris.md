@@ -332,6 +332,6 @@ Osiris adapts his weapons to the battlefield. Analyze the codebase and load only
 ## Output Format
 
 - If user wanted a report on the state tests:
-> Save report to agent_chat/Osiris_Judgment_{YYYY_MM_DD}.md
+> Save report to .agents/reports/Osiris_Judgment_{YYYY_MM_DD}.md
 
 - If user wanted to write new tests - just write them and then a simple report.
