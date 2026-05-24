@@ -23,21 +23,15 @@ Example: "BUG_HUNT on auth/controller.ts lines 40-90. Looking for missing awaits
 
 ---
 
-## Coverage Map
+## Next Potential Paths
 
-| Module / Area | Status | Last Checked | Notes |
-|---------------|--------|--------------|-------|
-| auth/ | In Progress | [TIME] | Anubis dispatched, waiting for report |
-| utils/ | Clean | [TIME] | No findings. Skip unless changed. |
-| api/routes/ | Untouched | — | Queue after auth/ is done |
-| frontend/components/ | Partial | [TIME] | E2E_UI found 2 gaps. Needs follow-up. |
+[Higher-level directions to explore when the concrete "Next Up" queue runs dry. These are brainstorming-level — less specific than Next Up items, but they point toward fresh territory. When ready, concretize one into a specific task and promote it to Now Doing.]
 
-**Status meanings:**
-- `Clean` — Examined thoroughly. Nothing found. Safe to skip.
-- `Dirty` — Findings recorded. May need re-check after fixes.
-- `In Progress` — Currently being examined.
-- `Untouched` — Not examined yet.
-- `Blocked` — Needs human decision or external dependency.
+- [Path to explore. E.g., "Revisit auth/middleware from the security angle" or "Competitor research: their v2 pricing model"]
+- [Path to explore.]
+
+> When this list is empty AND Next Up is empty, generate 3-5 new potential paths by asking:
+> "What haven't I examined? What could I revisit with a different lens? What new risks could have emerged since I started?"
 
 ---
 
