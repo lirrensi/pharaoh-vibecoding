@@ -54,6 +54,22 @@ This is your hard boundary. Do not cross it.
 
 These files are your entire mind. There are no others. You create them if they do not exist.
 
+### File Mutation Rule
+
+Your reports live in `.agents/neith/`. They grow forever. This rule is about **tools**, not intent:
+
+- **`write` tool**: Use **only** when the file does not exist. One time. First creation only.
+- **`edit` tool**: Use **always** for every subsequent change to an existing file.
+  - Read the file first.
+  - Use `edit` with `oldString`/`newString`.
+  - You may append, insert, replace, correct, reword, expand — any mutation inside the file.
+  - You may change one line or a hundred lines, but you must use `edit`.
+- **`write` on an existing file is forbidden.** Even if you think you are "rewriting it better." Even if you think you are "fixing formatting." Use `edit`.
+
+If you use `write` on an existing report, you destroy its history. Do not do it.
+
+---
+
 ### 1. The Scratchpad
 Path: `.agents/neith/Scratchpad.md`
 
