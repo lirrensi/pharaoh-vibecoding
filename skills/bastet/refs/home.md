@@ -226,7 +226,7 @@ IF IS_LEGACY:
 
 **Hunt:** "Works on my machine." Missing dependencies. "Just run these 47 commands." Unlisted prerequisites. Cryptic error messages. No `./dev doctor`. No auth bypass for headless agents.
 
-> **When dev environment setup is needed:** Load `bash: pp ph/dev_environment` for the full blueprint strategy by project type.
+> **When dev environment setup is needed:** Read `./dev_environment.md` for the full blueprint strategy by project type.
 
 ---
 
@@ -424,7 +424,7 @@ Those serve as examples — adapt to language specifics.
 
 **Hunt:** Linters that only output pretty colors. Tests that print "something failed" without details. Commands that require interactive input. No `./dev doctor`. Setup that breaks on second run. GUI-only authentication with no CLI bypass.
 
-> **When agent operability needs to go deeper — project-type detection, environment blueprints, self-healing protocols:** Load `bash: pp ph/dev_environment` for the full agent ops environment strategy.
+> **When agent operability needs to go deeper — project-type detection, environment blueprints, self-healing protocols:** Read `./dev_environment.md` for the full agent ops environment strategy.
 
 ### The Healthy Agent-Ready Repo
 
@@ -559,7 +559,7 @@ repo/
 
 ### The Healthy README
 
-Load `bash: pp ph/readme` for Bastet's full README-writing guide.
+Read `./readme.md` for Bastet's full README-writing guide.
 
 A good README answers these in order:
 1. **What is this?** (1-2 sentences)

@@ -6,10 +6,10 @@
 
 ## Modules
 
-- `ph/security/core.md` - Input handling, secrets, logging, failure modes, and privacy controls that apply almost everywhere.
-- `ph/security/identity.md` - Authentication, authorization, sessions, tenancy, and privilege boundaries.
-- `ph/security/remote_surfaces.md` - Headers, APIs, browser/mobile surfaces, network edges, and abuse-prone exposed flows.
-- `ph/security/execution_and_supply_chain.md` - Runtime, file/tool execution, CI/CD, agent/tool trust boundaries, and supply-chain risks.
+- `./security/core.md` - Input handling, secrets, logging, failure modes, and privacy controls that apply almost everywhere.
+- `./security/identity.md` - Authentication, authorization, sessions, tenancy, and privilege boundaries.
+- `./security/remote_surfaces.md` - Headers, APIs, browser/mobile surfaces, network edges, and abuse-prone exposed flows.
+- `./security/execution_and_supply_chain.md` - Runtime, file/tool execution, CI/CD, agent/tool trust boundaries, and supply-chain risks.
 
 ## Common Loadouts
 
@@ -32,7 +32,7 @@
 ## Loading Rule
 
 - Start with this router.
-- Load `ph/security/core.md` for nearly every security review.
+- Load `./security/core.md` for nearly every security review.
 - Add only the extra modules that match the codebase's actual trust boundaries.
 - Load all four modules only for genuinely broad platform reviews.
-- If the repo uses LLMs, RAG, tools, agents, embeddings, notebooks, evals, or model-serving paths, always add `ph/security/execution_and_supply_chain.md` and apply the ML-heavy stance above.
+- If the repo uses LLMs, RAG, tools, agents, embeddings, notebooks, evals, or model-serving paths, always add `./security/execution_and_supply_chain.md` and apply the ML-heavy stance above.

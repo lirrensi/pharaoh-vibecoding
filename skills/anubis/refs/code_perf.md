@@ -6,9 +6,9 @@
 
 ## Modules
 
-- `ph/perf/core.md` - Triage, tooling, algorithmic complexity, CPU/memory basics, observability, and general anti-patterns.
-- `ph/perf/services_and_data.md` - Databases, caches, queues, networks, service topology, contention, and overload control.
-- `ph/perf/frontend_and_runtime.md` - Frontend rendering, file/storage paths, startup time, runtime/GC tuning, and mobile constraints.
+- `./perf/core.md` - Triage, tooling, algorithmic complexity, CPU/memory basics, observability, and general anti-patterns.
+- `./perf/services_and_data.md` - Databases, caches, queues, networks, service topology, contention, and overload control.
+- `./perf/frontend_and_runtime.md` - Frontend rendering, file/storage paths, startup time, runtime/GC tuning, and mobile constraints.
 
 ## Common Loadouts
 
@@ -22,7 +22,7 @@
 
 ## Loading Rule
 
-- Start with `ph/perf/core.md`.
+- Start with `./perf/core.md`.
 - Add `services_and_data` for backend latency, throughput, queues, or database issues.
 - Add `frontend_and_runtime` for page speed, startup time, local file paths, or device/runtime constraints.
 - Load all three modules only when the product genuinely spans both service and client/runtime bottlenecks.

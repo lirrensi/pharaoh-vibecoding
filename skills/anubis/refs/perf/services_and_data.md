@@ -191,7 +191,7 @@ def key_lock(key):
 | 🟡 HIGH | **Reduce DNS lookups — reuse HTTP sessions/clients** | Creating a new HTTP client per request re-does DNS resolution, TCP handshake, and TLS handshake every time. |
 | 🟢 MEDIUM | **Use ETags and conditional requests** | If data hasn't changed, don't transmit it. ETags let clients ask "give me this only if it changed" — returns 304 Not Modified otherwise. |
 
-> 💡 **See also:** `ph/perf/frontend_and_runtime.md` -> Storage & File I/O for streaming large files, disk I/O optimization, and object storage.
+> 💡 **See also:** `./perf/frontend_and_runtime.md` -> Storage & File I/O for streaming large files, disk I/O optimization, and object storage.
 
 ```
 # Network Examples

@@ -1,6 +1,6 @@
 ---
-description: Test engineer and maintainer. Specializes in all sorts of testing for the app.
-mode: all
+name: osiris
+description: Test engineer and maintainer. Specializes in all sorts of testing for the app. Use this skill to design test plans, write tests, assess coverage, review test quality, and expose testing gaps.
 ---
 # Osiris — The Inevitable Judge
 
@@ -28,25 +28,25 @@ Also other docs/ may be present -> check at root level and subfolders for module
 - If asked to write comprehensive tests, assess coverage broadly, or design a test plan for a real repo:
 > First infer the repo shape from the codebase and the user's request.
 > Build a short internal profile using flags such as: `HAS_FRONTEND`, `HAS_BACKEND`, `HAS_MOBILE`, `HAS_DATABASE`, `HAS_API`, `HAS_ASYNC`, `HAS_AUTH`, `HAS_EXTERNAL_SERVICES`, `HAS_CLI`, `NEEDS_HIGH_AVAILABILITY`, `HANDLES_PII`, `HAS_COMPLEX_OUTPUTS`, `HAS_TIME_LOGIC`, `HAS_CACHING`, `HAS_FEATURE_FLAGS`, `HAS_LOCALIZATION`, `IS_MULTI_TENANT`, `HAS_FILE_STORAGE`, `HAS_SEARCH`, `HAS_SCHEDULERS`, `HAS_IMPORT_EXPORT`, `HAS_REALTIME`, `HAS_BROWSER_STORAGE`, `HAS_ADMIN_SURFACES`, `HAS_SECRETS_ROTATION`.
-> Load `bash: pp ph/tests/core` first.
-> IF the repo renders interactive UI in browser/desktop surfaces → THEN load `bash: pp ph/tests/frontend`
-> IF the repo exposes APIs, workers, queues, CLIs, libraries with side effects, databases, or external service integrations → THEN load `bash: pp ph/tests/backend`
-> IF the repo ships a mobile app or mobile-specific shell → THEN load `bash: pp ph/tests/mobile`
-> IF the request is about critical journeys, black-box verification, or flows that cross boundaries end-to-end → THEN load `bash: pp ph/tests/system_flows`
-> IF the repo has uptime, load, retry, observability, deploy, restore, or failure-recovery risk → THEN load `bash: pp ph/tests/resilience_ops`
-> IF `HAS_BROWSER_STORAGE` is true → bias toward `ph/tests/frontend` even when the bug looks like auth rather than UI.
-> IF any of `IS_MULTI_TENANT`, `HAS_FILE_STORAGE`, `HAS_SEARCH`, `HAS_SCHEDULERS`, `HAS_IMPORT_EXPORT`, or `HAS_REALTIME` are true → bias toward `ph/tests/backend`.
-> IF `HAS_SECRETS_ROTATION` or strong operational lifecycle risk is true → bias toward `ph/tests/resilience_ops`.
-> IF admin tools, reconciliation, approvals, imports, exports, or async follow-up reads define the real user outcome → bias toward `ph/tests/system_flows`.
+> Load `./tests/core.md` first.
+> IF the repo renders interactive UI in browser/desktop surfaces → THEN load `./tests/frontend.md`
+> IF the repo exposes APIs, workers, queues, CLIs, libraries with side effects, databases, or external service integrations → THEN load `./tests/backend.md`
+> IF the repo ships a mobile app or mobile-specific shell → THEN load `./tests/mobile.md`
+> IF the request is about critical journeys, black-box verification, or flows that cross boundaries end-to-end → THEN load `./tests/system_flows.md`
+> IF the repo has uptime, load, retry, observability, deploy, restore, or failure-recovery risk → THEN load `./tests/resilience_ops.md`
+> IF `HAS_BROWSER_STORAGE` is true → bias toward `./tests/frontend.md` even when the bug looks like auth rather than UI.
+> IF any of `IS_MULTI_TENANT`, `HAS_FILE_STORAGE`, `HAS_SEARCH`, `HAS_SCHEDULERS`, `HAS_IMPORT_EXPORT`, or `HAS_REALTIME` are true → bias toward `./tests/backend.md`.
+> IF `HAS_SECRETS_ROTATION` or strong operational lifecycle risk is true → bias toward `./tests/resilience_ops.md`.
+> IF admin tools, reconciliation, approvals, imports, exports, or async follow-up reads define the real user outcome → bias toward `./tests/system_flows.md`.
 > Do not load every testing guide by default.
-> Do not load the legacy master checklist in `ph/tests.md` unless the user explicitly wants the exhaustive checklist.
+> Do not load the legacy master checklist in `./tests/tests.md` unless the user explicitly wants the exhaustive checklist.
 
 - Module loading logic: use explicit IF/THEN exclusions too.
-> IF there is no rendered UI → THEN do not load `ph/tests/frontend`
-> IF there is no server-side behavior, no external integration, no data boundary, and no side effects beyond pure logic → THEN prefer `ph/tests/core` before loading `ph/tests/backend`
-> IF there is no mobile surface → THEN do not load `ph/tests/mobile`
-> IF the request is narrow and file-local → THEN do not load `ph/tests/system_flows` just because the repo is full stack
-> IF there is no scale, uptime, deploy, or recovery concern in scope → THEN do not load `ph/tests/resilience_ops`
+> IF there is no rendered UI → THEN do not load `./tests/frontend.md`
+> IF there is no server-side behavior, no external integration, no data boundary, and no side effects beyond pure logic → THEN prefer `./tests/core.md` before loading `./tests/backend.md`
+> IF there is no mobile surface → THEN do not load `./tests/mobile.md`
+> IF the request is narrow and file-local → THEN do not load `./tests/system_flows.md` just because the repo is full stack
+> IF there is no scale, uptime, deploy, or recovery concern in scope → THEN do not load `./tests/resilience_ops.md`
 
 ---
 
@@ -204,12 +204,12 @@ Osiris adapts his weapons to the battlefield. Analyze the codebase and load only
 
 | Module | Load When True | Main Focus |
 |--------|----------------|------------|
-| `ph/tests/core` | Always | Unit behavior, smoke, regression, mutation sanity, hygiene, CI gates |
-| `ph/tests/frontend` | Browser/desktop UI exists | Components, state, interaction, accessibility, visual safety |
-| `ph/tests/backend` | API/service/worker/CLI/data boundary exists | API, integration, database, async, contracts, auth, abuse cases |
-| `ph/tests/mobile` | Mobile app or mobile shell exists | Lifecycle, offline, permissions, deep links, device behavior |
-| `ph/tests/system_flows` | Request is about end-to-end or cross-boundary truth | Browser flows, CLI flows, API consumer journeys, real workflows |
-| `ph/tests/resilience_ops` | Scale, uptime, deploy, restore, or failure recovery matters | Load, chaos, observability, rollout, rollback, disaster recovery |
+| `./tests/core.md` | Always | Unit behavior, smoke, regression, mutation sanity, hygiene, CI gates |
+| `./tests/frontend.md` | Browser/desktop UI exists | Components, state, interaction, accessibility, visual safety |
+| `./tests/backend.md` | API/service/worker/CLI/data boundary exists | API, integration, database, async, contracts, auth, abuse cases |
+| `./tests/mobile.md` | Mobile app or mobile shell exists | Lifecycle, offline, permissions, deep links, device behavior |
+| `./tests/system_flows.md` | Request is about end-to-end or cross-boundary truth | Browser flows, CLI flows, API consumer journeys, real workflows |
+| `./tests/resilience_ops.md` | Scale, uptime, deploy, restore, or failure recovery matters | Load, chaos, observability, rollout, rollback, disaster recovery |
 
 **Guidance:**
 - `frontend` is not the same as end-to-end. End-to-end belongs in `system_flows`.

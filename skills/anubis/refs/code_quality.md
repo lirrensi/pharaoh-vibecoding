@@ -6,9 +6,9 @@
 
 ## Modules
 
-- `ph/quality/core.md` - Day-to-day correctness, readability, state, defensive coding, and logic traps.
-- `ph/quality/architecture_and_maintainability.md` - Structure, coupling, async/API design, duplication, over-engineering, and long-term maintainability.
-- `ph/quality/verification_and_tooling.md` - Tests, refactor safety, docs drift, build hygiene, and tool-wrapper contract integrity.
+- `./quality/core.md` - Day-to-day correctness, readability, state, defensive coding, and logic traps.
+- `./quality/architecture_and_maintainability.md` - Structure, coupling, async/API design, duplication, over-engineering, and long-term maintainability.
+- `./quality/verification_and_tooling.md` - Tests, refactor safety, docs drift, build hygiene, and tool-wrapper contract integrity.
 
 ## Common Loadouts
 
@@ -23,6 +23,6 @@
 ## Loading Rule
 
 - Start with this router.
-- Load `ph/quality/core.md` unless the review is explicitly narrow and non-core.
+- Load `./quality/core.md` unless the review is explicitly narrow and non-core.
 - Add one secondary module based on whether the risk is structural or verification/tooling related.
 - Load all three modules only for full-codebase audits.
