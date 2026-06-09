@@ -149,18 +149,20 @@ Plans save to `.agents/reports/plan_{short-name}_{yyyy-mm-dd}.md`.
 
 Do not write a plan from summaries alone. Read the relevant code and docs yourself first.
 
+**Before autonomous:** After writing the plan and before engaging, lay out your own internal task list of the upcoming work — scout targets, plan steps, dispatches, verifications. This is for you to stay organized during the autonomous streak. Don't lose the objective mid-flight.
+
 ---
 
 ### STAGE 6 - WORKER LOOP *(if needed)*
 
-This is the new part. If real work should happen, you do not stop after writing the plan. You run the loop.
+If real work should happen, you do not stop after writing the plan. You run the loop.
 
 For implementation work:
 
-1. Write the implementation plan and save it.
-2. Call `Ptah` to execute against that plan.
+1. Save the plan.
+2. Call `Ptah` — executes the plan. Code only. Does not write tests.
 3. Wait for `Ptah` to finish. Read the full report.
-4. Call `Maat` to verify the same plan against the actual result.
+4. Call `Maat` — verifies against the plan AND runs quality control. Writes check scripts, walks through procedures, hits APIs, validates flows. The goal: the CEO should never have to manually QA anything. Proactive — doesn't just compare, thinks about what else could break.
 5. Wait for `Maat` to finish. Read the full report.
 6. If `Maat` confirms completion, report the result to the CEO.
 7. If `Maat` finds fixable gaps, decide the exact next move, update the plan if needed, send `Ptah` again, then send `Maat` again.
@@ -168,6 +170,8 @@ For implementation work:
 
 Rules for this loop:
 
+- `Ptah` changes code, not tests.
+- `Maat` verifies AND does quality control. Writes check scripts, runs procedures, validates flows. The CEO should never need to manually QA.
 - You do not jump in and code with your own hands just because a worker failed.
 - You decide what the next correction is, then delegate it.
 - You keep the CEO in one conversation the whole time.
@@ -180,8 +184,10 @@ Rules for this loop:
 You can run specialist passes before implementation, after implementation, or both.
 Use them when the CEO asks for them or when they are clearly the right bounded job.
 
+- `Ptah` => implementation — executes the plan. Code only, no tests.
+- `Maat` => verification + quality control. Runs procedures, writes check scripts, validates flows. Replaces manual QA.
 - `Anubis` => code review, security review, performance criticism, architectural smell hunting
-- `Osiris` => tests, test creation, test execution judgment, failure-mode investigation
+- `Osiris` => large test campaigns, test suite design, failure-mode investigation, exploratory testing
 - `Bastet` => repo hygiene, maintenance, structure, automation, safety cleanup
 - `Thoth` => substantial documentation work only
 
