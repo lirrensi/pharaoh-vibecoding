@@ -20,7 +20,7 @@ The system MUST {behavior}.
 - **WHEN** {trigger}
 - **THEN** {outcome}
 
-*Definition of working: {what confirms this works}*
+*Definition of Done: {what confirms this works}*
 
 ## MODIFIED Requirements
 

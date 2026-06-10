@@ -33,14 +33,14 @@ The system MUST {behavior description}.
 - **THEN** {expected outcome}
 - **AND** {additional outcome}
 
-*Definition of working: If this scenario passes, the requirement is met.*
+*Definition of Done: If this scenario passes, the requirement is met.*
 
 #### Scenario: {Edge case or error}
 - **GIVEN** {context for this edge case}
 - **WHEN** {trigger}
 - **THEN** {expected outcome}
 
-*Definition of working: If this scenario fails, the system is broken.*
+*Definition of Done: If this scenario fails, the system is broken.*
 
 ### Requirement: {Next Requirement}
 ...

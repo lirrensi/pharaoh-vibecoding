@@ -39,7 +39,7 @@ links:
 
 ### 4. Content
 Write content following the format for the `node_type`:
-- `spec` / `feature-spec` → use `../spec-format.md`
+- `spec` → use `../spec-format.md`
 - `overview` → free-form but concise, warm tone
 - `architecture` / `component` → structural, factual
 - `guide` → step-by-step, task-oriented

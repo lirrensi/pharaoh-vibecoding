@@ -11,8 +11,7 @@ Each document has exactly one `node_type`. Choose based on what the document IS,
 | `node_type` | What it is | Lives in |
 |-------------|-----------|----------|
 | `overview` | Product identity, purpose, users, non-goals | `docs/overview/` |
-| `spec` | Behavioral specification (requirements + scenarios) | `docs/spec/` |
-| `feature-spec` | Per-feature behavioral spec | `docs/spec/features/` |
+| `spec` | Behavioral specification — cross-cutting system behavior and user-perceivable features (requirements + scenarios) | `docs/spec/` |
 | `architecture` | Implementation structure description | `docs/architecture/` |
 | `component` | Per-component architecture detail | `docs/architecture/components/` |
 | `adr` | Architectural decision record | `docs/architecture/decisions/` |
@@ -28,7 +27,8 @@ Each document has exactly one `node_type`. Choose based on what the document IS,
 **Creating new types:** You MAY create new `node_type` values if none of the existing types fit your document. However, every new type MUST be:
 1. Documented in `docs/ontology.md` (the project's ontology registry) with a clear explanation of what it is, where it lives, and why it exists.
 2. Added to the table above so the vocabulary stays current.
-3. Justified by having ≥3 documents that use it (no single-document types).
+
+**Guidance:** Only create a new type when it captures a genuinely distinct kind of document that will be used repeatedly. If it only fits one or two documents, use the closest existing type instead.
 
 **The ontology registry (`docs/ontology.md`) is the single source of truth for what document types exist and what they mean.** If a type isn't in the registry, it doesn't exist. If a new type is created, the registry must be updated.
 
@@ -77,7 +77,8 @@ links:
 | `tags` | Optional | `[lowercase, hyphenated]` | Free-form for search and grouping |
 | `confidence` | Optional | `decided`, `tentative`, `exploratory` | Whether a decision has been made, or it's open to change |
 | `links` | Optional | See below | Typed links to other docs and code |
-| `implementation_status` | Optional | `implemented`, `partial`, `discarded` | For ADRs and architecture docs: is this decision realized in code? |
+| `sync_status` | Optional | `verified`, `unchecked`, `drifted` | Whether Sync mode has confirmed docs match code. `unchecked` = never synced, `verified` = confirmed match, `drifted` = discrepancy found |
+| `last_synced` | Optional | `YYYY-MM-DD` | When Sync mode last ran against this doc's linked code |
 
 ### Confidence Field
 

@@ -4,7 +4,7 @@ When documentation references an external system (API, service, database, librar
 
 ---
 
-## The Boundary Decision Tree
+## How to Classify External Systems
 
 For every external dependency, answer these questions in order:
 
@@ -20,7 +20,7 @@ For every external dependency, answer these questions in order:
 | **Stable foundation** | Database, OS, language runtime — its API won't change under us | Document our usage patterns, not its API. Reference its official docs for details. |
 | **Upstream dependency** | Framework, library with versioned releases — may change, but slowly | Document the version we depend on, our usage patterns, and upgrade notes. |
 | **External API** | Third-party service with its own lifecycle — may change without notice | Document the contract we expect, our abstraction layer, and failure modes. |
-| **Volatile integration** | Beta API, unstable service — expected to break | Document heavily. Define our abstraction so we can swap implementations. Flag as `confidence: tentative`. |
+| **Unstable integration** | Beta API, experimental service — expected to break | Document heavily. Define our abstraction so we can swap implementations. Flag as `confidence: tentative`. |
 
 ### 3. Do we create our own abstraction?
 
@@ -57,11 +57,11 @@ For every external dependency, answer these questions in order:
 - **What belongs to Stripe:** API reference, SDK docs, dashboard usage
 ```
 
-### Volatile Integration
+### Unstable Integration
 ```markdown
 ## AI Provider: OpenAI (Beta endpoint)
 - **Canonical docs:** https://platform.openai.com/docs/
-- **Integration level:** Volatile — beta endpoint, may change without notice
+- **Integration level:** Unstable — beta endpoint, may change without notice
 - **Expected stability:** Low. Model names, request format, and pricing change frequently.
 - **Our abstraction:** `src/ai/provider.ts` — interface `complete(prompt) → response`
 - **Fallback:** We support swapping to Anthropic or local model
@@ -89,7 +89,7 @@ For every external dependency, answer these questions in order:
 Create `docs/reference/<system-name>.md` when:
 - The integration is complex (multiple endpoints, auth flows, state machines)
 - The dependency is critical (system fails if it's down)
-- The integration level is "external API" or "volatile"
+- The integration level is "external API" or "unstable"
 - Multiple components depend on the same external system
 
 ### When a note in the spec/architecture doc is enough

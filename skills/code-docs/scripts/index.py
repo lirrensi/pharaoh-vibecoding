@@ -20,10 +20,10 @@ from datetime import date
 
 
 STATUS_EMOJI = {
-    "active": "",
-    "draft": "[draft]",
-    "deprecated": "[deprecated]",
-    "archived": "[archived]",
+    "active": "🟢",
+    "draft": "🟡",
+    "deprecated": "🔴",
+    "archived": "⚫",
 }
 
 
@@ -51,25 +51,6 @@ def parse_frontmatter(text: str) -> dict:
             value = value[1:-1]
         data[key] = value
     return data
-
-
-def get_title(filepath: Path) -> str:
-    """Extract title: frontmatter title > first # heading > filename stem."""
-    try:
-        text = filepath.read_text(encoding="utf-8")
-    except Exception:
-        return filepath.stem
-
-    fm = parse_frontmatter(text)
-    if fm.get("title"):
-        return fm["title"]
-
-    for line in text.split("\n"):
-        match = re.match(r"^#\s+(.+)", line)
-        if match:
-            return match.group(1).strip()
-
-    return filepath.stem
 
 
 def get_summary(filepath: Path):
@@ -187,6 +168,11 @@ def build_all(root: Path, dry_run: bool = False):
 
 
 def main():
+    if "--help" in sys.argv or "-h" in sys.argv:
+        if __doc__:
+            print(__doc__.strip())
+        sys.exit(0)
+
     dry_run = "--dry-run" in sys.argv
 
     # Determine root
@@ -194,10 +180,17 @@ def main():
     if args:
         root = Path(args[0]).resolve()
     else:
-        # Default: docs/ relative to project root (3 levels up from scripts/)
+        # Walk up from the script directory until we find a docs/ folder
         script_dir = Path(__file__).resolve().parent
-        project_root = script_dir.parent.parent.parent  # scripts/ -> code-docs/ -> skills/ -> root
-        root = project_root / "docs"
+        candidate = script_dir
+        root = None
+        while candidate != candidate.parent:
+            if (candidate / "docs").is_dir():
+                root = candidate / "docs"
+                break
+            candidate = candidate.parent
+        if root is None:
+            root = Path.cwd() / "docs"  # fallback
 
     if not root.exists():
         print(f"Error: {root} does not exist. Create docs/ first or specify a path.")

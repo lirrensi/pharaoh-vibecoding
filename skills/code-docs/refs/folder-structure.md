@@ -23,8 +23,8 @@ docs/
 │   ├── error-handling.md       # Failure modes, edge cases, limits (node_type: spec)
 │   └── features/               # Per-feature behavioral specs
 │       ├── INDEX.md
-│       ├── auth.md             # (node_type: feature-spec)
-│       ├── api.md              # (node_type: feature-spec)
+│       ├── auth.md             # (node_type: spec)
+│       ├── api.md              # (node_type: spec)
 │       └── ...                 # One file per feature
 │
 ├── architecture/               # "How" layer — implementation structure
@@ -74,7 +74,7 @@ docs/
 |------------------------|---------------|-------------|
 | Product identity, purpose, users | `docs/overview/` | `overview` |
 | Exact system behavior, contracts | `docs/spec/` | `spec` |
-| One specific feature's behavior | `docs/spec/features/` | `feature-spec` |
+| One specific feature's behavior | `docs/spec/features/` | `spec` |
 | Implementation structure | `docs/architecture/` | `architecture` |
 | One specific component | `docs/architecture/components/` | `component` |
 | An architectural decision | `docs/architecture/decisions/` | `adr` |
@@ -90,7 +90,7 @@ docs/
 
 ### When to split `spec/features/`
 
-A feature gets its own `feature-spec` file if:
+A feature gets its own spec file (still `node_type: spec`) if:
 1. **Independence test:** the feature could be understood, specified, and tested independently.
 2. **Size threshold:** the parent spec exceeds 300 lines — extract features.
 3. **Different actors:** the feature involves different user roles or subsystems.

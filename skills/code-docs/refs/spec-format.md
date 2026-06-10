@@ -1,6 +1,6 @@
 # Spec Format — BDD + RFC
 
-Every behavioral specification document (`node_type: spec` or `feature-spec`) follows this merged format: BDD's Given/When/Then scenarios + RFC 2119 normative keywords + goal-driven structure.
+Every behavioral specification document (`node_type: spec`) follows this merged format: BDD's Given/When/Then scenarios + RFC 2119 normative keywords + goal-driven structure.
 
 ---
 
@@ -31,14 +31,14 @@ The system MUST {behavior}. Use RFC 2119: MUST, SHOULD, MAY.
 - **THEN** {expected outcome}
 - **AND** {additional outcome}
 
-*Definition of working: If this scenario passes, the requirement is met.*
+*Definition of Done: If this scenario passes, the requirement is met.*
 
 #### Scenario: {Edge case or error}
 - **GIVEN** {context for this edge case}
 - **WHEN** {trigger}
 - **THEN** {expected outcome}
 
-*Definition of working: If this scenario fails to produce the expected error, the system is broken.*
+*Definition of Done: If this scenario fails to produce the expected error, the system is broken.*
 
 ## Data Contracts
 
@@ -98,16 +98,16 @@ Follow each requirement with:
 ### User Stories
 Capture WHO benefits, WHAT they want, and WHY it matters. Keeps specs grounded in user value.
 
-### Definition of Working
+### Definition of Done
 
-Every scenario includes a *"Definition of working"* — a one-line statement of what confirms the behavior is correct. This is NOT a success message or a test assertion. It is a contract:
+Every scenario includes a *"Definition of Done"* — a one-line proof that the behavior exists and works as specified. This is NOT a success message or a test assertion. It is a contract:
 
 - **Happy path:** "If this scenario passes, the requirement is met."
 - **Error path:** "If this scenario fails to produce the expected error, the system is broken."
 - **Conflict path:** "If this scenario throws a different error, we cannot proceed — the conflict must be resolved first."
 - **Boundary path:** "If the input exceeds the limit, the system MUST reject it. Accepting it means the limit is not enforced."
 
-This turns every scenario from "here's a nice example" into "here's exactly what working means, and here's exactly what broken means."
+This turns every scenario from "here's a nice example" into "here's exactly what Done means, and here's exactly what broken means."
 
 ### Scenarios
 Every requirement has ≥1 scenario. Scenarios must be:
@@ -115,7 +115,7 @@ Every requirement has ≥1 scenario. Scenarios must be:
 - **Testable** — could write an automated test from it
 - **Declarative** — what happens, not UI clicks (see below)
 - **Cover both paths** — minimum: happy path + error/edge case
-- **Have a definition of working** — what confirms this behavior is correct
+- **Have a Definition of Done** — what confirms this behavior is correct
 
 Pattern:
 - **GIVEN** — preconditions, existing state before the event
@@ -128,15 +128,15 @@ Pattern:
 Scenarios MUST be declarative (business language), NEVER imperative (UI/implementation details).
 
 **Declarative (correct):**
-> GIVEN a registered user with valid credentials  
-> WHEN they submit the login form  
-> THEN they are redirected to the dashboard
+> **GIVEN** a registered user with valid credentials  
+> **WHEN** they authenticate  
+> **THEN** a session is established and their default view is displayed
 
 **Imperative (wrong):**
-> GIVEN the login page is loaded  
-> WHEN the user types "user@example.com" in the email field  
-> AND clicks the "#login-button"  
-> THEN the browser navigates to "/dashboard"
+> **GIVEN** the login page is loaded  
+> **WHEN** the user types "user@example.com" in the email field  
+> **AND** clicks the "#login-button"  
+> **THEN** the browser navigates to "/dashboard"
 
 Why this matters: declarative scenarios survive UI redesigns, framework changes, and implementation rewrites. Imperative scenarios break the moment you change a CSS selector. If a scenario mentions a button, a field name, a URL path, or a DOM element, rewrite it declaratively.
 

@@ -41,7 +41,7 @@ Client → Gateway → Service → DB
 ## Dependencies
 | Dependency | Version | Purpose | Integration Level |
 |-----------|---------|---------|------------------|
-| dep_name | version | why we use it | stable/upstream/external/volatile |
+| dep_name | version | why we use it | stable/upstream/external/unstable |
 
 ## Contracts / Invariants
 | Invariant | Description | Implementation Status |
