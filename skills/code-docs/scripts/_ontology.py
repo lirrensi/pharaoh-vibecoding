@@ -140,6 +140,46 @@ def today_str() -> str:
     return date.today().isoformat()
 
 
+def now_ts() -> str:
+    """Return HH:MM timestamp for log entries."""
+    from datetime import datetime
+    return datetime.now().strftime("%H:%M")
+
+
+def log_operation(docs_root: Path, operation: str, detail: str = ""):
+    """Append a timestamped entry to docs/log.md. Creates the file if needed.
+
+    Usage:
+        log_operation(root, "index", "rebuilt 47 docs across 12 folders")
+        log_operation(root, "sync", "spec/auth.md — verified, no drift")
+        log_operation(root, "curate", "created guides/setup.md")
+    """
+    log_path = docs_root / "log.md"
+    today = today_str()
+    ts = now_ts()
+
+    entry = f"- `{ts}` **{operation}** {detail}\n"
+
+    try:
+        existing = log_path.read_text(encoding="utf-8")
+    except Exception:
+        existing = ""
+
+    lines = existing.splitlines()
+
+    # Check if today's heading already exists
+    today_header = f"## {today}"
+    if today_header in existing:
+        # Append to today's section
+        new_content = existing.rstrip("\n") + "\n" + entry
+    else:
+        # Add new day heading
+        separator = "\n" if existing and not existing.endswith("\n") else ""
+        new_content = existing.rstrip("\n") + separator + f"\n{today_header}\n\n{entry}"
+
+    log_path.write_text(new_content, encoding="utf-8")
+
+
 def build_graph(docs: list[tuple[Path, dict]], index_files: dict[Path, list[Path]] | None = None) -> dict[Path, list[tuple[Path, str]]]:
     """Build adjacency: doc → list of (target_path, link_type).
 

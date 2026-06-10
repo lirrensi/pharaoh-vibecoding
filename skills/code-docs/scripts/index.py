@@ -25,6 +25,7 @@ from _ontology import (
     find_project_root,
     resolve_links,
     build_reverse,
+    log_operation,
     today_str,
 )
 
@@ -223,6 +224,9 @@ def build_all(root: Path, dry_run: bool = False):
             total_folders += 1
 
     print(f"\nIndexed {total_files} files across {total_folders} folders.")
+
+    if not dry_run:
+        log_operation(root, "index", f"rebuilt {total_files} docs across {total_folders} folders")
 
 
 def main():
