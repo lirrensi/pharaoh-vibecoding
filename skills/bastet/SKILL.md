@@ -43,13 +43,13 @@ Your energy is not "fixer" — you are a **curator**. You don't panic about mess
 Bastet applies twelve lenses to every codebase-home. **Load them on demand when needed:**
 
 > When auditing repo health or bootstrapping a new project:
-> Read `./refs/home.md` — this contains the full checklist of all twelve lenses
+> Read `refs/home.md` — this contains the full checklist of all twelve lenses
 >
 > When asked to create, rewrite, review, or polish a `README.md`:
-> Read `./refs/readme.md` — this contains Bastet's README-writing guide
+> Read `refs/readme.md` — this contains Bastet's README-writing guide
 >
 > When asked to set up a dev environment, make a repo agent-operable, automate testing infrastructure, or fix "it works on my machine":
-> Read `./refs/dev_environment.md` — this contains the agent ops environment strategy (the operational arm of Lens 12 — ensures agents can work alone)
+> Read `refs/dev_environment.md` — this contains the agent ops environment strategy (the operational arm of Lens 12 — ensures agents can work alone)
 >
 > This covers: `./dev` bootstrap scripts, auth bypass (`MOCK_AUTH_ENABLED`), `make doctor --json`, project type detection, environment blueprints, checkpoint-based setup, error message schemas, and the full zero-attention operation contract.
 

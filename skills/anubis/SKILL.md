@@ -24,9 +24,9 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
 - If user asks for specific part of app to check > go check there.
 
 - If user wants the whole codebase check: load the routers first:
-  > Load `./refs/code_quality.md`
-  > Load `./refs/code_security.md`
-  > Load `./refs/code_perf.md`
+  > Load `refs/code_quality.md`
+  > Load `refs/code_security.md`
+  > Load `refs/code_perf.md`
   Then load only the leaf modules that match the repo's actual shape and risk surface. Do not load every module by default.
 
 - Before loading leaf modules for any broad review, determine the threat model first:
@@ -38,16 +38,16 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
   Build a short internal threat-model snapshot before deciding modules.
 
 - Focused reviews:
-  > Quality correctness/core: `./refs/quality/core.md`
-  > Quality structure/maintainability: `./refs/quality/architecture_and_maintainability.md`
-  > Quality verification/tooling: `./refs/quality/verification_and_tooling.md`
-  > Security core: `./refs/security/core.md`
-  > Security identity: `./refs/security/identity.md`
-  > Security remote surfaces: `./refs/security/remote_surfaces.md`
-  > Security execution/supply chain: `./refs/security/execution_and_supply_chain.md`
-  > Performance core: `./refs/perf/core.md`
-  > Performance services/data: `./refs/perf/services_and_data.md`
-  > Performance frontend/runtime: `./refs/perf/frontend_and_runtime.md`
+  > Quality correctness/core: `refs/quality/core.md`
+  > Quality structure/maintainability: `refs/quality/architecture_and_maintainability.md`
+  > Quality verification/tooling: `refs/quality/verification_and_tooling.md`
+  > Security core: `refs/security/core.md`
+  > Security identity: `refs/security/identity.md`
+  > Security remote surfaces: `refs/security/remote_surfaces.md`
+  > Security execution/supply chain: `refs/security/execution_and_supply_chain.md`
+  > Performance core: `refs/perf/core.md`
+  > Performance services/data: `refs/perf/services_and_data.md`
+  > Performance frontend/runtime: `refs/perf/frontend_and_runtime.md`
 
 - Default loadouts:
   > Web service: security `core + identity + remote_surfaces`; quality `core + architecture_and_maintainability`; performance `core + services_and_data`
@@ -55,21 +55,21 @@ Work through findings in this exact order: CRITICAL first, then HIGH, MEDIUM, LO
   > CLI / scanner / extension / plugin: security `core + execution_and_supply_chain`; quality `verification_and_tooling + architecture_and_maintainability`; performance `core + frontend_and_runtime`
 
 - Module loading logic: use explicit IF/THEN rules.
-  > IF the repo parses input, validates payloads, handles secrets, logs sensitive events, processes PII, or can fail closed/open → THEN load `./refs/security/core.md`
-  > IF the repo has login, sessions, API keys, tokens, roles, orgs, tenants, ownership checks, admin flows, or privileged mutations → THEN load `./refs/security/identity.md`
-  > IF the repo exposes HTTP APIs, browsers, cookies, CORS, headers, webhooks, WebSockets, SSE, postMessage, deep links, mobile clients, or public abuse surfaces → THEN load `./refs/security/remote_surfaces.md`
-  > IF the repo handles files, paths, archives, shell/tool execution, CI/CD, dependency installs, extensions, plugins, GitHub Actions, MCP/tools, agents, RAG, or runtime automation → THEN load `./refs/security/execution_and_supply_chain.md`
-  > IF the repo has ordinary application logic, state transitions, error handling, parsing, cleanup, null/edge-case risks, or correctness-sensitive transformations → THEN load `./refs/quality/core.md`
-  > IF the repo has multiple modules/services, concurrency, APIs, contracts, abstractions, duplication, coupling, bloat, or maintainability drift → THEN load `./refs/quality/architecture_and_maintainability.md`
-  > IF the repo depends on tests, examples, wrappers, scanners, docs, manifests, CI validation, refactors, or toolchain correctness for trust → THEN load `./refs/quality/verification_and_tooling.md`
-  > IF performance is in scope at all and the bottleneck is not yet known → THEN load `./refs/perf/core.md` first
-  > IF the hotspot is backend latency, DB queries, caching, queues, external I/O, scaling, contention, or distributed-system behavior → THEN load `./refs/perf/services_and_data.md`
-  > IF the hotspot is page load, rendering, startup, file/storage paths, runtime overhead, local app responsiveness, cold start, or mobile battery/runtime behavior → THEN load `./refs/perf/frontend_and_runtime.md`
+  > IF the repo parses input, validates payloads, handles secrets, logs sensitive events, processes PII, or can fail closed/open → THEN load `refs/security/core.md`
+  > IF the repo has login, sessions, API keys, tokens, roles, orgs, tenants, ownership checks, admin flows, or privileged mutations → THEN load `refs/security/identity.md`
+  > IF the repo exposes HTTP APIs, browsers, cookies, CORS, headers, webhooks, WebSockets, SSE, postMessage, deep links, mobile clients, or public abuse surfaces → THEN load `refs/security/remote_surfaces.md`
+  > IF the repo handles files, paths, archives, shell/tool execution, CI/CD, dependency installs, extensions, plugins, GitHub Actions, MCP/tools, agents, RAG, or runtime automation → THEN load `refs/security/execution_and_supply_chain.md`
+  > IF the repo has ordinary application logic, state transitions, error handling, parsing, cleanup, null/edge-case risks, or correctness-sensitive transformations → THEN load `refs/quality/core.md`
+  > IF the repo has multiple modules/services, concurrency, APIs, contracts, abstractions, duplication, coupling, bloat, or maintainability drift → THEN load `refs/quality/architecture_and_maintainability.md`
+  > IF the repo depends on tests, examples, wrappers, scanners, docs, manifests, CI validation, refactors, or toolchain correctness for trust → THEN load `refs/quality/verification_and_tooling.md`
+  > IF performance is in scope at all and the bottleneck is not yet known → THEN load `refs/perf/core.md` first
+  > IF the hotspot is backend latency, DB queries, caching, queues, external I/O, scaling, contention, or distributed-system behavior → THEN load `refs/perf/services_and_data.md`
+  > IF the hotspot is page load, rendering, startup, file/storage paths, runtime overhead, local app responsiveness, cold start, or mobile battery/runtime behavior → THEN load `refs/perf/frontend_and_runtime.md`
 
 - Module loading logic: use explicit IF/THEN exclusions too.
-  > IF the repo is a pure local CLI/tool with no auth, no tenants, and no exposed network service → THEN do not load `./refs/security/identity.md` unless the code still implements credentials or privilege separation
-  > IF the repo has no browser/mobile/public network surface → THEN do not load `./refs/security/remote_surfaces.md` just because it is software
-  > IF the repo is small and single-process with little architectural surface → THEN prefer `./refs/quality/core.md` before loading broader maintainability modules
+  > IF the repo is a pure local CLI/tool with no auth, no tenants, and no exposed network service → THEN do not load `refs/security/identity.md` unless the code still implements credentials or privilege separation
+  > IF the repo has no browser/mobile/public network surface → THEN do not load `refs/security/remote_surfaces.md` just because it is software
+  > IF the repo is small and single-process with little architectural surface → THEN prefer `refs/quality/core.md` before loading broader maintainability modules
   > IF performance concerns are clearly backend-only or client-only → THEN load only the matching performance leaf, not both
 
 

@@ -13,9 +13,9 @@ You are Thoth, keeper of canonical documentation. You do not write code. You own
 
 **Do not load everything upfront.** This skill uses progressive loading:
 
-1. Read `./refs/principles.md` for the core philosophy (once per session, for orientation).
+1. Read `refs/principles.md` for the core philosophy (once per session, for orientation).
 2. Determine your mode from the prompt (see table below).
-3. Load **only** the mode file you need: `./refs/modes/<mode>.md`.
+3. Load **only** the mode file you need: `refs/modes/<mode>.md`.
 4. Load additional reference files **only** when their specific guidance is required.
 
 ## Core Principles
@@ -36,12 +36,12 @@ Determine your mode from the prompt. Then read **only** the mode file you need.
 
 | Mode | When to use | Load |
 |------|------------|------|
-| **Inquire** | Understanding, explaining, finding, comparing, or auditing docs | `./refs/modes/inquire.md` |
-| **Curate** | Creating, updating, moving, or deprecating individual docs | `./refs/modes/curate.md` |
-| **Propose** | Creating a change proposal with delta specs | `./refs/modes/propose.md` |
-| **Sync** | Reconciling docs with actual code | `./refs/modes/sync.md` |
-| **Archive** | Merging a completed change into main specs | `./refs/modes/archive.md` |
-| **Audit** | Checking ontology invariants and doc health | `./refs/modes/audit.md` |
+| **Inquire** | Understanding, explaining, finding, comparing, or auditing docs | `refs/modes/inquire.md` |
+| **Curate** | Creating, updating, moving, or deprecating individual docs | `refs/modes/curate.md` |
+| **Propose** | Creating a change proposal with delta specs | `refs/modes/propose.md` |
+| **Sync** | Reconciling docs with actual code | `refs/modes/sync.md` |
+| **Archive** | Merging a completed change into main specs | `refs/modes/archive.md` |
+| **Audit** | Checking ontology invariants and doc health | `refs/modes/audit.md` |
 
 **Defaults:**
 - As a subagent, default to **Inquire** unless a write task is explicit.
@@ -54,14 +54,14 @@ Load these **only** when you need the specific guidance. Do not load them all at
 
 | File | Contains | Load when |
 |------|---------|-----------|
-| `./refs/principles.md` | Full philosophy, layer ownership, conflict rules | First orientation, or when in doubt about philosophy |
-| `./refs/ontology.md` | Frontmatter spec, `node_type` vocabulary, link types, status values | Any write operation (Curate, Propose, Archive) |
-| `./refs/folder-structure.md` | Canonical `docs/` folder layout, where each doc type lives | Creating new docs, reorganizing, proposing structure |
-| `./refs/spec-format.md` | BDD+RFC merged spec writing format, scenario templates | Writing or editing behavioral specs |
-| `./refs/index-spec.md` | INDEX.md format and auto-generation expectations | Creating or updating INDEX.md files |
-| `./refs/docs.md` | General documentation writing standards, language, diagrams, deprecation | Writing standards reference |
-| `./refs/search.md` | How to search docs — graph-walking INDEX.md, tags, ripgrep patterns | Finding anything in the docs |
-| `./refs/external-systems.md` | External system boundaries, integration levels, abstraction rules | Documenting dependencies and external APIs |
+| `refs/principles.md` | Full philosophy, layer ownership, conflict rules | First orientation, or when in doubt about philosophy |
+| `refs/ontology.md` | Frontmatter spec, `node_type` vocabulary, link types, status values | Any write operation (Curate, Propose, Archive) |
+| `refs/folder-structure.md` | Canonical `docs/` folder layout, where each doc type lives | Creating new docs, reorganizing, proposing structure |
+| `refs/spec-format.md` | BDD+RFC merged spec writing format, scenario templates | Writing or editing behavioral specs |
+| `refs/index-spec.md` | INDEX.md format and auto-generation expectations | Creating or updating INDEX.md files |
+| `refs/docs.md` | General documentation writing standards, language, diagrams, deprecation | Writing standards reference |
+| `refs/search.md` | How to search docs — graph-walking INDEX.md, tags, ripgrep patterns | Finding anything in the docs |
+| `refs/external-systems.md` | External system boundaries, integration levels, abstraction rules | Documenting dependencies and external APIs |
 | `./templates/` | Reusable templates for every `node_type` | Creating new documents — copy the matching template |
 
 ## Quick Rules

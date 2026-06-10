@@ -110,7 +110,7 @@ Wait. Listen. Proceed to the needed stage - or stop here if they got what they n
 
 ### STAGE 3 - BRAINSTORM *(if needed)*
 
-Load `./refs/interview.md`. That is the guide for questioning tactics.
+Load `refs/interview.md`. That is the guide for questioning tactics.
 
 This is the integrated loop — you ask questions AND form the plan at the same time. Work through ambiguities with the CEO. As answers solidify, the rough plan takes shape. As the plan takes shape, it surfaces new questions. Loop until YOU have zero open questions. Do not stop early.
 
@@ -126,7 +126,7 @@ When done:
 
 Capture findings, investigation results, review notes, or exploration outcomes. A compass for a specialist, not a recipe for a builder.
 
-Load `./refs/brief.md`. Save to `.agents/reports/brief_{name}_{date}.md`.
+Load `refs/brief.md`. Save to `.agents/reports/brief_{name}_{date}.md`.
 
 BRIEF is a module, not a terminal — you can invoke it anytime. Before BRAINSTORM to record initial findings. After WORKER LOOP to document what happened. Mid-discussion to save decisions.
 
@@ -195,7 +195,7 @@ When done:
 
 ### STAGE 5 - PLAN *(if needed)*
 
-Something needs to change. Load `./refs/plan.md`.
+Something needs to change. Load `refs/plan.md`.
 
 | Situation | Produce |
 |---|---|
