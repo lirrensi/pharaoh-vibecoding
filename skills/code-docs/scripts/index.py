@@ -4,6 +4,7 @@
 Scans docs/ recursively, reads YAML frontmatter from each .md file,
 and writes an INDEX.md in each folder with:
 - Links to every .md file with title + status emoji
+- Graph annotations: outgoing links (→) and incoming links (←) per doc
 - Links to every subfolder's INDEX.md
 - A tags section aggregating all tags
 
@@ -14,47 +15,75 @@ Usage:
 """
 
 import sys
-import re
 from pathlib import Path
-from datetime import date
+from collections import defaultdict
+
+from _ontology import (
+    STATUS_EMOJI,
+    parse_frontmatter,
+    get_title,
+    find_project_root,
+    resolve_links,
+    build_reverse,
+    today_str,
+)
 
 
-STATUS_EMOJI = {
-    "active": "🟢",
-    "draft": "🟡",
-    "deprecated": "🔴",
-    "archived": "⚫",
-}
+def shorten_path(target: Path, base: Path) -> str:
+    """Show a target path compactly, relative to docs root or as filename."""
+    try:
+        rel = target.relative_to(base)
+        return str(rel).replace("\\", "/")
+    except ValueError:
+        try:
+            rel = target.relative_to(base.parent)
+            return "../" + str(rel).replace("\\", "/")
+        except ValueError:
+            return target.name
 
 
-def parse_frontmatter(text: str) -> dict:
-    """Extract YAML-like frontmatter between --- delimiters."""
-    if not text.startswith("---"):
-        return {}
-    parts = text.split("---", 2)
-    if len(parts) < 3:
-        return {}
-    fm_text = parts[1].strip()
-    data = {}
-    for line in fm_text.split("\n"):
-        line = line.strip()
-        if ":" not in line:
+def format_links(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict) -> str:
+    """Build a compact link annotation line for a single document.
+
+    Shows outgoing (→) and incoming (←) links, one per type.
+    Returns empty string if no links.
+    """
+    resolved_fp = filepath.resolve()
+    out_links = resolve_links(filepath, all_docs.get(resolved_fp, {}))
+    in_links = reverse.get(resolved_fp, [])
+
+    if not out_links and not in_links:
+        return ""
+
+    parts = []
+
+    # Outgoing: → target (type)
+    for link_type in ["depends_on", "documents", "implements", "supersedes", "relates_to", "part_of", "implemented_by"]:
+        targets = out_links.get(link_type, [])
+        for t in targets:
+            label = shorten_path(t, docs_root)
+            parts.append(f"→ {label} ({link_type})")
+
+    # Incoming: ← source (type)
+    seen = set()
+    for src, link_type in in_links:
+        if src == resolved_fp:
             continue
-        key, _, value = line.partition(":")
-        key = key.strip()
-        value = value.strip()
-        # Parse list values like [auth, security]
-        if value.startswith("[") and value.endswith("]"):
-            value = [v.strip().strip("'\"") for v in value[1:-1].split(",") if v.strip()]
-        # Remove quotes
-        elif value.startswith('"') or value.startswith("'"):
-            value = value[1:-1]
-        data[key] = value
-    return data
+        key = (src, link_type)
+        if key in seen:
+            continue
+        seen.add(key)
+        label = shorten_path(src, docs_root)
+        parts.append(f"← {label} ({link_type})")
+
+    if not parts:
+        return ""
+
+    return "  " + "  ·  ".join(parts)
 
 
-def get_summary(filepath: Path):
-    """Get a one-line summary: title from frontmatter or filename stem.
+def get_summary(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict):
+    """Get a one-line summary: title + status emoji, with graph annotations.
     Returns (display_string, tags_set)."""
     try:
         text = filepath.read_text(encoding="utf-8")
@@ -65,12 +94,17 @@ def get_summary(filepath: Path):
         display = title or filepath.stem.replace("-", " ").replace("_", " ").title()
         if emoji:
             display = f"{display} {emoji}"
-        return display, set(fm.get("tags", [])) if isinstance(fm.get("tags"), list) else set()
+
+        # Build link annotation line
+        link_line = format_links(filepath, docs_root, reverse, all_docs)
+
+        tags = set(fm.get("tags", [])) if isinstance(fm.get("tags"), list) else set()
+        return display, tags, link_line
     except Exception:
-        return filepath.stem, set()
+        return filepath.stem, set(), ""
 
 
-def build_index(folder: Path, dry_run: bool = False) -> tuple[int, int]:
+def build_index(folder: Path, docs_root: Path, reverse: dict, all_docs: dict, dry_run: bool = False) -> tuple[int, int]:
     """Build INDEX.md for a single folder. Returns (files_indexed, tags_found)."""
     if not folder.is_dir():
         return 0, 0
@@ -84,18 +118,20 @@ def build_index(folder: Path, dry_run: bool = False) -> tuple[int, int]:
     entries = []
     all_tags = set()
 
-    # Document entries
+    # Document entries with graph annotations
     for f in md_files:
-        summary, tags = get_summary(f)
-        entries.append(f"- [{summary}]({f.name})")
+        display, tags, link_line = get_summary(f, docs_root, reverse, all_docs)
+        entries.append(f"- [{display}]({f.name})")
+        if link_line:
+            entries.append(link_line)
         all_tags.update(tags)
 
-    # Subfolder entries — always link (serves as reminder that subfolder needs INDEX.md)
+    # Subfolder entries
     for d in subfolders:
         entries.append(f"- [{d.name}/]({d.name}/INDEX.md)")
 
     # Build content
-    today = date.today().isoformat()
+    today = today_str()
     folder_name = folder.name if folder.name != "docs" else "Documentation"
 
     lines = [
@@ -142,7 +178,30 @@ def build_all(root: Path, dry_run: bool = False):
     """Walk docs/ and build INDEX.md for every folder.
 
     Processes deepest folders first (depth-first) so parent INDEX.md
-    can link to already-generated child INDEX.md files."""
+    can link to already-generated child INDEX.md files.
+    Also computes the full doc graph so entries show incoming/outgoing links.
+    """
+    # ── First pass: collect all docs and build the graph ──
+
+    all_docs = {}  # resolved_path → frontmatter
+    for f in sorted(root.rglob("*.md")):
+        if f.name == "INDEX.md":
+            continue
+        try:
+            text = f.read_text(encoding="utf-8")
+            fm = parse_frontmatter(text)
+            all_docs[f.resolve()] = fm
+        except Exception:
+            pass
+
+    # Build graph + reverse index
+    from _ontology import build_graph as bg
+    docs_list = [(fp, fm) for fp, fm in all_docs.items()]
+    graph = bg(docs_list)
+    reverse = build_reverse(graph)
+
+    # ── Second pass: generate indexes with link annotations ──
+
     total_files = 0
     total_folders = 0
 
@@ -153,11 +212,10 @@ def build_all(root: Path, dry_run: bool = False):
             depth = len(folder.relative_to(root).parts)
             folders.append((depth, folder))
 
-    # Process deepest first so children exist when parents link to them
     folders.sort(key=lambda x: -x[0])
 
     for depth, folder in folders:
-        files, tags = build_index(folder, dry_run=dry_run)
+        files, tags = build_index(folder, root, reverse, all_docs, dry_run=dry_run)
         if files > 0 or any(
             d.is_dir() for d in folder.iterdir() if not d.name.startswith(".")
         ):
@@ -180,17 +238,9 @@ def main():
     if args:
         root = Path(args[0]).resolve()
     else:
-        # Walk up from the script directory until we find a docs/ folder
         script_dir = Path(__file__).resolve().parent
-        candidate = script_dir
-        root = None
-        while candidate != candidate.parent:
-            if (candidate / "docs").is_dir():
-                root = candidate / "docs"
-                break
-            candidate = candidate.parent
-        if root is None:
-            root = Path.cwd() / "docs"  # fallback
+        project = find_project_root(script_dir)
+        root = (project / "docs") if project else (Path.cwd() / "docs")
 
     if not root.exists():
         print(f"Error: {root} does not exist. Create docs/ first or specify a path.")
