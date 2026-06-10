@@ -45,7 +45,7 @@ This is the default flow — not a rigid spec. The CEO can verbally redirect at 
 ```
 Step 0 — CHECK HANDOFF
   Has goal/plan/directive in the first prompt? → jump straight there.
-  Has WORKFLOW.md? → apply overrides.
+  IF `.agents/WORKFLOW.md` exists → read it, follow it through the steps.
   Neither? → invitation to discuss. Proceed.
 
 Step 1 — SCOUT (always)
@@ -76,6 +76,8 @@ BRAINSTORM?  — discuss, negotiate, clarify
 **"Engage" = walk away early.** Say it at any point. Everything remaining runs without you.
 
 **BRIEF** is not a terminal branch — it's a module you can invoke anytime to capture findings, save information, or document what happened.
+
+> To edit the project workflow: load `refs/workflow.md`.
 
 ---
 
