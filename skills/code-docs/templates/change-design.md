@@ -1,13 +1,13 @@
 ---
 node_type: change-design
-title: {Feature} Design
+title: Feature Design
 status: draft
 updated: YYYY-MM-DD
 links:
   depends_on: [proposal.md, behavior.md]
 ---
 
-# Design: {Title}
+# Design: Title
 
 ## Technical Approach
 {How we'll implement this. Libraries, patterns, data flow.}

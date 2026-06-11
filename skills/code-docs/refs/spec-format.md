@@ -140,6 +140,20 @@ Scenarios MUST be declarative (business language), NEVER imperative (UI/implemen
 
 Why this matters: declarative scenarios survive UI redesigns, framework changes, and implementation rewrites. Imperative scenarios break the moment you change a CSS selector. If a scenario mentions a button, a field name, a URL path, or a DOM element, rewrite it declaratively.
 
+**Protocol-level declarative (correct):**
+> **GIVEN** a client with valid API credentials  
+> **WHEN** they send a POST request to `/api/v1/auth` with `{email: string, password: string}`  
+> **THEN** the system responds with `200 OK` and a body containing `{access_token: string, expires_in: 3600}`  
+> **AND** the token is valid for subsequent authenticated requests
+
+**Imperative protocol (wrong):**
+> **GIVEN** the user opens the auth dialog  
+> **WHEN** the user fills in the form and clicks submit  
+> **THEN** the dialog shows a loading spinner  
+> **AND** the page redirects to the dashboard
+
+**Protocol-level declarative scenarios** describe the *contract* — what messages are sent, what fields are expected, what responses are returned. These survive complete rewrites of the UI, the framework, or the transport layer.
+
 ### Data Contracts
 Tables of inputs/outputs with types and constraints. Use real field names — implementers code against this.
 
@@ -157,15 +171,84 @@ Every spec defines boundaries: rate limits, sizes, timeouts, retries, with exact
 
 ---
 
+## Protocol Contracts
+
+Every spec that involves external communication (API, events, messages) MUST define the protocol contract:
+
+### Request Format
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| field | type | yes/no | description, constraints |
+
+### Response Format
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| field | type | yes/no | description |
+
+### Message Flow
+```
+Client → Gateway → Auth Service
+         ↓
+       Audit Log
+```
+
+### State Machine
+| State | Events | Next State | Side Effects |
+|-------|--------|------------|-------------|
+| idle | request received | processing | request logged |
+| processing | success | completed | response emitted |
+| processing | failure | error | retry scheduled |
+
+---
+
+## Internal Behavior
+
+Document how the system processes things internally. This is the invisible machinery that makes the external behavior possible.
+
+### Processing Pipeline
+| Stage | Input | Output | Rules |
+|-------|-------|--------|-------|
+| validation | raw request | validated request | schema check, rate limit check |
+| authorization | validated request | authorized request | permission check, token validation |
+| execution | authorized request | result | business logic, state mutation |
+| response | result | formatted response | error wrapping, audit logging |
+
+### Decision Logic
+Describe the rules the system uses to make decisions internally:
+- "If the request contains a `session_id`, the system MUST validate it against the cache before processing."
+- "If the cache lookup fails, the system MUST fall back to the database and update the cache on success."
+
+### Internal State
+| State | Description | Transitions |
+|-------|-------------|-------------|
+| state_name | what this internal state means | events that change it |
+
+---
+
+## User Experience (Non-UI)
+
+Document what the user *experiences* and *perceives* — not the interface they use to get there.
+
+**Good:** "The user is informed that their action was successful."
+**Bad:** "A green toast notification appears in the top-right corner with the text 'Success!'"
+
+**Good:** "The user can access their saved data."
+**Bad:** "The user clicks the 'Dashboard' tab in the sidebar menu."
+
+The UI is implementation detail. The user experience is behavioral contract.
+
+---
+
 ## What Does NOT Belong in a Spec
 
 - ❌ Class names, function names, file paths, framework choices
 - ❌ Step-by-step implementation instructions
-- ❌ UI layout, CSS, pixel values
+- ❌ UI layout, CSS, pixel values, button labels, modal animations
 - ❌ Database queries, ORM configuration
 - ❌ Non-behavioral trivia ("this file was created by Bob in 2023")
+- ❌ Screen-by-screen walkthroughs ("click X, then Y, then Z")
 
-**Quick test:** If the implementation can change without changing externally visible behavior, it does NOT belong in a spec.
+**Quick test:** If the implementation can change without changing externally visible behavior, it does NOT belong in a spec. A UI redesign, framework swap, or component refactor should never require a spec update.
 
 ---
 
@@ -174,7 +257,16 @@ Every spec defines boundaries: rate limits, sizes, timeouts, retries, with exact
 | Layer | Answers | Contains | Does NOT contain |
 |-------|---------|----------|-----------------|
 | **overview/** | WHY does this exist? | Identity, purpose, users, value, non-goals | Behavior details, tech choices |
-| **spec/** | WHAT must it do? | Requirements, scenarios, contracts, errors | Implementation structure |
-| **architecture/** | HOW is it built? | Components, dependencies, boundaries, ADRs | Behavioral requirements |
+| **spec/** | WHAT must it do? | Requirements, scenarios, contracts, errors, protocols, internal behavior | Implementation structure, UI details, framework choices |
+| **architecture/** | HOW is it built? | Components, dependencies, boundaries, ADRs, file structure | Behavioral requirements, user-facing contracts |
 
-A good way to test: could you hand the spec to an independent team and they'd build the right thing without seeing the code? If yes, the spec is strong enough.
+### The Spec Completeness Test
+
+Could you hand the spec to an independent team and they'd build the **correct system** without seeing the code? The spec must contain enough information for them to:
+
+1. **Implement the user experience** — what users experience and perceive
+2. **Implement the protocol** — API contracts, message formats, wire protocols, state transitions
+3. **Implement the internal behavior** — state machines, processing pipelines, decision logic, error handling
+4. **Verify correctness** — every scenario has a Definition of Done
+
+**The spec must be the complete source of truth for the system. Code is one rendering. If the spec is strong enough, you could delete the code and rebuild from the spec alone.**

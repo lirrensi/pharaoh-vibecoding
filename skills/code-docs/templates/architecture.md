@@ -1,6 +1,6 @@
 ---
 node_type: architecture
-title: {System/Component Name} Architecture
+title: System Component Name Architecture
 status: active
 updated: YYYY-MM-DD
 tags: []
@@ -9,25 +9,45 @@ links:
   documents: []
 ---
 
-# {System/Component Name} Architecture
+# System Component Name Architecture
 
 ## Overview
 {What this component/system is and why it exists in the architecture}
 
 ## Scope Boundary
-**Owns:** {what this component is responsible for}
+**Owns:** {what this component is responsible for — behavior, not files}
 **Does not own:** {what it explicitly does NOT handle}
-**Boundary interfaces:** {how it connects to other components}
+**Boundary interfaces:** {how it connects to other components — protocol, not just names}
 
 ## Components
 | Component | Responsibility | Key Files |
 |-----------|---------------|-----------|
-| name | what it does | `src/path/` |
+| name | what it does — behaviorally | `src/path/` |
+
+## Internal Behavior
+{How this component processes internally — state machines, decision logic, pipelines}
+
+### Processing Pipeline
+| Stage | Input | Output | Rules |
+|-------|-------|--------|-------|
+| stage | input | output | decision rules |
+
+### Internal State
+| State | Description | Transitions |
+|-------|-------------|-------------|
+| state | what this state means | events that change it |
 
 ## Data Models / Storage
 | Entity | Storage | Schema Location | Notes |
 |--------|---------|----------------|-------|
 | entity_name | PostgreSQL, Redis, etc. | `src/path/schema.ts` | description |
+
+## Protocol / Communication
+{How this component communicates with others — message formats, protocols, APIs}
+
+```
+{ASCII diagram showing message flow between components}
+```
 
 ## Relationships and Flow
 {How data and control move through the system. Use ASCII diagrams.}

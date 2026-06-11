@@ -39,9 +39,9 @@ links:
 
 ### 4. Content
 Write content following the format for the `node_type`:
-- `spec` → use `../spec-format.md`
-- `overview` → free-form but concise, warm tone
-- `architecture` / `component` → structural, factual
+- `spec` → use `../spec-format.md`. Focus on behavior, protocol contracts, internal processing — NOT UI details.
+- `overview` → free-form but concise, warm tone. Focus on user experience, not interface.
+- `architecture` / `component` → structural, factual. Focus on internal behavior, processing pipelines, and communication protocols.
 - `guide` → step-by-step, task-oriented
 - `adr` → Status, Context, Decision, Consequences
 

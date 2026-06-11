@@ -1,6 +1,6 @@
 ---
 node_type: change-behavior
-title: {Feature} Behavior Changes
+title: Feature Behavior Changes
 status: draft
 updated: YYYY-MM-DD
 links:
@@ -8,7 +8,7 @@ links:
   documents: []
 ---
 
-# Behavior Changes: {Title}
+# Behavior Changes: Title
 
 ## ADDED Requirements
 

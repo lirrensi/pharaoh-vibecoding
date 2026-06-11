@@ -1,6 +1,6 @@
 ---
 node_type: adr
-title: ADR-{NNNN}: {Decision Title}
+title: ADR-NNNN Decision Title
 status: active
 updated: YYYY-MM-DD
 tags: [adr, decision]
@@ -10,7 +10,7 @@ links:
   superseded_by: []
 ---
 
-# ADR-{NNNN}: {Decision Title}
+# ADR-NNNN: Decision Title
 
 ## Status
 {Proposed | Accepted | Deprecated | Superseded by ADR-XXXX}

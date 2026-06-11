@@ -23,19 +23,19 @@ docs/changes/<kebab-case-name>/
 └── tasks.md         # Implementation checklist
 ```
 
-Name the folder with kebab-case, descriptive: `add-dark-mode`, `fix-auth-timeout`, `refactor-session-store`.
+Name the folder with kebab-case, descriptive: `add-rate-limiting`, `fix-auth-timeout`, `refactor-session-store`.
 
 ### Step 3: Write proposal.md
 
 ```markdown
 ---
 node_type: change-proposal
-title: Add Dark Mode
+title: Add Rate-Limiting
 status: draft
 updated: YYYY-MM-DD
-tags: [ui, theming]
+tags: [api, security, performance]
 links:
-  depends_on: [../../spec/features/ui.md]
+  depends_on: [../../spec/features/api.md]
 ---
 
 # Proposal: {Title}
@@ -62,51 +62,51 @@ This is the most important artifact. It describes behavioral changes as deltas:
 ```markdown
 ---
 node_type: change-behavior
-title: Dark Mode Behavior Changes
+title: Rate-Limiting Behavior Changes
 status: draft
 updated: YYYY-MM-DD
 links:
   depends_on: [proposal.md]
-  documents: [../../spec/features/ui.md]
+  documents: [../../spec/features/api.md]
 ---
 
-# Behavior Changes: Dark Mode
+# Behavior Changes: Rate-Limiting
 
 ## ADDED Requirements
 
-### Requirement: Theme Persistence
-The system MUST persist the user's theme preference across sessions.
+### Requirement: Request Throttling
+The system MUST reject requests that exceed the rate limit.
 
-#### Scenario: Theme survives page reload
-- **GIVEN** a user who selected dark mode
-- **WHEN** the user reloads the page
-- **THEN** the page renders in dark mode
+#### Scenario: User exceeds rate limit
+- **GIVEN** a user who has made 100 requests in the last minute
+- **WHEN** the user makes another request
+- **THEN** the system rejects the request with HTTP 429
+- **AND** the response includes a `Retry-After` header
 
-### Requirement: System Preference Detection
-The system MUST detect the OS-level theme preference on first visit.
+### Requirement: Rate Limit Headers
+The system MUST include rate limit headers in every API response.
 
-#### Scenario: First visit on dark-mode OS
-- **GIVEN** a first-time visitor whose OS is in dark mode
-- **WHEN** the page loads
-- **THEN** the page renders in dark mode
-- **AND** the preference is saved to localStorage
+#### Scenario: Successful request includes headers
+- **GIVEN** a user who has made 50 requests in the last minute
+- **WHEN** the user makes a valid request
+- **THEN** the response includes `X-RateLimit-Remaining: 50`
+- **AND** the response includes `X-RateLimit-Reset: {timestamp}`
 
 ## MODIFIED Requirements
 
-### Requirement: Theme Toggle
-The system MUST provide a theme toggle in the header.
-(Previously: theme toggle was in settings page only.)
+### Requirement: Authentication
+The system MUST track rate limits per authenticated user.
+(Previously: rate limits were global per IP only.)
 
-#### Scenario: Quick toggle from header
-- **GIVEN** a user on any page
-- **WHEN** the user clicks the theme toggle in the header
-- **THEN** the theme switches immediately
-- **AND** the preference is persisted
+#### Scenario: Authenticated user has separate quota
+- **GIVEN** an authenticated user and an anonymous user
+- **WHEN** both make requests from the same IP
+- **THEN** each has their own rate limit counter
 
 ## REMOVED Requirements
 
-### Requirement: Per-Page Theme Override
-(Removed — simplified to global theme only. Per-page overrides caused confusion.)
+### Requirement: Global IP-Based Throttling
+(Removed — per-IP throttling was too aggressive for NAT and shared office environments.)
 ```
 
 **Delta rules:**
@@ -119,7 +119,7 @@ The system MUST provide a theme toggle in the header.
 ```markdown
 ---
 node_type: change-design
-title: Dark Mode Design
+title: Rate-Limiting Design
 status: draft
 updated: YYYY-MM-DD
 links:
@@ -129,23 +129,29 @@ links:
 # Design: {Title}
 
 ## Technical Approach
-{How we'll implement this. Libraries, patterns, data flow.}
+{How we'll implement this. Algorithms, data structures, patterns.}
 
 ## Architecture Decisions
 
-### Decision: CSS Custom Properties over CSS-in-JS
+### Decision: Token Bucket over Sliding Window
 {Decision, rationale, alternatives considered.}
 
-### Decision: React Context over Redux
+### Decision: Redis over In-Memory
 {Decision, rationale, alternatives considered.}
 
 ## Data Flow
 {ASCII diagram or description of data/control flow.}
 
+```
+Client → Gateway → Rate Limiter → Service
+                ↓
+              Redis
+```
+
 ## File Changes
-- `src/contexts/ThemeContext.tsx` (new)
-- `src/components/ThemeToggle.tsx` (new)
-- `src/styles/globals.css` (modified)
+- `src/middleware/rate-limit.ts` (new)
+- `src/services/rate-limiter.ts` (new)
+- `src/config/limits.ts` (modified)
 ```
 
 ### Step 6: Write tasks.md
@@ -153,7 +159,7 @@ links:
 ```markdown
 ---
 node_type: change-tasks
-title: Dark Mode Tasks
+title: Rate-Limiting Tasks
 status: draft
 updated: YYYY-MM-DD
 links:
@@ -162,21 +168,21 @@ links:
 
 # Tasks: {Title}
 
-## 1. Theme Infrastructure
-- [ ] 1.1 Create ThemeContext with light/dark state
-- [ ] 1.2 Add CSS custom properties for theme colors
-- [ ] 1.3 Implement localStorage persistence
-- [ ] 1.4 Add system preference detection
+## 1. Core Implementation
+- [ ] 1.1 Implement token bucket algorithm
+- [ ] 1.2 Add Redis-backed rate limit storage
+- [ ] 1.3 Implement rate limit middleware
 
-## 2. UI Components
-- [ ] 2.1 Create ThemeToggle component
-- [ ] 2.2 Add toggle to header
-- [ ] 2.3 Update all components to use CSS variables
+## 2. Protocol & Headers
+- [ ] 2.1 Add `X-RateLimit-*` headers to all responses
+- [ ] 2.2 Implement `Retry-After` header for 429 responses
+- [ ] 2.3 Add rate limit to OpenAPI schema
 
-## 3. Testing & Polish
-- [ ] 3.1 Test contrast ratios for accessibility
-- [ ] 3.2 Test persistence across page reloads
-- [ ] 3.3 Test system preference detection
+## 3. Testing & Validation
+- [ ] 3.1 Test per-user rate limits
+- [ ] 3.2 Test per-IP rate limits
+- [ ] 3.3 Test rate limit headers in responses
+- [ ] 3.4 Test 429 response with retry logic
 ```
 
 **Task best practices:**

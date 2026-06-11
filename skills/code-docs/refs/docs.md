@@ -11,6 +11,7 @@ General writing standards for all documentation produced under this system. For 
 - If something is undecided, label it explicitly: "**[UNDECIDED]** The retry strategy has not been finalized."
 - Prefer active voice: "The system returns a token" not "A token is returned by the system."
 - Use present tense: "validates" not "will validate."
+- **Protocol language:** When describing API contracts, use exact field names, types, and values. Not "a token is sent" but "the response body includes `access_token: string` with `expires_in: 3600` (seconds)."
 
 ---
 
@@ -44,6 +45,7 @@ await client.login(credentials);
 - Prefer text-first, versionable diagrams: Mermaid, PlantUML, ASCII art.
 - Use diagrams when structure or flow is easier to see than explain.
 - Every diagram needs a caption or preceding sentence explaining what it shows.
+- **Protocol diagrams** are mandatory for any spec involving communication. Show message formats, sequence, and state transitions.
 
 ASCII example:
 ```
@@ -51,20 +53,51 @@ Client → Gateway → Auth Service → DB
                 ↘ Cache
 ```
 
+Protocol diagram example:
+```
+Client                    Gateway                    Auth Service
+  | POST /login              |                            |
+  |------------------------->|                            |
+  |                          | POST /validate             |
+  |                          |--------------------------->|
+  |                          |                            |
+  |                          |<---------------------------|
+  |                          | 200 + {token, user_id}     |
+  |                          |                            |
+  |<-------------------------| 200 + {token, expires_at}  |
+  |                          |                            |
+```
+
 Mermaid example:
 ````markdown
 ```mermaid
 sequenceDiagram
-    Client->>Gateway: POST /login
+    Client->>Gateway: POST /login {email, password}
     Gateway->>Auth: validate(credentials)
     Auth->>DB: lookup user
     DB-->>Auth: user record
     Auth-->>Gateway: JWT token
-    Gateway-->>Client: 200 + token
+    Gateway-->>Client: 200 + {token, expires_at}
 ```
 ````
 
 ---
+
+## Internal Behavior Documentation
+
+Every spec and architecture document must explain what the system does *internally* — not just what the user sees. Internal behavior includes:
+
+- **State machines** — states, events, transitions, side effects
+- **Processing pipelines** — stages, inputs, outputs, decision rules
+- **Decision logic** — the rules the system uses to make choices internally
+- **Message flows** — how components communicate at the protocol level
+- **Error propagation** — how errors flow through the system internally
+
+**Good:** "The system validates the request against the schema, then checks the rate limiter. If the rate limit is exceeded, the system rejects the request immediately without reaching the business logic."
+**Bad:** "The user sees an error message."
+
+**Good:** "The system enters a retry loop with exponential backoff, capped at 5 attempts."
+**Bad:** "The API returns a 500 error."
 
 ## Links and Boundaries
 
@@ -135,22 +168,27 @@ When onboarding or orienting to the documentation:
 
 Always structure answers as:
 
-- **What overview says** — product identity and scope
-- **What spec says** — exact behavioral requirements
-- **What architecture says** — implementation structure
+- **What overview says** — product identity and scope, user experience principles
+- **What spec says** — exact behavioral requirements, protocol contracts, internal behavior
+- **What architecture says** — implementation structure, internal processing, component communication
 - **What code does** (if inspected) — actual behavior
-- **Whether they agree** — flag discrepancies
+- **Whether they agree** — flag discrepancies between any layer
+
+When reporting on a spec, always include:
+- **User experience** — what the user experiences and perceives
+- **Protocol** — API contracts, message formats, wire protocols
+- **Internal behavior** — state machines, processing pipelines, decision logic
 
 ---
 
 ## Quick Reference — Doc Types
 
-| Doc Type | Audience | Primary Question | Location |
-|----------|----------|-----------------|----------|
-| Overview | Humans, stakeholders | Why does this exist? | `docs/overview/` |
-| Spec | Implementers, testers, agents | What must it do? | `docs/spec/` |
-| Architecture | Maintainers, agents | How is it built? | `docs/architecture/` |
-| Guide | Users, contributors | How do I do X? | `docs/guides/` |
-| ADR | Maintainers | Why was this decided? | `docs/architecture/decisions/` |
-| Runbook | Operators | How do I operate X? | `docs/ops/` |
-| INDEX.md | Everyone | Where is everything? | Every folder |
+| Doc Type | Audience | Primary Question | Contains | Does NOT contain |
+|----------|----------|-----------------|----------|-----------------|
+| Overview | Humans, stakeholders | Why does this exist? | Identity, purpose, user experience principles, non-goals | Behavior details, tech choices |
+| Spec | Implementers, testers, agents | What must it do? | Requirements, scenarios, protocol contracts, internal behavior, state machines | UI details, implementation structure, framework choices |
+| Architecture | Maintainers, agents | How is it built? | Components, dependencies, internal processing, communication protocols | Behavioral requirements, user-facing contracts |
+| Guide | Users, contributors | How do I do X? | Step-by-step procedures | Specs, architecture decisions |
+| ADR | Maintainers | Why was this decided? | Decision context, rationale, consequences | Implementation details |
+| Runbook | Operators | How do I operate X? | Operational procedures, incident response | Business logic, specs |
+| INDEX.md | Everyone | Where is everything? | Maps, links, summaries | Content |

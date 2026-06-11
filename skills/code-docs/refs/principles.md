@@ -63,6 +63,9 @@ The stronger the docs, the more disposable the code becomes.
 - **Testable over aspirational.** Every scenario should be verifiable — you could write a test for it.
 - **Declarative over imperative.** Describe what happens, not how to click through a UI.
 - **Behavior over implementation.** `spec/` never mentions classes, functions, frameworks, or file names.
+- **Internal behavior over UI.** Document what the system *does* internally (state machines, processing pipelines, decision logic) — not what buttons a user clicks. A UI redesign should never require a spec update.
+- **Protocol over presentation.** Document message formats, API contracts, wire protocols, state transitions, and data schemas. The presentation layer (colors, layout, components) is implementation detail.
+- **User experience over interface.** Document what the user *experiences* and *perceives* — not the interface they use to get there. "The user is authenticated" not "The user clicks the login button and a modal appears".
 
 ## Document Lifecycle
 
