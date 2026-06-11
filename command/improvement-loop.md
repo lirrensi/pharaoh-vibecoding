@@ -1,74 +1,67 @@
 ---
-description: Run Neith with a focus, write a full task list, auto-fix safe items, leave decisions in the file for me to edit
----
-Read all currently open and recently found issues from (if present):
-- Neith (`.agents/neith`)
-- Reports (`.agents/reports`, all files regardless of format)
-- Pending tasks and TODO markers in the codebase
-
-Why: need initial check of what we already have in mind so Neith does not waste time going over the same issues.
+description: Scout the codebase by delegating specialists, accumulate findings into a single staging file, auto-fix safe items, report what's left for decisions
 ---
 
-## Phase 1 — Run Neith With Focus
+## Phase 0 — Read existing state
 
-Run Neith first if there's a specific objective. If no objective is specified, skip to Phase 2 and work with existing reports.
+If `.agents/issues-staging.md` exists, read it. Note:
+- What's already listed in both sections (so you don't duplicate)
+- The highest ID number (so new items continue from there)
 
-User specified goal: $ARGUMENTS
-
-When running Neith:
-- **Objective:**  what should Neith hunt for? Be explicit about scope.
-- Run at minimum once. Run multiple passes if the scope is broad or Neith's first pass surfaces areas that need deeper investigation.
-- Let Neith accumulate findings across passes. Each pass builds on the last.
-- Neith's job is to find, not to fix. It writes findings to `.agents/neith/` — scratchpad for state, report_issues for findings, report_activity for what was covered.
-
----
-
-## Phase 2 — Read Everything & Cross-Check
-
-Read every report, every finding, every TODO, every Neith file. Do not skip anything.
-
-Then cross-check against the actual codebase:
-- Is this finding still real? Or was it already fixed?
-- Is it obsolete because the relevant code was removed or refactored?
-- Is it invalid because the assumption was wrong?
-
-Discard anything stale, fixed, or invalid silently. Do not include it in the task file. Only real, current issues survive.
-
----
-
-## Phase 3 — Write the Task File
-
-Write everything into `.agents/issues-staging.md`. This file is both the report and the control surface — I will open it, edit it, mark decisions, and add corrections directly. Make it clean and scannable.
-
-### File format:
+If it does NOT exist, create it with this skeleton:
 
 ```markdown
-# Issues Staging — [brief title / date]
+# Issues Staging
 
-_N items total — X auto-fix, Y need decision_
-
----
+_0 items total — 0 auto-fix, 0 need decision_
 
 ## ✅ Auto-Fix
 
-_These have unambiguous correct solutions. No behavior changes. Will be fixed automatically in Phase 4._
-
-- [ ] #001 — [one clear sentence describing the issue]
-- [ ] #002 — [one clear sentence]
-...
+_No items yet._
 
 ---
 
 ## 🔴 Needs Decision
 
-_These require a product or architectural call. Do not fix until I review._
-
-| # | Title | Severity | Why this needs a decision | Recommendation |
-|---|---|---|---|---|
-| #003 | Short title | High | The actual tradeoff or ambiguity — no padding. Why can't this just be auto-fixed? | What you'd do if it were your call |
-
-...
+_No items yet._
 ```
+
+Also read (if present) for awareness of already-walked territory:
+- `.agents/neith/ActivityLog.md`
+- `.agents/reports/` — all files
+
+---
+
+## Phase 1 — Seek & Accumulate
+
+You are running at the top level. You **can** dispatch specialists. You **can** also read files yourself. Choose the right tool.
+
+User specified focus: $ARGUMENTS
+
+### Scope
+
+- If a focus was given: zero in on that area. Be surgical.
+- If no focus: run a broad sweep. Dispatch Anubis on core modules, Osiris on high-risk test gaps, Explorer on tangled areas.
+
+### How to seek
+
+| Situation | Action |
+|---|---|
+| Broad code audit — bugs, smells, security across a module | **Anubis** — bounded scope, ask Location/Observation/Severity |
+| Test coverage gaps — untested paths, brittle tests | **Osiris** — scope to specific modules |
+| Feature / improvement ideas | **Hathor** |
+| Mapping unknown territory | **Explorer** |
+| Narrow check — one file, one function | **DIY** — read files directly |
+| Quick surface scan — glob/grep | **DIY** |
+
+- Run at most 2-3 specialists in parallel.
+- Give each a bounded prompt: exact scope, exact concern.
+- If the user asked for a specific number of passes — do that many. Otherwise run at least 2 passes, or until you've found a meaningful batch (aim for 10+ items if the codebase warrants it).
+- If a specialist surfaces a new area worth digging into — queue another pass.
+
+### Categorize immediately
+
+As each finding comes in, sort it right now into the correct block. Don't batch-categorize later.
 
 ### The litmus test
 
@@ -106,31 +99,49 @@ Anything that changes what the user sees, experiences, or depends on:
 
 **When in doubt, it goes in Needs Decision.** No auto-fixing anything you're not 100% sure about.
 
-Do not ask me anything during this phase. Just write the file completely, then proceed to Phase 4.
+### Append to the staging file
+
+Before appending each item, scan the existing staging file — is this already there? Skip duplicates. If it amplifies an existing finding, update that entry instead.
+
+Write each new item into `.agents/issues-staging.md` immediately as you categorize it:
+
+- Auto-fix → append a checkbox to the `✅ Auto-Fix` block:
+  ```
+  - [ ] #NNN — one clear sentence
+  ```
+- Needs Decision → append a row to the `🔴 Needs Decision` table:
+  ```
+  | #NNN | Short title | Severity | Why decision | Recommendation |
+  ```
+
+Update the totals line at the top after each batch. Keep IDs sequential.
 
 ---
 
-## Phase 4 — Auto-Fix Section A
+## Phase 2 — Auto-Fix
 
-Go through every `[ ]` item in the Auto-Fix section and fix it.
+Go through every `[ ]` item in the ✅ Auto-Fix block. One at a time:
 
-Rules while fixing:
-- **One item at a time.** Fix → verify → mark `[x]` → next.
-- **If an item turns out not to be auto-fixable** — the fix is more complex than expected, touches risky code, or you realize it needs a decision — do NOT force it. Move it to the Needs Decision section instead.
-- **Apply the litmus test mid-flight.** After each fix, ask: would a user notice different behavior? If yes — move it to Needs Decision. Same goes if a fix breaks an existing test.
+1. Fix it.
+2. Verify the fix works.
+3. Mark it `[x]`.
+4. If mid-fix you realize it's NOT actually auto-fixable (more complex than expected, touches risky code, would change behavior) — do NOT force it. Move it down to the 🔴 Needs Decision block instead.
+5. Apply the litmus test mid-flight: would a user notice? If yes → move it down.
 
-When all auto-fix items are either `[x]` done or moved to Needs Decision, proceed to Phase 5.
+When all auto-fix items are either `[x]` or moved to Needs Decision → done.
 
 ---
 
-## Phase 5 — Report
+## Phase 3 — Report
 
-Give me a tight summary:
+Tight summary:
 
-> "Auto-fixed X items. Y items moved to Needs Decision during fixing. Z items total now waiting for your review in Section B."
+> "Auto-fixed X items. Y items turned out to need a decision and were moved. Z items total now waiting for your review in the Needs Decision section."
 >
-> Quick list of what was fixed — one line per item, no detail needed.
->
-> "Open `.agents/issues-staging.md` to review decisions and edit directly."
+> "Open `.agents/issues-staging.md` to review decisions."
 
-Do not present the decision items to me in the chat. Do not ask me to decide inline. The file is the interface — I'll open it, review, and mark decisions there myself. This keeps the conversation clean and the work documented in one place.
+Quick list of what was fixed — one line per item. Then list what's waiting for decisions (IDs + titles only, no detail).
+
+---
+
+> **The staging file is persistent.** Run this command again with a different focus — it reads what's already there, avoids duplicates, appends more, and auto-fixes the new batch. The file grows across sessions.
