@@ -77,6 +77,7 @@ links:
 | `tags` | Optional | `[lowercase, hyphenated]` | Free-form for search and grouping |
 | `confidence` | Optional | `decided`, `tentative`, `exploratory` | Whether a decision has been made, or it's open to change |
 | `links` | Optional | See below | Typed links to other docs and code |
+| `resource` | Optional | URI or path string | Canonical pointer to the *underlying asset* the doc describes (dashboard URL, service endpoint, table, repo path, file location, etc.). Distinct from `links.*`: it answers "where is the real thing this doc talks about?", not "how does it relate to other docs?". |
 | `sync_status` | Optional | `verified`, `unchecked`, `drifted` | Whether Sync mode has confirmed docs match code. `unchecked` = never synced, `verified` = confirmed match, `drifted` = discrepancy found |
 | `last_synced` | Optional | `YYYY-MM-DD` | When Sync mode last ran against this doc's linked code |
 
@@ -91,6 +92,48 @@ Describes whether a decision has been finalized, not how sure you are:
 | `exploratory` | No decision yet — exploring options | Research spikes, prototype docs, pre-ADR analysis |
 
 Do NOT use `confidence` to express how sure you are about facts. Use it to signal whether a decision is locked or still in play. A spec with `confidence: tentative` says "this is the current plan but expect changes."
+
+---
+
+## Resource Field
+
+`resource:` is a **single, canonical pointer to the real-world asset a doc is about** — a live URL, a service endpoint, a dashboard, a database table, a repo path, a file on disk. It is *not* a relationship to other docs; that is what `links:` is for. It answers a different question:
+
+- `links.*` → *"how does this doc relate to other docs and code?"*
+- `resource:` → *"where is the actual thing this doc describes?"*
+
+**Use `resource:` when the doc describes a tangible asset** (a service, a table, a dashboard, an API, a runbook target). **Omit it when the doc is purely abstract** (a philosophy, a concept, a definition, a process).
+
+`resource:` is a single string. Prefer absolute URIs when one exists. If a relative path is the only option, resolve it the same way `links.*` paths are resolved (relative to the doc's own directory).
+
+### Examples
+
+```yaml
+# A spec for a BigQuery table — pointer is the BigQuery console URL
+resource: https://console.cloud.google.com/bigquery?p=acme&d=sales&t=orders
+
+# An architecture doc for a service — pointer is the service entry in code
+resource: ../../services/billing/src/index.ts
+
+# A runbook for a dashboard — pointer is the dashboard URL
+resource: https://grafana.example.internal/d/billing-funnel
+
+# An ops runbook for an alert — pointer is the alert config
+resource: ../../infra/alerts/billing-freshness.yaml
+
+# A spec describing a concept (e.g. "metric definition") — no resource
+# (omit the field; the doc is abstract)
+```
+
+### Why it's a separate field, not a `links.*` type
+
+- It is **singular** by design — every doc has at most one canonical asset, which keeps "jump to the real thing" a one-key lookup.
+- It is **renderable** — `INDEX.md` and `status.py` can show a "↗ live" affordance next to docs that have a `resource:`.
+- It is **stable under rename** — moving the doc across folders does not break the link, because the resource is usually absolute or repo-rooted.
+
+### In `status.py` reports
+
+`resource:` is treated as a *soft signal*, not an invariant. A doc without one is **not** a finding — many abstract docs legitimately have no asset. A doc *with* a `resource:` is **not** verified; we do not check that the URL still resolves (that would be HTTP probing on every run, which is rude and slow). It is purely a navigational affordance.
 
 ---
 
