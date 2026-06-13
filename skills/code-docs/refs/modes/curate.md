@@ -33,7 +33,7 @@ status: active
 updated: YYYY-MM-DD
 tags: [domain, topic]
 links:
-  depends_on: [../path/to/parent.md]
+  depends_on: [/path/to/parent.md]
 ---
 ```
 

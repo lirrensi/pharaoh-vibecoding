@@ -23,22 +23,29 @@ from _ontology import (
     parse_frontmatter,
     get_title,
     find_project_root,
-    resolve_links,
+    resolve_links_with_raw,
     build_reverse,
     log_operation,
     today_str,
 )
 
 
-def shorten_path(target: Path, base: Path) -> str:
-    """Show a target path compactly, relative to docs root or as filename."""
+def display_label_for_doc(target: Path, docs_root: Path) -> str:
+    """Display a target doc path as `/path/within/docs/` for human reading.
+
+    Mirrors the absolute-link convention: leading `/` means "absolute,
+    scope by extension". For markdown targets, that's docs-root.
+
+    Falls back to a folder-relative path for targets outside docs/ (rare).
+    """
     try:
-        rel = target.relative_to(base)
-        return str(rel).replace("\\", "/")
+        rel = target.relative_to(docs_root)
+        return "/" + str(rel).replace("\\", "/")
     except ValueError:
+        # Target is outside docs/ — show the project-relative form
         try:
-            rel = target.relative_to(base.parent)
-            return "../" + str(rel).replace("\\", "/")
+            rel = target.relative_to(docs_root.parent)
+            return "/" + str(rel).replace("\\", "/")
         except ValueError:
             return target.name
 
@@ -47,25 +54,33 @@ def format_links(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict)
     """Build a compact link annotation line for a single document.
 
     Shows outgoing (→) and incoming (←) links, one per type.
+
+    For **outgoing** links: displays the raw href the author wrote
+    (e.g. "/overview/product.md", "/src/auth/") — never a re-serialised
+    relative path. This is the absolute-link convention: the display
+    matches what's in the source.
+
+    For **incoming** links: displays the doc path as `/path/within/docs/`
+    so the convention is consistent across both directions.
+
     Returns empty string if no links.
     """
     resolved_fp = filepath.resolve()
-    out_links = resolve_links(filepath, all_docs.get(resolved_fp, {}))
+    out_links_raw = resolve_links_with_raw(filepath, all_docs.get(resolved_fp, {}))
     in_links = reverse.get(resolved_fp, [])
 
-    if not out_links and not in_links:
+    if not out_links_raw and not in_links:
         return ""
 
     parts = []
 
-    # Outgoing: → target (type)
+    # Outgoing: → <raw href> (type)  — uses the author's original text
     for link_type in ["depends_on", "documents", "implements", "supersedes", "relates_to", "part_of", "implemented_by"]:
-        targets = out_links.get(link_type, [])
-        for t in targets:
-            label = shorten_path(t, docs_root)
-            parts.append(f"→ {label} ({link_type})")
+        targets = out_links_raw.get(link_type, [])
+        for resolved_target, raw_href in targets:
+            parts.append(f"→ {raw_href} ({link_type})")
 
-    # Incoming: ← source (type)
+    # Incoming: ← <doc path as /abs> (type)
     seen = set()
     for src, link_type in in_links:
         if src == resolved_fp:
@@ -74,7 +89,7 @@ def format_links(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict)
         if key in seen:
             continue
         seen.add(key)
-        label = shorten_path(src, docs_root)
+        label = display_label_for_doc(src, docs_root)
         parts.append(f"← {label} ({link_type})")
 
     if not parts:

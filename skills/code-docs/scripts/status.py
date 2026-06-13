@@ -66,8 +66,15 @@ def check_orphans(docs: list[tuple[Path, dict]], incoming: dict[Path, list]) -> 
 
 
 def check_broken_links(docs: list[tuple[Path, dict]], index_files: dict[Path, list[Path]]) -> list[tuple[Path, str, Path]]:
-    """Find links pointing to non-existent files.
-    Returns list of (source, link_type, broken_target)."""
+    """Find links pointing to non-existent .md files.
+
+    Returns list of (source, link_type, broken_target).
+
+    Only checks targets that are markdown (`.md` / `.markdown`). Code
+    targets (TypeScript, Python, etc.) are NOT checked here — those are
+    `documents` / `implemented_by` claims about assets, not navigation
+    links. Sync mode is the right place to verify code paths.
+    """
     broken = []
     all_existing = {fp.resolve() for fp, _ in docs}
     # Also include INDEX.md files as existing
@@ -77,6 +84,9 @@ def check_broken_links(docs: list[tuple[Path, dict]], index_files: dict[Path, li
         resolved = resolve_links(src_path, fm)
         for link_type, targets in resolved.items():
             for target in targets:
+                # Only check markdown targets; skip code/data assets
+                if target.suffix.lower() not in (".md", ".markdown"):
+                    continue
                 if target not in all_existing:
                     broken.append((src_path, link_type, target))
     return broken
@@ -122,12 +132,21 @@ def _strip_frontmatter(text: str) -> str:
     return parts[2]
 
 
-def extract_body_links(filepath: Path) -> list[tuple[Path, str]]:
+def extract_body_links(filepath: Path, docs_root: Path | None = None) -> list[tuple[Path, str]]:
     """Extract local-file markdown links from a doc's body.
 
     Returns list of (resolved_target_path, raw_href). External URLs
     (http://, https://, mailto:, etc.) are skipped — we don't probe them.
     Same for pure anchors (#section) and empty hrefs.
+
+    Resolution rules (mirrors _ontology.resolve_href):
+      - Leading `/` → absolute, scope by extension (.md → docs_root, else project root)
+      - Known top-level docs folder → docs-root relative
+      - Plain relative → relative to this doc's directory (legacy)
+
+    The raw_href returned is the EXACT string the author wrote (e.g.
+    "/overview/product.md" or "../foo/bar.md") so reports show what the
+    doc actually says, not a re-serialised absolute path.
     """
     try:
         text = filepath.read_text(encoding="utf-8")
@@ -138,7 +157,6 @@ def extract_body_links(filepath: Path) -> list[tuple[Path, str]]:
     body = _strip_code_fences(body)
 
     out: list[tuple[Path, str]] = []
-    base = filepath.parent
     for match in _LINK_RE.finditer(body):
         href = match.group(2).strip()
         if not href:
@@ -154,27 +172,40 @@ def extract_body_links(filepath: Path) -> list[tuple[Path, str]]:
         href_clean = href.split("#", 1)[0].split("?", 1)[0]
         if not href_clean:
             continue
-        # We only care about .md links (and relative paths to .md)
-        # Other extensions (images, etc.) are not our concern here.
-        if not href_clean.endswith(".md"):
+        # We only care about .md links. Code/config links in body are
+        # also valid, but their broken-ness is out of scope for status.py
+        # (resolve_links + sync handles them). Keep .md focus here.
+        if not href_clean.endswith(".md") and not href_clean.endswith(".markdown"):
             continue
-        target = (base / href_clean).resolve()
-        out.append((target, href))
+        # Resolve using the same rules as the ontology resolver
+        target = _resolve_body_href(href_clean, filepath, docs_root)
+        if target is not None:
+            out.append((target, href))
     return out
 
 
-def check_broken_body_links(docs: list[tuple[Path, dict]], index_files: dict[Path, list[Path]]) -> list[tuple[Path, str, Path]]:
+def _resolve_body_href(href_clean: str, filepath: Path, docs_root: Path | None) -> Path | None:
+    """Resolve a body link href to an absolute Path using the unified rules."""
+    # Local import to avoid circular import at module load
+    from _ontology import _resolve_one, _find_docs_root
+    if docs_root is None:
+        docs_root = _find_docs_root(filepath)
+    project_root = docs_root.parent if docs_root else None
+    return _resolve_one(href_clean, filepath.parent, docs_root, project_root)
+
+
+def check_broken_body_links(docs: list[tuple[Path, dict]], index_files: dict[Path, list[Path]], docs_root: Path | None = None) -> list[tuple[Path, str, Path]]:
     """Find inline markdown links in body text pointing to non-existent .md files.
 
     Returns list of (source_doc, raw_href, resolved_target). The raw_href is
-    the EXACT string the author wrote (e.g. "../../foo/bar.md") so reports
+    the EXACT string the author wrote (e.g. "/overview/product.md") so reports
     show what the doc actually says, not a re-serialised absolute path."""
     broken: list[tuple[Path, str, Path]] = []
     all_existing = {fp.resolve() for fp, _ in docs}
     all_existing.update(idx.resolve() for idx in index_files)
 
     for fp, _fm in docs:
-        for target, raw in extract_body_links(fp):
+        for target, raw in extract_body_links(fp, docs_root=docs_root):
             if target not in all_existing:
                 broken.append((fp, raw, target))
     return broken
@@ -514,7 +545,7 @@ def main():
     # Issues
     orphans = check_orphans(docs, incoming)
     broken = check_broken_links(docs, index_files)
-    broken_body = check_broken_body_links(docs, index_files)
+    broken_body = check_broken_body_links(docs, index_files, docs_root=root)
     broken_index = check_broken_index_links(index_files)
     unsynced = check_unsynced(docs)
     drifted = check_drifted(docs)

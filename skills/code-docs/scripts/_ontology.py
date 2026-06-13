@@ -76,8 +76,39 @@ def find_project_root(start: Path) -> Optional[Path]:
     return None
 
 
-def resolve_links(filepath: Path, fm: dict) -> dict[str, list[Path]]:
-    """Extract typed links from frontmatter, resolving relative paths against the doc's directory.
+def resolve_links(filepath: Path, fm: dict, docs_root: Optional[Path] = None) -> dict[str, list[Path]]:
+    """Extract typed links from frontmatter, resolving each path to an absolute target.
+
+    ## Path resolution rules
+
+    A link target is resolved in this order:
+
+    1. **Leading `/`** — absolute. Scope is inferred from the extension:
+       - `.md` (or any markdown file) → relative to `docs_root` (so
+         `/overview/product.md` is `docs_root/overview/product.md`).
+       - anything else (code, configs, etc.) → relative to the project
+         root (the parent of `docs_root`). So `/src/auth/index.ts` is
+         `project_root/src/auth/index.ts`.
+       This is the **recommended** form. It's stable when files are
+       moved within their folder, stable when the referrer is moved,
+       and works for both docs and code with one syntax.
+
+    2. **Repo-root relative** (no leading `/`, but path starts with a
+       known top-level folder like `src/`, `services/`, `infra/`) →
+       treated as relative to the project root. Lets you write
+       `src/auth/index.ts` from anywhere.
+
+    3. **Docs-root relative** (path starts with a known top-level docs
+       folder like `overview/`, `spec/`, `architecture/`, etc.) → treated
+       as relative to `docs_root`. Lets you write `overview/product.md`
+       from anywhere inside docs/.
+
+    4. **Plain relative** (e.g. `sibling.md`, `./foo.md`) → relative to
+       the doc's own directory. The legacy form. Works but is fragile
+       on move.
+
+    If `docs_root` is None, the resolver infers it by walking up from
+    `filepath` until it finds a folder named `docs`.
 
     Returns {link_type: [resolved_target_paths]}.
     Handles both string values and lists of strings.
@@ -86,6 +117,10 @@ def resolve_links(filepath: Path, fm: dict) -> dict[str, list[Path]]:
     if not isinstance(links, dict):
         return {}
 
+    if docs_root is None:
+        docs_root = _find_docs_root(filepath)
+
+    project_root = docs_root.parent if docs_root else None
     base = filepath.parent
     resolved = {}
     for link_type, targets in links.items():
@@ -99,10 +134,128 @@ def resolve_links(filepath: Path, fm: dict) -> dict[str, list[Path]]:
         for t in targets:
             if not isinstance(t, str):
                 continue
-            target = (base / t).resolve()
-            paths.append(target)
+            target = _resolve_one(t, base, docs_root, project_root)
+            if target is not None:
+                paths.append(target)
         if paths:
             resolved[link_type] = paths
+    return resolved
+
+
+# Top-level folder names that are conventionally *under* docs/.
+_DOCS_TOP_LEVEL = frozenset({
+    "overview", "spec", "specs", "architecture", "components",
+    "decisions", "guides", "ops", "reference", "changes", "archive",
+})
+
+# Top-level folder names that are conventionally *outside* docs/ (i.e. code).
+_CODE_TOP_LEVEL = frozenset({
+    "src", "lib", "services", "apps", "packages", "modules",
+    "components", "pages", "routes", "api", "internal", "cmd",
+    "test", "tests", "scripts", "tools", "bin",
+    "infra", "deploy", "k8s", "helm", "terraform",
+    "docs",  # yes, sometimes you self-reference
+})
+
+
+def _find_docs_root(start: Path) -> Optional[Path]:
+    """Walk up from start until we find a folder named `docs`."""
+    candidate = start.resolve() if start.is_dir() else start.parent.resolve()
+    while candidate != candidate.parent:
+        if candidate.name == "docs" and candidate.is_dir():
+            return candidate
+        candidate = candidate.parent
+    return None
+
+
+def _resolve_one(href: str, base: Path, docs_root: Optional[Path], project_root: Optional[Path]) -> Optional[Path]:
+    """Resolve a single link target to an absolute Path, or None if unresolvable."""
+    href = href.strip()
+    if not href:
+        return None
+
+    # Rule 1: leading `/` — absolute, scope by extension
+    if href.startswith("/"):
+        body = href.lstrip("/")
+        # Drop fragment / query for filesystem lookup
+        body = body.split("#", 1)[0].split("?", 1)[0]
+        if not body:
+            return None
+        is_markdown = body.endswith(".md") or body.endswith(".markdown")
+        if is_markdown and docs_root is not None:
+            return (docs_root / body).resolve()
+        if project_root is not None:
+            return (project_root / body).resolve()
+        # No roots known — fall back to (base / body) for safety
+        return (Path("/") / body).resolve() if Path(body).is_absolute() else (Path.cwd() / body).resolve()
+
+    # Strip fragment / query
+    clean = href.split("#", 1)[0].split("?", 1)[0]
+    if not clean:
+        return None
+
+    first_segment = clean.split("/", 1)[0]
+
+    # Rule 2: known code top-level → project root
+    if first_segment in _CODE_TOP_LEVEL and project_root is not None:
+        return (project_root / clean).resolve()
+
+    # Rule 3: known docs top-level → docs root
+    if first_segment in _DOCS_TOP_LEVEL and docs_root is not None:
+        return (docs_root / clean).resolve()
+
+    # Rule 4: plain relative → doc's own directory (legacy form, still supported)
+    return (base / clean).resolve()
+
+
+def resolve_href(href: str, source_file: Path, docs_root: Optional[Path] = None) -> Optional[Path]:
+    """Public helper: resolve a single inline body link or frontmatter href.
+
+    Mirrors `_resolve_one`'s rules. Used by status.py for body links and
+    by any future tool that needs to walk a single href.
+    """
+    if docs_root is None:
+        docs_root = _find_docs_root(source_file)
+    project_root = docs_root.parent if docs_root else None
+    return _resolve_one(href, source_file.parent, docs_root, project_root)
+
+
+def resolve_links_with_raw(filepath: Path, fm: dict, docs_root: Optional[Path] = None) -> dict[str, list[tuple[Path, str]]]:
+    """Like `resolve_links` but also returns the raw href the author wrote.
+
+    Returns {link_type: [(resolved_target_path, raw_href_string), ...]}.
+
+    Useful for tools that need to *display* the original link text
+    (e.g. INDEX.md link annotations) rather than a re-serialised path.
+
+    Resolution rules are identical to `resolve_links` — see its docstring.
+    """
+    links = fm.get("links", {})
+    if not isinstance(links, dict):
+        return {}
+
+    if docs_root is None:
+        docs_root = _find_docs_root(filepath)
+
+    project_root = docs_root.parent if docs_root else None
+    base = filepath.parent
+    resolved: dict[str, list[tuple[Path, str]]] = {}
+    for link_type, targets in links.items():
+        if link_type not in LINK_TYPES:
+            continue
+        if isinstance(targets, str):
+            targets = [targets]
+        if not isinstance(targets, list):
+            continue
+        pairs: list[tuple[Path, str]] = []
+        for t in targets:
+            if not isinstance(t, str):
+                continue
+            target = _resolve_one(t, base, docs_root, project_root)
+            if target is not None:
+                pairs.append((target, t))
+        if pairs:
+            resolved[link_type] = pairs
     return resolved
 
 

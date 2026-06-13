@@ -101,7 +101,7 @@ Every spec and architecture document must explain what the system does *internal
 
 ## Links and Boundaries
 
-- Cross-link related sections: "See [Error Handling](error-handling.md) for failure modes."
+- Cross-link related sections: "See [Error Handling](/spec/error-handling.md) for failure modes."
 - Link to ADRs for important design decisions.
 - For external systems, document the contract and expectations — not their internals.
 - If another repo has canonical docs, link to that repo instead of rewriting locally.

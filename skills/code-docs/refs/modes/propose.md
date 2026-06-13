@@ -35,7 +35,7 @@ status: draft
 updated: YYYY-MM-DD
 tags: [api, security, performance]
 links:
-  depends_on: [../../spec/features/api.md]
+  depends_on: [/spec/features/api.md]
 ---
 
 # Proposal: {Title}
@@ -67,7 +67,7 @@ status: draft
 updated: YYYY-MM-DD
 links:
   depends_on: [proposal.md]
-  documents: [../../spec/features/api.md]
+  documents: [/spec/features/api.md]
 ---
 
 # Behavior Changes: Rate-Limiting

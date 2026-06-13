@@ -27,8 +27,8 @@ If a document feels too narrow, check if it has `links: part_of` pointing to a p
 INDEX.md (map)
   └─ summary: "Authentication — login, sessions, 2FA [auth, security]"
        └─ open file
-            └─ links.depends_on: [../overview/product.md]
-            └─ links.documents: [../../src/auth/]
+            └─ links.depends_on: [/overview/product.md]
+            └─ links.documents: [/src/auth/]
             └─ body links: "See [Session Management](sessions.md)"
 ```
 

@@ -55,8 +55,8 @@ Check every markdown link `[text](path.md)` in both body text and frontmatter `l
 **Report:**
 ```
 Broken links:
-- spec/features/auth.md → ../overview/product.md (broken: product.md not found at that path)
-- spec/features/api.md: links.documents → ../../src/api/ (directory exists, but no .md files there)
+- spec/features/auth.md → /overview/product.md (broken: product.md not found at that path)
+- spec/features/api.md: links.documents → /src/api/ (directory exists, but no .md files there)
 ```
 
 #### I4: No orphans

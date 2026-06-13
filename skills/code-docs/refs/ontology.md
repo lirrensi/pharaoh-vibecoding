@@ -40,6 +40,8 @@ Each document has exactly one `node_type`. Choose based on what the document IS,
 
 Every document MUST have YAML frontmatter. Minimal for index/non-load-bearing docs, full for all others.
 
+> **Hard rule:** all link paths in user-authored docs MUST start with `/`. No `../`, no `./`, no bare `foo.md`, no folder-prefix forms. See [Link Path Convention](#link-path-convention--always-absolute) for the full story and [Enforcement](#enforcement-the-no-relative-crap-rule) for how it's linted.
+
 ### Minimal (for `index` and lightweight docs)
 
 ```yaml
@@ -60,9 +62,9 @@ updated: 2026-06-09
 tags: [auth, security, sessions]
 confidence: certain
 links:
-  depends_on: [../overview/product.md]
-  documents: [../../src/auth/]
-  supersedes: [old-auth-spec.md]
+  depends_on: [/overview/product.md]
+  documents: [/src/auth/]
+  supersedes: [/archive/old-auth-spec.md]
 ---
 ```
 
@@ -113,13 +115,13 @@ Do NOT use `confidence` to express how sure you are about facts. Use it to signa
 resource: https://console.cloud.google.com/bigquery?p=acme&d=sales&t=orders
 
 # An architecture doc for a service — pointer is the service entry in code
-resource: ../../services/billing/src/index.ts
+resource: /services/billing/src/index.ts
 
 # A runbook for a dashboard — pointer is the dashboard URL
 resource: https://grafana.example.internal/d/billing-funnel
 
 # An ops runbook for an alert — pointer is the alert config
-resource: ../../infra/alerts/billing-freshness.yaml
+resource: /infra/alerts/billing-freshness.yaml
 
 # A spec describing a concept (e.g. "metric definition") — no resource
 # (omit the field; the doc is abstract)
@@ -155,11 +157,78 @@ Links are markdown links `[text](path.md)` declared under `links:` in frontmatte
 
 ```yaml
 links:
-  depends_on: [../overview/product.md]
-  documents: [../../src/auth/, ../../src/sessions/]
-  supersedes: [../archive/old-auth-flow.md]
-  implemented_by: [../../src/auth/login.ts]
+  depends_on: [/overview/product.md]
+  documents: [/src/auth/, /src/sessions/]
+  supersedes: [/archive/old-auth-flow.md]
+  implemented_by: [/src/auth/login.ts]
 ```
+
+---
+
+## Link Path Convention — Always Absolute
+
+**All link paths in `links:` frontmatter and in inline body prose MUST be absolute, scoped to the docs root or the project root.** No `../` anywhere. No `./sibling.md`. No `../overview/foo.md`. The reason is simple: relative links are a slow-motion bug factory. They break the moment you move a file, and you only find out when somebody clicks the link and 404s — or an agent walks the graph and gets lost.
+
+### The rule
+
+A leading `/` means **absolute**. The scope is inferred from the file extension:
+
+| Link looks like… | Resolves against… | Example |
+|---|---|---|
+| `/overview/product.md` (any `.md` / `.markdown`) | the **docs root** | `docs/overview/product.md` |
+| `/src/auth/index.ts` (anything else) | the **project root** | `src/auth/index.ts` |
+
+So `docs/spec/features/auth.md` writing `depends_on: [/overview/product.md]` and `docs/architecture/core.md` writing `depends_on: [/overview/product.md]` produce **the same target**. Move either referrer anywhere inside `docs/` — the link still works. Move the *target* — only the target's own location matters, and the link will report as broken (which is what you want).
+
+### Why this and not `../`?
+
+- **No math.** You never count `..`s. You just write the path the way you'd say it out loud: "the auth spec is at `/spec/features/auth.md`."
+- **Stable on referrer move.** If `docs/spec/auth.md` becomes `docs/spec/features/auth.md`, no link in any other doc needs updating.
+- **Stable on docs-folder rename.** The convention's contract is "leading `/` means docs root for `.md`" — `docs/` can be renamed in the resolver config without touching the docs themselves.
+- **One syntax for docs and code.** `[text](/src/auth/)` works identically to `[text](/overview/product.md)`. No fallback rules, no special cases.
+- **OKF-compatible shape.** The Open Knowledge Format uses the same leading-`/` convention for bundle-relative paths. If Pharaoh ever publishes an OKF bundle, no rewriting needed.
+
+### What about code targets?
+
+Code targets (`/src/...`, `/services/...`, `/infra/...`) resolve to the project root, not the docs root. So a spec at `docs/spec/auth.md` can say `documents: [/src/auth/]` and it will find `src/auth/` in the project root, no matter where the spec lives.
+
+### Legacy relative form (still accepted, not recommended)
+
+For backward compatibility, the resolver also accepts:
+
+- A path starting with a known top-level folder (e.g. `overview/product.md`, `src/auth/`) — treated as relative to docs root or project root respectively based on the folder convention.
+- A plain relative path (e.g. `sibling.md`, `./foo.md`, `../bar.md`) — relative to the doc's own directory.
+
+These forms work but break on move. They are supported only to make migration painless. The canonical, recommended form is the leading-`/` absolute form.
+
+### In `status.py` reports
+
+When a link is broken, the report shows the **raw href the author wrote** (e.g. `/overview/ghost.md`), not a re-serialised path. So you can see exactly what the doc says and fix it in one place.
+
+### Migration
+
+Run `python scripts/migrate-links.py docs/` to auto-rewrite existing relative links in frontmatter and body prose into the absolute form. The script is idempotent — running it twice is a no-op.
+
+### Enforcement (the "no relative crap" rule)
+
+**All link paths in user-authored docs MUST start with `/`.** No exceptions, no `../`, no `./`, no bare `foo.md`, no folder-prefix `overview/foo.md`. Just the leading slash.
+
+Run `python scripts/check-no-relative.py docs/` to lint the doc tree. It exits **1** when it finds any relative path in any user-authored doc, and prints the exact location and offending href so you can fix it in one place. The check is **CI-friendly** — wire it into your pre-commit hook or your CI pipeline and a relative path can never sneak in.
+
+The check is intentionally **strict but smart**:
+
+| Path / file pattern | Linted? | Why |
+|---|---|---|
+| `docs/overview/foo.md`, `docs/spec/bar.md`, etc. | ✅ yes | normal user-authored docs |
+| `docs/INDEX.md`, `docs/overview/INDEX.md`, etc. | ❌ skipped | auto-generated by `index.py` |
+| `docs/changes/<name>/{proposal,behavior,design,tasks}.md` | ❌ skipped | change-artifact templates use bare siblings; resolver handles correctly |
+| `docs/changes/<name>/stray.md` (any other name) | ✅ yes | if you put a non-canonical file in a change folder, it gets linted |
+| `docs/changes/<name>/{*.md}` with `--include-changes` flag | ✅ yes | opt-in strict mode for projects that want *no* exceptions |
+| `skills/code-docs/refs/*.md`, `skills/code-docs/templates/*.md` | n/a | skill internals, not user docs |
+| External URLs (`http://...`, `mailto:...`, `tel:...`) | ✅ allowed | navigation off-repo |
+| Pure anchors (`#section`) | ✅ allowed | in-page navigation |
+
+Use `--no-fail` to make the check informational (exit 0 even on violations) — useful for surfacing a backlog of legacy paths during migration without breaking CI. Use `--verbose` to see every file inspected. Use `--include-changes` to enable the strictest mode that also lints the change-artifact siblings.
 
 ---
 
