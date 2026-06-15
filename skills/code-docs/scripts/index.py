@@ -51,9 +51,12 @@ def display_label_for_doc(target: Path, docs_root: Path) -> str:
 
 
 def format_links(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict) -> str:
-    """Build a compact link annotation line for a single document.
+    """Build a multi-line link annotation block for a single document.
 
-    Shows outgoing (→) and incoming (←) links, one per type.
+    One arrow per line — outgoing (→) first, then incoming (←). Each
+    line is indented 2 spaces so it continues the markdown list item
+    visually, and you can copy/paste a single edge without snipping
+    through a wall of `·` separators.
 
     For **outgoing** links: displays the raw href the author wrote
     (e.g. "/overview/product.md", "/src/auth/") — never a re-serialised
@@ -95,7 +98,10 @@ def format_links(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict)
     if not parts:
         return ""
 
-    return "  " + "  ·  ".join(parts)
+    # One arrow per line, 2-space indent to continue the markdown list item.
+    # Leading "\n  " so the first continuation is on its own line, indented
+    # to match the rest.
+    return "\n  " + "\n  ".join(parts)
 
 
 def get_summary(filepath: Path, docs_root: Path, reverse: dict, all_docs: dict):
