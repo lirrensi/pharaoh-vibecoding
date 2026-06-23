@@ -2,7 +2,7 @@
 
 **Trigger:** Code has changed and docs may be out of sync, or asked to reconcile docs with existing code.
 
-You read code passively. You never edit it. You update docs to reflect reality or flag contradictions for human resolution.
+You read code passively. You never edit it. You update docs to match code, or write discrepancies to a throwaway `code-flags.md` for a code agent to fix.
 
 ---
 
@@ -28,16 +28,16 @@ For each requirement/scenario in the spec:
 
 | Type | Example | Action |
 |------|---------|--------|
-| **Missing behavior** | Spec says MUST validate email, code doesn't | Flag: code is incomplete |
-| **Extra behavior** | Code implements rate limiting, spec is silent | Propose: add to spec |
-| **Contradiction** | Spec says MUST expire in 15 min, code uses 30 min | Flag: decide which is correct |
+| **Missing behavior** | Spec says MUST validate email, code doesn't | Write flag to code-flags.md |
+| **Extra behavior** | Code implements rate limiting, spec is silent | Update spec to document the behavior |
+| **Contradiction** | Spec says MUST expire in 15 min, code uses 30 min | If doc is correct → write flag to code-flags.md. If code is correct → update doc |
 | **Stale architecture** | Arch doc references `src/old/`, code is in `src/new/` | Update architecture doc |
-| **Undocumented feature** | Whole feature exists in code, zero spec coverage | Propose: create spec |
+| **Undocumented feature** | Whole feature exists in code, zero spec coverage | Create spec via Curate mode |
 
 ### Step 5: Decide and act
 For each discrepancy:
 - **If code is correct** → Update docs to match. Add missing requirements, correct stale values.
-- **If doc is correct** → Flag the code for change. Do NOT edit code.
+- **If doc is correct** → Collect the discrepancy into a flag (see Step 7). Do NOT edit code.
 - **If uncertain** → Ask the user. Don't guess.
 
 ### Step 6: Update docs
@@ -45,25 +45,44 @@ For each discrepancy:
 - Bump `updated:` dates on modified docs.
 - Never silently delete documented behavior — use MODIFIED/REMOVED deltas.
 
-### Step 7: Report
+### Step 7: Write throwaway code-flags.md
+For every discrepancy where **docs are correct and code is wrong**, write a flag into `code-flags.md` at the **project root** (NOT inside `docs/`). This is a temporary handoff file — never committed, never kept.
+
+Use the format from `../../templates/code-flags.md`. Each flag MUST include:
+- **Source doc** (absolute path from docs root)
+- **Doc requirement** (quote or tight paraphrase with RFC 2119 keyword)
+- **Code location** (file path + line number + function name — precise enough to jump to)
+- **What code does** (the wrong behavior)
+- **Resolution** (actionable instruction — "Change X to Y on line N")
+- **Status: pending**
+
+After writing, hand the file to a code agent: *"Fix every pending flag in code-flags.md, then delete the file."*
+
+The code agent:
+1. Reads `code-flags.md`
+2. Fixes each flag in code
+3. **Deletes `code-flags.md`** — the file is throwaway, never committed
+
+### Step 8: Report to user
+Summarize what was found and what was done:
+
 ```
-## Sync Report
+## Sync Report — YYYY-MM-DD
 
 ### Docs checked
 - overview/product.md — synced, no issues
-- spec/features/auth.md — 3 discrepancies found
-- architecture/components/agent.md — 1 discrepancy found
+- spec/features/auth.md — 2 discrepancies (1 doc updated, 1 flagged for code)
+- architecture/components/agent.md — 1 discrepancy (doc updated)
 
-### Discrepancies
-| Doc | Requirement | Code | Status |
-|-----|------------|------|--------|
-| spec/features/auth.md | Session expires in 15 min | Uses 30 min | **Doc updated to 15 min** (code was wrong) |
-| spec/features/auth.md | Password validation | Not implemented | **Flagged for implementation** |
-| arch/components/agent.md | Agent path: `src/agent/` | Code is `src/agents/` | **Architecture doc updated** |
+### Doc updates applied
+- spec/features/auth.md — corrected session timeout (15 min → code had 30)
+- architecture/components/agent.md — corrected file paths (src/agent/ → src/agents/)
 
-### Docs updated
-- spec/features/auth.md — corrected session timeout
-- architecture/components/agent.md — corrected file paths
+### Code flags written
+Wrote code-flags.md at project root with 1 flag:
+- Password validation not implemented (spec/features/auth.md → src/auth/register.ts:45)
+
+→ Hand off code-flags.md to a code agent. File is deleted after fixes are applied.
 ```
 
 ---
@@ -84,6 +103,7 @@ For each discrepancy:
 Load:
 - `../principles.md` — layer ownership and conflict resolution
 - `../ontology.md` — for updating frontmatter on modified docs
+- `../../templates/code-flags.md` — throwaway flag file format
 
 Load as needed:
 - `../spec-format.md` — if writing new behavioral requirements

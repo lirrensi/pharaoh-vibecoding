@@ -69,7 +69,7 @@ The stronger the docs, the more disposable the code becomes.
 
 ## Document Lifecycle
 
-- **Never delete.** Mark deprecated docs with `status: deprecated`. Add `supersedes` links.
+- **Never physically delete a file.** No text must be lost as a result of any operation. Mark deprecated docs with `status: deprecated` and add `supersedes` links. Moving to `archive/` is allowed — the file still exists, it just changes location. `git rm` followed by no trace is forbidden.
 - **Never silently change.** Every meaningful update bumps `updated:` and explains what changed.
 - **Archive preserves history.** Completed change proposals move to `archive/` with full context.
-- **INDEX.md is always current.** After any doc change, rebuild the affected INDEX.md files.
+- **INDEX.md is always current.** After any doc change, run `python scripts/index.py` to regenerate all INDEX.md files. **Never hand-edit INDEX.md — the script wipes and overwrites them completely.**

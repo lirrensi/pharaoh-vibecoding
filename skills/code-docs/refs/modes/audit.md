@@ -121,7 +121,7 @@ Layer coherence issues:
 {N} documents across {N} folders
 
 ### Recommendations
-1. Create INDEX.md for guides/ and spec/features/
+1. Run `python scripts/index.py` to generate INDEX.md for all folders
 2. Add frontmatter to: guides/setup.md, architecture/old-stuff.md
 3. Link or deprecate orphaned docs: old-feature.md, unused.md
 4. Move behavioral requirements from architecture/components/agent.md to spec/
@@ -142,7 +142,7 @@ Layer coherence issues:
 ## What NOT to do during Audit
 
 - ❌ Edit any docs (unless explicitly asked to fix issues found)
-- ❌ Create INDEX.md files automatically (report the gap, don't fill it)
+- ❌ Run `python scripts/index.py` automatically (report the gap, don't fill it)
 - ❌ Delete orphaned docs (report them, let the user decide)
 - ❌ Guess at correct frontmatter values
 

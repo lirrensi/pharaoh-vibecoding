@@ -46,12 +46,13 @@ Write content following the format for the `node_type`:
 - `adr` → Status, Context, Decision, Consequences
 
 ### 5. Link
-Add at least one incoming link:
-- Add an entry to the folder's `INDEX.md`: `- [Title](file.md) — one-line summary`
-- Add `links: depends_on` in frontmatter to parent/related docs
+Add at least one incoming link in frontmatter:
+- Add `links: depends_on` in frontmatter to parent/related docs.
+- INDEX.md entries are auto-generated from frontmatter `title` and `status` — you do NOT manually add entries.
 
 ### 6. Rebuild INDEX.md
-Update the folder's `INDEX.md` — add the new document entry and rebuild the tags section.
+Run `python scripts/index.py` to regenerate all INDEX.md files from frontmatter.
+**Never hand-edit an INDEX.md — the script wipes and overwrites every INDEX.md.** Any manual change you make will be lost.
 
 ---
 
@@ -72,8 +73,7 @@ Update the folder's `INDEX.md` — add the new document entry and rebuild the ta
 
 1. **Use git mv** to preserve history: `git mv docs/old/path.md docs/new/path.md`
 2. **Rewrite every link** pointing to the old path — check all frontmatter `links:` and body markdown links.
-3. **Update both INDEX.md files** — remove from old folder, add to new folder.
-4. **Rebuild both INDEX.md files** — tags and summaries.
+3. **Run `python scripts/index.py`** to regenerate all INDEX.md files — the script will pick up the new location from frontmatter and the old folder's INDEX.md will drop the entry automatically.
 
 ---
 
@@ -81,8 +81,8 @@ Update the folder's `INDEX.md` — add the new document entry and rebuild the ta
 
 1. Set `status: deprecated` in frontmatter.
 2. Add `supersedes: [old-file.md]` in the replacement doc's frontmatter (if applicable).
-3. Update the INDEX.md entry: add 🔴 status emoji.
-4. **Never delete.** Git preserves history; the doc stays for reference.
+3. Run `python scripts/index.py` — the script reads `status: deprecated` from frontmatter and adds the 🔴 emoji automatically.
+4. **Never physically delete a file.** No text must be lost as a result of any operation. Git preserves history; the doc stays for reference. Moving to `archive/` is allowed (the file still exists).
 
 ---
 
@@ -90,7 +90,7 @@ Update the folder's `INDEX.md` — add the new document entry and rebuild the ta
 
 Always load for Curate mode:
 - `../ontology.md` — node_type vocabulary, frontmatter spec, link types, status values
-- `../index-spec.md` — INDEX.md format for rebuilding
+- `../index-spec.md` — INDEX.md format and script usage (`python scripts/index.py`)
 
 Load as needed:
 - `../folder-structure.md` — if placing a new doc or reorganizing

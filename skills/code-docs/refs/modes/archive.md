@@ -50,10 +50,11 @@ For each requirement in the `## REMOVED Requirements` section:
 2. Use today's date as the prefix.
 3. Do NOT modify the archived files — preserve them exactly as they were.
 
-### Step 6: Update INDEX.md files
-1. Rebuild `docs/changes/INDEX.md` — remove the archived change.
-2. Rebuild `docs/archive/INDEX.md` — add the archived change.
-3. Rebuild any affected spec INDEX.md files (if requirements were added/removed from them).
+### Step 6: Regenerate INDEX.md files
+Run `python scripts/index.py` — the script will:
+1. Remove the archived change from `docs/changes/INDEX.md`.
+2. Add the archived change to `docs/archive/INDEX.md`.
+3. Refresh any affected spec INDEX.md files (if requirements were merged into them).
 
 ### Step 7: Report
 ```
@@ -69,7 +70,7 @@ For each requirement in the `## REMOVED Requirements` section:
 | spec/features/ui.md | MODIFIED | Theme Toggle (now in header) |
 | spec/features/ui.md | REMOVED | Per-Page Theme Override |
 
-### INDEX.md rebuilt
+### INDEX.md regenerated
 - docs/changes/INDEX.md
 - docs/archive/INDEX.md
 - docs/spec/features/INDEX.md
@@ -84,7 +85,7 @@ For each requirement in the `## REMOVED Requirements` section:
 ## What NOT to do during Archive
 
 - ❌ Modify the archived change artifacts (proposal, behavior, design, tasks) — preserve exact history
-- ❌ Skip updating INDEX.md files
+- ❌ Skip running `python scripts/index.py` after archive
 - ❌ Archive without verifying implementation matches specs
 - ❌ Delete changed files instead of archiving them
 - ❌ Archive if any tasks are incomplete

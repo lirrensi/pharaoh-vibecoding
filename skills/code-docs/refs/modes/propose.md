@@ -191,8 +191,8 @@ links:
 - Keep tasks small — completable in one session
 - Tasks describe work, not verification
 
-### Step 7: Update INDEX.md
-Add the change folder to `docs/changes/INDEX.md`.
+### Step 7: Regenerate INDEX.md
+Run `python scripts/index.py` — the script will pick up the new change folder and add it to `docs/changes/INDEX.md` automatically from frontmatter.
 
 ### Step 8: Report
 Present the proposal structure to the user. Wait for approval before implementation.
