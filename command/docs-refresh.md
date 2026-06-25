@@ -2,7 +2,7 @@
 description: Full doc maintenance — tidy, re-index, sync against code, make docs perfect
 ---
 Load the `code-docs` skill. Run a complete maintenance pass over all canonical docs.
-Goal: make sure docs stay canon, all indexed and pretty.
+Goal: Full doc maintenance — tidy, re-index, sync against code, make docs perfect
 
 Do whatever is needed to get the docs into perfect shape:
 - Tidy structure, links, frontmatter, and ontology
