@@ -13,11 +13,14 @@ The stack refines downward — each layer adds precision while preserving the tr
 ```
 overview/  →  spec/  →  architecture/  →  code
 (why)        (what)     (how)             (rendering)
+   ↑_________________________________________↑
+                 stories/ — memory of how we learned
 ```
 
 - `overview/` is written first. It defines product identity, purpose, value, users, and non-goals.
 - `spec/` is derived from `overview/`. It defines exact, testable behavior in BDD+RFC format.
 - `architecture/` is derived from `spec/`. It defines how the current implementation realizes the behavior.
+- `stories/` is the project's empirical memory. It records how we figured things out: debug sessions, migrations, incidents, and surprises. It does not override the layers above; it explains where they came from.
 - Code may be discarded and regenerated from the docs. The docs are the valuable artifact.
 
 ## Layer Ownership
@@ -72,4 +75,5 @@ The stronger the docs, the more disposable the code becomes.
 - **Never physically delete a file.** No text must be lost as a result of any operation. Mark deprecated docs with `status: deprecated` and add `supersedes` links. Moving to `archive/` is allowed — the file still exists, it just changes location. `git rm` followed by no trace is forbidden.
 - **Never silently change.** Every meaningful update bumps `updated:` and explains what changed.
 - **Archive preserves history.** Completed change proposals move to `archive/` with full context.
+- **Stories preserve memory.** `docs/stories/` holds dated narratives of how the system was learned the hard way. When a story reveals canonical truth, promote it into `spec/`, `architecture/`, `guides/`, or `ops/` — but keep the story as provenance.
 - **INDEX.md is always current.** After any doc change, run `python scripts/index.py` to regenerate all INDEX.md files. **Never hand-edit INDEX.md — the script wipes and overwrites them completely.**

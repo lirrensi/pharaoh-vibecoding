@@ -23,6 +23,7 @@ Each document has exactly one `node_type`. Choose based on what the document IS,
 | `change-design` | Technical approach for a change | `docs/changes/<name>/design.md` |
 | `change-tasks` | Implementation checklist | `docs/changes/<name>/tasks.md` |
 | `index` | Folder table of contents | Any `INDEX.md` |
+| `story` | Dated narrative of an engineering session — debug, migration, implementation, incident | `docs/stories/` |
 
 **Creating new types:** You MAY create new `node_type` values if none of the existing types fit your document. However, every new type MUST be:
 1. Documented in `docs/ontology.md` (the project's ontology registry) with a clear explanation of what it is, where it lives, and why it exists.
@@ -33,6 +34,8 @@ Each document has exactly one `node_type`. Choose based on what the document IS,
 **The ontology registry (`docs/ontology.md`) is the single source of truth for what document types exist and what they mean.** If a type isn't in the registry, it doesn't exist. If a new type is created, the registry must be updated.
 
 **Fallback rule:** If unsure and you don't want to create a new type, a behavioral spec is `spec`, a how-to is `guide`.
+
+**Stories:** `story` documents live in `docs/stories/` and capture dated engineering narratives. They are *not* canonical specs or runbooks — they are source material that may feed those layers. See `refs/stories.md` for full conventions, templates, and the story lifecycle.
 
 ---
 
@@ -240,6 +243,15 @@ Use `--no-fail` to make the check informational (exit 0 even on violations) — 
 | `draft` | Work in progress, not yet authoritative | New docs still being shaped |
 | `deprecated` | No longer current, kept for history | Old behavior replaced by newer doc; set `supersedes` on replacement |
 | `archived` | Historical record only | Moved to `docs/archive/` after a change is completed |
+
+### Story status values
+
+Stories may use a slightly wider vocabulary. See `refs/stories.md` for the full list. The additional values are:
+
+| Status | Meaning |
+|--------|---------|
+| `resolved` | The underlying issue is fixed; the story is kept for context. |
+| `mystery` | We never fully figured it out. Honest and useful. |
 
 ---
 

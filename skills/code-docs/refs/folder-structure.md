@@ -52,6 +52,10 @@ docs/
 │   └── <YYYY-MM-DD>-<change-name>/  # Date-prefixed for chronological order
 │       └── ...                 # Full change context preserved
 │
+├── stories/                    # Dated engineering narratives — the project's memory
+│   ├── INDEX.md
+│   └── YYYY-MM-DD-short-name.md  # (node_type: story)
+│
 ├── guides/                     # How-to documents
 │   ├── INDEX.md
 │   └── ...                     # (node_type: guide)
@@ -83,6 +87,7 @@ docs/
 | Shared definition or convention | `docs/reference/` | `reference` |
 | A proposed change | `docs/changes/<name>/` | `change-*` |
 | Completed change | `docs/archive/<date>-<name>/` | `change-*` (preserved) |
+| An engineering narrative: debug session, migration, incident, investigation | `docs/stories/` | `story` |
 
 ---
 
@@ -113,6 +118,7 @@ Add a new folder under `docs/` only when:
 - ADRs: `NNNN-short-description.md` (4-digit sequential number).
 - Change folders: kebab-case, descriptive (`add-dark-mode`, `fix-auth-timeout`).
 - Archive folders: `YYYY-MM-DD-<change-name>` (date of archive).
+- Story files: `YYYY-MM-DD-short-description.md` (date the session happened).
 - Never freeform names like `final-version.md` or `notes-about-stuff.md`.
 
 ---

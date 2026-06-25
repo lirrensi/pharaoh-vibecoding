@@ -146,6 +146,7 @@ def resolve_links(filepath: Path, fm: dict, docs_root: Optional[Path] = None) ->
 _DOCS_TOP_LEVEL = frozenset({
     "overview", "spec", "specs", "architecture", "components",
     "decisions", "guides", "ops", "reference", "changes", "archive",
+    "stories",
 })
 
 # Top-level folder names that are conventionally *outside* docs/ (i.e. code).

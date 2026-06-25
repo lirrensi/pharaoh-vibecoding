@@ -56,6 +56,62 @@ Run `python scripts/index.py` to regenerate all INDEX.md files from frontmatter.
 
 ---
 
+## CAPTURE — Write a Story
+
+Use this for engineering narratives: debug sessions, migrations, incidents, implementation slogs, or any session where the *process of figuring it out* is worth preserving.
+
+### 1. Decide if it belongs in `docs/stories/`
+
+A story is right when:
+- You spent meaningful time figuring something out.
+- The dead ends and hypotheses matter.
+- The context of discovery is useful to future readers.
+
+A story is wrong when:
+- The answer fits in a code comment.
+- It's already cleanly covered by a spec, runbook, or guide.
+
+### 2. Name it
+
+```text
+docs/stories/YYYY-MM-DD_short-description.md
+```
+
+Use the date the session happened, not the date you write the file.
+
+### 3. Use the story template
+
+Copy `templates/story.md` and fill it in. Key fields:
+
+```yaml
+---
+node_type: story
+title: {Short, specific title}
+status: active
+updated: YYYY-MM-DD
+session_type: debug | implementation | migration | incident | investigation | spike | review
+tags: [debug, auth, race-condition, gotcha]
+links:
+  relates_to: [/spec/auth.md]
+  documents: [/src/auth/token-store.ts]
+---
+```
+
+### 4. Promote findings to canonical docs
+
+After writing the story, ask:
+- Does a `spec/` doc need updating? Update it and link back to the story.
+- Does an `architecture/` doc need updating? Update it and link back.
+- Does an `ops/` runbook or `guides/` doc need creating? Create it and link back.
+
+The story becomes provenance. The canonical docs become truth.
+
+### 5. Rebuild INDEX.md
+
+Run `python scripts/index.py` so `docs/stories/INDEX.md` lists the new story.
+
+---
+
 ## UPDATE — Edit Existing Document
 
 1. **Read first.** Load the current doc and any `depends_on` links.
@@ -96,3 +152,4 @@ Load as needed:
 - `../folder-structure.md` — if placing a new doc or reorganizing
 - `../spec-format.md` — if writing a behavioral spec
 - `../principles.md` — if unsure about layer boundaries
+- `../stories.md` — if capturing or editing a `story`

@@ -16,6 +16,7 @@ Read in order:
 1. `docs/overview/` — for product identity and purpose
 2. `docs/spec/` — for the canonical behavioral answer
 3. `docs/architecture/` — for implementation context
+4. `docs/stories/` — for how the system was learned, debugged, or surprised us
 
 ### 3. Cross-reference
 If the spec references another spec, follow the link. Use `links: depends_on` in frontmatter to understand dependencies.
@@ -31,6 +32,7 @@ Structure your answer:
 - **What overview says** — identity, purpose, scope
 - **What spec says** — exact behavior, requirements, scenarios
 - **What architecture says** — implementation structure
+- **What stories say** — historical context, prior debug sessions, how the system was learned
 - **What code does** (if checked) — actual behavior
 - **Whether they agree** — flag any discrepancies
 
@@ -39,9 +41,10 @@ Structure your answer:
 ## Search Strategy
 
 1. **Start with INDEX.md** — scan the relevant folder's INDEX.md for document summaries and tags.
-2. **Follow tags** — if you know the domain (e.g., "auth"), check the tags section of INDEX.md.
+2. **Follow tags** — if you know the domain (e.g. "auth"), check the tags section of INDEX.md.
 3. **Read frontmatter** — `title` and `tags` in frontmatter tell you if a doc is relevant before reading it.
 4. **Use `links`** — `depends_on` tells you what to read first.
+5. **Check `docs/stories/` for history** — when the question is "has anyone seen this before?", "why did we do it this way?", or involves weird behavior, search stories first.
 
 ---
 
@@ -62,3 +65,4 @@ Only if you need them for this inquiry:
 - `../spec-format.md` — if you're explaining how a spec is structured
 - `../ontology.md` — if you need to reference node types or link types
 - `../folder-structure.md` — if the question involves doc organization
+- `../stories.md` — if the inquiry involves historical context, debug sessions, or empirical lessons
