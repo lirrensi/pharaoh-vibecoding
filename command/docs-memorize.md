@@ -1,13 +1,14 @@
 ---
-description: Log of records — record session learnings back into docs
+description: Record valuable findings from this chat into docs
 ---
-Update documentation (`docs/`) with lessons, decisions, procedures, done, etc in this session.
-Walk back thru all history here, from start to current:
-- identify important bits
-- deduplicate common 
-- update docs with atomic changes.
+Load the `code-docs` skill. Review only the current conversation history.
+Goal: update docs with useful stuff from current history.
 
-MUST USE `code-docs` still. NO DELEGATION. Your history is here.
-No asking, no questions, update all autonomously. I already walked off.
+Record anything valuable from today:
+- Code changes that were not yet reflected in docs
+- Debugging findings, gotchas, workarounds
+- Decisions, lessons, or important realizations
+
+Update the appropriate docs directly. Do not pull in unrelated historical records or outside context. Do not edit code.
 
 Focus (if present): $ARGUMENTS
